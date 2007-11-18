@@ -3,6 +3,10 @@
 # $Id: Changes,v 2.23 2007/05/29 18:15:32 dankogai Exp dankogai $
 #
 $Revision: 2.23 $ $Date: 2007/05/29 18:15:32 $
+! encoding.pm t/mime_header_iso2022jp.t
+  ported back from Perl 5.10-RC1
+
+2.23 2007/05/29 18:15:32
 ! Encode.xs
   got rid of global fallback_cb; encode_method() now takes one more
   argument which is a coderef to fallback.  This should make

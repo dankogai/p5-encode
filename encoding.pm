@@ -323,6 +323,14 @@ always the same as the length of C<$/> in the native encoding.
 
 This pragma affects utf8::upgrade, but not utf8::downgrade.
 
+=head2 Side effects
+
+If the C<encoding> pragma is in scope then the lengths returned are
+calculated from the length of C<$/> in Unicode characters, which is not
+always the same as the length of C<$/> in the native encoding.
+
+This pragma affects utf8::upgrade, but not utf8::downgrade.
+
 =head1 FEATURES THAT REQUIRE 5.8.1
 
 Some of the features offered by this pragma requires perl 5.8.1.  Most
@@ -619,6 +627,11 @@ At any rate, the very use of format is questionable when it comes to
 unicode characters since you have to consider such things as character
 width (i.e. double-width for ideographs) and directions (i.e. BIDI for
 Arabic and Hebrew).
+
+=item Thread safety
+
+C<use encoding ...> is not thread-safe (i.e., do not use in threaded
+applications).
 
 =back
 
