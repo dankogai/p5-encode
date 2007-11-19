@@ -30,7 +30,7 @@ $0 -[Dehfv] [ucm files ...]
 }
 
 $| = 1;
-my (%Hdr, %U2E, %E2U);
+my (%Hdr, %U2E, %E2U, %Fallback);
 my $in_charmap = 0;
 my $nerror = 0;
 my $nwarning = 0;
@@ -50,7 +50,7 @@ sub nit($;$){
 
 for $ARGV (@ARGV){
     open UCM, $ARGV or die "$ARGV:$!";
-    %Hdr = %U2E = %E2U = ();
+    %Hdr = %U2E = %E2U = %Fallback = ();
     $in_charmap = $nerror = $nwarning = 0;
     $. = 0;
     while(<UCM>){
@@ -88,12 +88,13 @@ for $ARGV (@ARGV){
             $fb =~ /^\|([0123])$/ or nit "malformed fallback: $fb";
             $fb = $1; 
             $Opt{f} and $fb = 0;
-            unless ($fb == 1){ # check uni -> enc
+            unless ($fb == 3){ # check uni -> enc
                 if (exists $U2E{$uni}){
                     nit "dupe encode map: U$uni => $U2E{$uni} and $enc", 1;
                 }else{
                     $U2E{$uni} = $enc;
-                    if ($Opt{e} and $fb != 3) {
+                    $Fallback{$uni}{$enc} = 1 if $fb == 1;
+                    if ($Opt{e}) {
                         my $e = hex2enc($enc);
                         my $u = hex2uni($uni);
                         my $eu = Encode::encode($name, $u);
@@ -102,12 +103,13 @@ for $ARGV (@ARGV){
                     }
                 }
             }
-            unless ($fb == 3){  # check enc -> uni
+            unless ($fb == 1){  # check enc -> uni
                 if (exists $E2U{$enc}){
                     nit "dupe decode map: $enc => U$E2U{$enc} and U$uni", 1;
                 }else{
                     $E2U{$enc} = $uni;
-                    if ($Opt{e} and $fb != 1) {
+                    $Fallback{$enc}{$uni} = 1 if $fb == 3;
+                    if ($Opt{e}) {
                         my $e = hex2enc($enc);
                         my $u = hex2uni($uni);
                         $Opt{D} and warn "$uni, $enc";
@@ -139,12 +141,12 @@ sub hex2uni{
 sub checkRT{
     for my $uni (keys %E2U){
         my $enc = $U2E{$uni} or next; # okay
-        $E2U{$U2E{$uni}} eq $uni or
+        $E2U{$U2E{$uni}} eq $uni or $Fallback{$uni}{$enc} or
             nit "RT failure: U$uni => $enc =>U$E2U{$U2E{$uni}}";
     }
     for my $enc (keys %E2U){
-        my $uni =  $E2U{$enc} or next; # okay
-        $U2E{$E2U{$enc}} eq $enc or
+        my $uni = $E2U{$enc} or next; # okay
+        $U2E{$E2U{$enc}} eq $enc or $Fallback{$enc}{$uni} or
             nit "RT failure: $enc => U$uni => $U2E{$E2U{$enc}}";
     }
 }
