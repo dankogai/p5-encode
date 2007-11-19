@@ -3,6 +3,9 @@
 # $Id: Changes,v 2.23 2007/05/29 18:15:32 dankogai Exp dankogai $
 #
 $Revision: 2.23 $ $Date: 2007/05/29 18:15:32 $
+! bin/ucmlint
+  Fix by MIYAGAWA via CodeRepos
+  http://coderepos.org/share/changeset/1791
 ! encoding.pm t/mime_header_iso2022jp.t
   ported back from Perl 5.10-RC1
 
