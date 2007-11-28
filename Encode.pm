@@ -734,7 +734,7 @@ you're not interested in this, then bitwise-or the bitmask with it.
 
 =back
 
-=Head2 coderef for CHECK
+=head2 coderef for CHECK
 
 As of Encode 2.12 CHECK can also be a code reference which takes the
 ord value of unmapped caharacter as an argument and returns a string
