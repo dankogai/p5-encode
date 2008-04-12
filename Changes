@@ -3,6 +3,10 @@
 # $Id: Changes,v 2.24 2008/03/12 09:51:11 dankogai Exp $
 #
 $Revision: 2.24 $ $Date: 2008/03/12 09:51:11 $
+! lib/Encode/Alias.pm
+  "This fix for Encode::Alias should make Solaris happy:"
+  Message-ID: <47D886D9.6060001@iki.fi>
+$Revision: 2.24 $ $Date: 2008/03/12 09:51:11 $
 ! lib/Encode/Config.pm
   adds and  fixes also adds cp858 support.
 ! Encode.pm encoding.pm lib/Encode/Alias.pm ucm/cp858.ucm
