@@ -36,7 +36,8 @@ our @EXPORT_OK = (
 
 our %EXPORT_TAGS = (
     all          => [ @EXPORT,    @EXPORT_OK ],
-    fallbacks    => [@FB_CONSTS],
+    default      => [ @EXPORT ],
+    fallbacks    => [ @FB_CONSTS ],
     fallback_all => [ @FB_CONSTS, @FB_FLAGS ],
 );
 
