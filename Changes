@@ -3,9 +3,13 @@
 # $Id: Changes,v 2.24 2008/03/12 09:51:11 dankogai Exp $
 #
 $Revision: 2.24 $ $Date: 2008/03/12 09:51:11 $
+! Makefile.PL
+  Perl 5.10/Encode 2.24: Tiny typo in Encode's Makefile.PL arg processing
+  Message-Id: <961C2A4F-92B3-416D-A9F9-E7B0ADA9F134@fsck.com>
 ! lib/Encode/Alias.pm
   "This fix for Encode::Alias should make Solaris happy:"
   Message-ID: <47D886D9.6060001@iki.fi>
+
 $Revision: 2.24 $ $Date: 2008/03/12 09:51:11 $
 ! lib/Encode/Config.pm
   adds and  fixes also adds cp858 support.
