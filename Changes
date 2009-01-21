@@ -6,7 +6,7 @@ $Revision: 2.27 $ $Date: 2009/01/21 22:55:07 $
 ! lib/Encode/MIME/Header.pm t/mime-header.t
   Addressed: Encode::MIME::Header MIME-Q encoding truncates 
     trailing zeros in some circumstances
-  http://rt.cpan.org/Ticket/Display.html?id=342627
+  http://rt.cpan.org/Ticket/Display.html?id=42627
 ! lib/Encode/Alias.pm
   Added alias: unicode-1-1-utf-7
   http://rt.cpan.org/Ticket/Display.html?id=38558  
