@@ -10,7 +10,7 @@ $Revision: 2.27 $ $Date: 2009/01/21 22:55:07 $
   Message-Id: <693254b90902010027x277a5d0fm4f5700ba2f276239@mail.gmail.com>
 ! lib/Encode/MIME/Header.pm
   Addressed: Split header lines are joined incorrectly
-  http://rt.cpan.org/Ticket/Display.html?id=42627
+  http://rt.cpan.org/Ticket/Display.html?id=42902
 
 2.27 2009/01/21 22:55:07
 ! lib/Encode/MIME/Header.pm t/mime-header.t
