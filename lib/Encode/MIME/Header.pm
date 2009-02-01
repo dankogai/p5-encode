@@ -44,7 +44,7 @@ sub decode($$;$) {
     $str =~ s/\?=\s+=\?/\?==\?/gos;
 
     # multi-line header to single line
-    $str =~ s/(:?\r|\n|\r\n)[ \t]//gos;
+    $str =~ s/(?:\r|\n|\r\n)[ \t]+//gos;
 
     1 while ( $str =~
         s/(\=\?[0-9A-Za-z\-_]+\?[Qq]\?)(.*?)\?\=\1(.*?)\?\=/$1$2$3\?\=/ )
