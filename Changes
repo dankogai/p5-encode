@@ -3,6 +3,11 @@
 # $Id: Changes,v 2.29 2009/02/01 13:14:37 dankogai Exp $
 #
 $Revision: 2.29 $ $Date: 2009/02/01 13:14:37 $
+! lib/Encode/MIME/Header.pm
+  Addressed: Encode::MIME::Header::decode should respect CHECK
+  http://rt.cpan.org/Ticket/Display.html?id=43204
+
+2.29 2009/02/01 13:14:37
 ! Encode.pm
   VERSION++ just to make PAUSE happy
   Message-Id: <877i4anwwt.fsf@k75.linux.bogus>

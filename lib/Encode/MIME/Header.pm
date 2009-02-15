@@ -61,15 +61,15 @@ sub decode($$;$) {
     }{
         if      (uc($2) eq 'B'){
             $obj->{decode_b} or croak qq(MIME "B" unsupported);
-            decode_b($1, $3);
+            decode_b($1, $3, $chk);
         } elsif (uc($2) eq 'Q'){
             $obj->{decode_q} or croak qq(MIME "Q" unsupported);
-            decode_q($1, $3);
+            decode_q($1, $3, $chk);
         } else {
             croak qq(MIME "$2" encoding is nonexistent!);
         }
     }egox;
-    $_[1] = '' if $chk;
+    $_[1] = $str if $chk;
     return $str;
 }
 
@@ -77,19 +77,20 @@ sub decode_b {
     my $enc  = shift;
     my $d    = find_encoding($enc) or croak qq(Unknown encoding "$enc");
     my $db64 = decode_base64(shift);
+    my $chk  = shift;
     return $d->name eq 'utf8'
       ? Encode::decode_utf8($db64)
-      : $d->decode( $db64, Encode::FB_PERLQQ );
+      : $d->decode( $db64, $chk || Encode::FB_PERLQQ );
 }
 
 sub decode_q {
-    my ( $enc, $q ) = @_;
+    my ( $enc, $q, $chk ) = @_;
     my $d = find_encoding($enc) or croak qq(Unknown encoding "$enc");
     $q =~ s/_/ /go;
     $q =~ s/=([0-9A-Fa-f]{2})/pack("C", hex($1))/ego;
     return $d->name eq 'utf8'
       ? Encode::decode_utf8($q)
-      : $d->decode( $q, Encode::FB_PERLQQ );
+      : $d->decode( $q, $chk || Encode::FB_PERLQQ );
 }
 
 my $especials =
