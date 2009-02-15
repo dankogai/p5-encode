@@ -1,11 +1,15 @@
 # Revision history for Perl extension Encode.
 #
-# $Id: Changes,v 2.29 2009/02/01 13:14:37 dankogai Exp $
+# $Id: Changes,v 2.30 2009/02/15 17:44:13 dankogai Exp dankogai $
 #
-$Revision: 2.29 $ $Date: 2009/02/01 13:14:37 $
+$Revision: 2.30 $ $Date: 2009/02/15 17:44:13 $
+! encoding.pm
+  fixed regexes, et cetera. by drry
+  http://coderepos.org/share/changeset/29767
 ! lib/Encode/MIME/Header.pm
   Addressed: Encode::MIME::Header::decode should respect CHECK
   http://rt.cpan.org/Ticket/Display.html?id=43204
+  http://coderepos.org/share/changeset/29767
 
 2.29 2009/02/01 13:14:37
 ! Encode.pm
