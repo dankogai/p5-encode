@@ -44,10 +44,10 @@ sub decode($$;$) {
     $str =~ s/\?=\s+=\?/\?==\?/gos;
 
     # multi-line header to single line
-    $str =~ s/(?:\r\n|[\r\n])[ \t]+//gos;
+     $str =~ s/(?:\r|\n|\r\n)[ \t]+//gos;
 
     1 while ( $str =~
-        s/(=\?[-0-9A-Za-z_]+\?[Qq]\?)(.*?)\?=\1(.*?\?=)/$1$2$3/ )
+         s/(\=\?[0-9A-Za-z\-_]+\?[Qq]\?)(.*?)\?\=\1(.*?)\?\=/$1$2$3\?\=/ )
       ;    # Concat consecutive QP encoded mime headers
            # Fixes breaking inside multi-byte characters
 
@@ -95,23 +95,25 @@ sub decode_q {
 
 my $especials =
   join( '|' => map { quotemeta( chr($_) ) }
-      unpack( "C*", qq{()<>@,;:"'/[]?.=} ) );
+      unpack( "C*", qq{()<>@,;:\"\'/[]?.=} ) );
 
 my $re_encoded_word = qr{
-    =\?                # begin encoded word
-    (?:[-0-9A-Za-z_]+) # charset (encoding)
-    (?:\*[A-Za-z]{1,8}+(?:-[A-Za-z]{1,8})*)? # language (RFC 2231)
-    \?(?:[QqBb])\?     # delimiter
-    (?:.*?)            # Base64-encodede contents
-    \?=                # end encoded word
-}xo;
+       (?:
+    =\?               # begin encoded word
+    (?:[0-9A-Za-z\-_]+) # charset (encoding)
+        (?:\*\w+(?:-\w+)*)? # language (RFC 2231)
+    \?(?:[QqBb])\?      # delimiter
+    (?:.*?)             # Base64-encodede contents
+    \?=                 # end encoded word
+       )
+      }xo;
 
 my $re_especials = qr{$re_encoded_word|$especials}xo;
 
 sub encode($$;$) {
     my ( $obj, $str, $chk ) = @_;
     my @line = ();
-    for my $line ( split /\r\n|[\r\n]/o, $str ) {
+    for my $line ( split /\r|\n|\r\n/o, $str ) {
         my ( @word, @subline );
         for my $word ( split /($re_especials)/o, $line ) {
             if (   $word =~ /[^\x00-\x7f]/o
@@ -175,10 +177,10 @@ sub _encode_q {
     my $chunk = shift;
     $chunk = encode_utf8($chunk);
     $chunk =~ s{
-            [^0-9A-Za-z]
-       }{
-            join("" => map {sprintf "=%02X", $_} unpack("C*", $&))
-       }egox;
+        ([^0-9A-Za-z])
+           }{
+           join("" => map {sprintf "=%02X", $_} unpack("C*", $1))
+           }egox;
     return HEAD . 'Q?' . $chunk . TAIL;
 }
 
@@ -191,7 +193,7 @@ Encode::MIME::Header -- MIME 'B' and 'Q' header encoding
 
 =head1 SYNOPSIS
 
-    use Encode qw/encode decode/;
+    use Encode qw/encode decode/; 
     $utf8   = decode('MIME-Header', $header);
     $header = encode('MIME-Header', $utf8);
 
@@ -236,6 +238,6 @@ handsets which does not grok UTF-8.
 L<Encode>
 
 RFC 2047, L<http://www.faqs.org/rfcs/rfc2047.html> and many other
-locations.
+locations. 
 
 =cut
