@@ -146,6 +146,10 @@ sub encode($$;$) {
     return undef unless defined $string;
     $string .= '' if ref $string;    # stringify;
     $check ||= 0;
+    unless ( defined $name ) {
+        require Carp;
+        Carp::croak("Encoding name should not be undef");
+    }
     my $enc = find_encoding($name);
     unless ( defined $enc ) {
         require Carp;
