@@ -31,8 +31,6 @@ my @pmlibdirs = qw(lib Encode);
 
 $ARGV{MORE_SCRIPTS} and push @exe_files, @more_exe_files;
 $ARGV{INSTALL_UCM}   and push @pmlibdirs, "ucm";
-my @man =  ();
-@man = ( MAN1PODS => {}, MAN3PODS => {} ) if $ENV{PERL_CORE};
 
 WriteMakefile(
     NAME         => "Encode",
@@ -44,7 +42,6 @@ WriteMakefile(
         SUFFIX       => 'gz',
         DIST_DEFAULT => 'all tardist',
     },
-    @man,
     INC         => '-I' . File::Spec->catfile( '.', 'Encode' ),
     PMLIBDIRS   => \@pmlibdirs,
     INSTALLDIRS => 'perl',
