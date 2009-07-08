@@ -34,12 +34,12 @@ plan tests => 5;
 }
 
 {
-    my($st, $out, $err) = run_cmd [qw(-S foobar -f utf-8), $script];
+    my($st, $out, $err) = run_cmd [qw(-S foobar -f utf-8 -t ascii), $script];
     like($err, qr{unknown scheme.*fallback}i, 'warning for unknown scheme');
 }
 
 {
-    my ( $st, $out, $err ) = run_cmd [qw(-f utf-8 ./non-existing/file)];
+    my ( $st, $out, $err ) = run_cmd [qw(-f utf-8 -t ascii ./non-existing/file)];
     like( $err, qr{can't open}i );
 }
 
