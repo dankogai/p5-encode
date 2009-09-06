@@ -1,7 +1,12 @@
 # Revision history for Perl extension Encode.
 #
-# $Id: Changes,v 2.36 2009/09/06 09:03:07 dankogai Exp dankogai $
-$Revision: 2.36 $ $Date: 2009/09/06 09:03:07 $
+# $Id: Changes,v 2.37 2009/09/06 14:32:21 dankogai Exp dankogai $
+$Revision: 2.37 $ $Date: 2009/09/06 14:32:21 $
+! Encode.xs
+  fixed: compilation failure on compilers not supporting C99
+  http://rt.cpan.org/Ticket/Display.html?id=49466
+
+2.37 2009/09/06 09:03:07
 ! Encode.xs
   fixed: 'find_encoding("utf8")->decode(undef)' causes segmentation fault
   http://rt.cpan.org/Ticket/Display.html?id=49462
