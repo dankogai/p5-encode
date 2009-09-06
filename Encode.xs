@@ -1,5 +1,5 @@
 /*
- $Id: Encode.xs,v 2.14 2007/05/29 18:15:32 dankogai Exp $
+ $Id: Encode.xs,v 2.15 2009/09/06 09:03:07 dankogai Exp dankogai $
  */
 
 #define PERL_NO_GET_CONTEXT
@@ -407,6 +407,7 @@ SV *	src
 int	check
 CODE:
 {
+    if (src == &PL_sv_undef) src = newSV(0);
     STRLEN slen;
     U8 *s = (U8 *) SvPV(src, slen);
     U8 *e = (U8 *) SvEND(src);
@@ -465,6 +466,7 @@ SV *	src
 int	check
 CODE:
 {
+    if (src == &PL_sv_undef) src = newSV(0);
     STRLEN slen;
     U8 *s = (U8 *) SvPV(src, slen);
     U8 *e = (U8 *) SvEND(src);
