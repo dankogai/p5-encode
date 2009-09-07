@@ -1,5 +1,5 @@
 BEGIN {
-    if ($ENV{'PERL_CORE'}){
+    if ( $ENV{'PERL_CORE'} && $] >= 5.011) {
         chdir 't';
         unshift @INC, '../lib';
     }

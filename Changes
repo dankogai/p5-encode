@@ -2,11 +2,19 @@
 #
 # $Id: Changes,v 2.37 2009/09/06 14:32:21 dankogai Exp dankogai $
 $Revision: 2.37 $ $Date: 2009/09/06 14:32:21 $
+! t/CJKT.t t/guess.t t/perlio.t t/piconv.t
+  $PERL_CORE trick is now off for perl 5.11 or better.
+  Message-Id: <b77c1dce0909070245s59b294bq8a8a8166e7342793@mail.gmail.com> 
+  Message-Id: <E7FADA6C-D5A7-4ECA-BE4C-85911A97677E@dan.co.jp>
+  Message-Id: <20090907154908.GS60303@plum.flirble.org>
+  Message-Id: <20090907161509.GN8057@iabyn.com>
+
+2.37 2009/09/06 14:32:21
 ! Encode.xs
   fixed: compilation failure on compilers not supporting C99
   http://rt.cpan.org/Ticket/Display.html?id=49466
 
-2.37 2009/09/06 09:03:07
+2.36 2009/09/06 09:03:07
 ! Encode.xs
   fixed: 'find_encoding("utf8")->decode(undef)' causes segmentation fault
   http://rt.cpan.org/Ticket/Display.html?id=49462
