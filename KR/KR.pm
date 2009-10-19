@@ -60,11 +60,7 @@ mean "cp949" encodings.  To fix that, the following aliases are set;
   qr/ks_c_5601-1987$/i     => '"cp949"'
 
 The ASCII region (0x00-0x7f) is preserved for all encodings, even
-though this conflicts with mappings by the Unicode Consortium.  See
-
-L<http://www.debian.or.jp/~kubota/unicode-symbols.html.en>
-
-to find out why it is implemented that way.
+though this conflicts with mappings by the Unicode Consortium.
 
 =head1 SEE ALSO
 

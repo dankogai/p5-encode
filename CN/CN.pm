@@ -65,11 +65,7 @@ mean C<euc-cn> encodings.  To fix that, C<gb2312> is aliased to C<euc-cn>.
 Use C<gb2312-raw> when you really mean it.
 
 The ASCII region (0x00-0x7f) is preserved for all encodings, even though
-this conflicts with mappings by the Unicode Consortium.  See
-
-L<http://www.debian.or.jp/~kubota/unicode-symbols.html.en>
-
-to find out why it is implemented that way.
+this conflicts with mappings by the Unicode Consortium.
 
 =head1 SEE ALSO
 

@@ -2,6 +2,10 @@
 #
 # $Id: Changes,v 2.37 2009/09/06 14:32:21 dankogai Exp dankogai $
 $Revision: 2.37 $ $Date: 2009/09/06 14:32:21 $
+! Byte/Byte.pm CN/CN.pm Changes JP/JP.pm KR/KR.pm TW/TW.pm 
+  Unicode/Unicode.pm bin/enc2xs lib/Encode/Supported.pod
+  Fix URLs
+   http://rt.cpan.org/Ticket/Display.html?id=49776
 ! t/CJKT.t t/guess.t t/perlio.t t/piconv.t
   $PERL_CORE trick is now off for perl 5.11 or better.
   Message-Id: <b77c1dce0909070245s59b294bq8a8a8166e7342793@mail.gmail.com> 
@@ -526,7 +530,7 @@ $Revision: 2.37 $ $Date: 2009/09/06 14:32:21 $
 1.99 2003/12/29 02:47:16
 ! Unicode/Unicode.xs
   find_encoding("UTF-16BE")->encode("abc") now null terminates
-  http://www.mail-archive.com/perl5-porters@perl.org/msg69766.html
+  http://www.xray.mpe.mpg.de/mailing-lists/perl5-porters/2003-10/threads.html#00258
 ! Encode.pm
   prototype bug in decode_utf8() fixed
   Message-Id: <600A4CDA-F004-11D7-B570-000393AE4244@dan.co.jp>
