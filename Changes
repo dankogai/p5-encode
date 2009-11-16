@@ -1,7 +1,16 @@
 # Revision history for Perl extension Encode.
 #
-# $Id: Changes,v 2.37 2009/09/06 14:32:21 dankogai Exp dankogai $
-$Revision: 2.37 $ $Date: 2009/09/06 14:32:21 $
+# $Id: Changes,v 2.38 2009/11/16 14:08:13 dankogai Exp dankogai $
+$Revision: 2.38 $ $Date: 2009/11/16 14:08:13 $
+! Encode.xs
+  Addressed: Encode memory corruption [perl #70528]
+  Message-Id: <alpine.LFD.2.00.0911152328070.9483@ein.m-l.org>
+! t/Unicode.t Unicode/Unicode.xs
+  Patched: #51263: set magic is not applied when modifying encode arguments
+  http://rt.cpan.org/Ticket/Display.html?id=51263
+! Encode.xs
+  Patched: #51204: Callback CHECK not supported for UTF-8 decoder/encoder
+  http://rt.cpan.org/Ticket/Display.html?id=51204
 ! Byte/Byte.pm CN/CN.pm Changes JP/JP.pm KR/KR.pm TW/TW.pm 
   Unicode/Unicode.pm bin/enc2xs lib/Encode/Supported.pod
   Fix URLs
