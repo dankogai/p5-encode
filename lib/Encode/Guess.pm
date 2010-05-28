@@ -53,7 +53,7 @@ sub decode($$;$) {
         require Carp;
         Carp::croak($guessed);
     }
-    my $utf8 = $guessed->decode( $octet, $chk );
+    my $utf8 = $guessed->decode( $octet, $chk || 0 );
     $_[1] = $octet if $chk;
     return $utf8;
 }
