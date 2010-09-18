@@ -2,7 +2,7 @@ package Encode::Guess;
 use strict;
 use warnings;
 use Encode qw(:fallbacks find_encoding);
-our $VERSION = do { my @r = ( q$Revision: 2.3 $ =~ /\d+/g ); sprintf "%d." . "%02d" x $#r, @r };
+our $VERSION = do { my @r = ( q$Revision: 2.4 $ =~ /\d+/g ); sprintf "%d." . "%02d" x $#r, @r };
 
 my $Canon = 'Guess';
 sub DEBUG () { 0 }
@@ -279,7 +279,7 @@ the internal suspects list.
   my $decoder = guess_encoding($data, qw/euc-jp euc-kr euc-cn/);
   die $decoder unless ref($decoder);
   my $utf8 = $decoder->decode($data);
-  # check only ascii and utf8
+  # check only ascii, utf8 and UTF-(16|32) with BOM
   my $decoder = guess_encoding($data);
 
 =back
