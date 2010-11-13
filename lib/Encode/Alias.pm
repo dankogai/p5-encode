@@ -90,9 +90,9 @@ sub define_alias {
                     DEBUG and warn "delete \$Alias\{$k\}";
                     delete $Alias{$k};
                 }
-                elsif ( ref($alias) eq 'CODE' ) {
+                elsif ( ref($alias) eq 'CODE' && $alias->($k) ) {
                     DEBUG and warn "delete \$Alias\{$k\}";
-                    delete $Alias{ $alias->($name) };
+                    delete $Alias{$k};
                 }
             }
         }
