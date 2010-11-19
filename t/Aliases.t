@@ -109,7 +109,14 @@ BEGIN{
     @ARGV and $ON_EBCDIC = $ARGV[0] eq 'EBCDIC';
     $Encode::ON_EBCDIC = $ON_EBCDIC;
     init_a2c();
-    @override_tests = qw(myascii:cp1252 mygreek:cp1253);
+    @override_tests = qw(
+        myascii:cp1252
+        mygreek:cp1253
+        myhebrew:iso-8859-2
+        myarabic:cp1256
+        ueightsomething:utf-8-strict
+        unknown:
+    );
 }
 
 if ($ON_EBCDIC){
@@ -142,6 +149,16 @@ define_alias(
          qr/greek/i    => '"WinGreek"',
          qr/hebrew/i   => '"WinHebrew"'
         );
+
+Encode::find_encoding("myhebrew");  # polute alias cache
+
+define_alias( sub {
+    my $enc = shift;
+    return "iso-8859-2"     if $enc =~ /hebrew/i;
+    return "does-not-exist" if $enc =~ /arabic/i;  # should then use other override alias
+    return "utf-8"          if $enc =~ /eight/i;
+    return;
+});
 
 print "# alias test with alias overrides\n";
 
