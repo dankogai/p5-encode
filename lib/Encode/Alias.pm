@@ -286,7 +286,9 @@ Encode::Alias - alias definitions to encodings
 
   use Encode;
   use Encode::Alias;
-  define_alias( newName => ENCODING);
+  define_alias( "newName" => ENCODING);
+  define_alias( qr/.../ => ENCODING);
+  define_alias( sub { return ENCODING if ...; } );
 
 =head1 DESCRIPTION
 
@@ -294,7 +296,8 @@ Allows newName to be used as an alias for ENCODING. ENCODING may be
 either the name of an encoding or an encoding object (as described 
 in L<Encode>).
 
-Currently I<newName> can be specified in the following ways:
+Currently the first argument to define_alias() can be specified in the
+following ways:
 
 =over 4
 
@@ -321,7 +324,7 @@ experienced.  Use this feature with caution.
 
 The same effect as the example above in a different way.  The coderef
 takes the alias name as an argument and returns a canonical name on
-success or undef if not.  Note the second argument is not required.
+success or undef if not.  Note the second argument is ignored if provided.
 Use this with even more caution than the regex version.
 
 =back
