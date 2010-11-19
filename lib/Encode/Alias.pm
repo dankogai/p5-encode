@@ -372,6 +372,10 @@ to do so.  And
 
 gets the factory settings back.
 
+Note that define_alias() will not be able to override the canonical name
+of encodings. Encodings are first looked up by canonical name before
+potential aliases are tried.
+
 =head1 SEE ALSO
 
 L<Encode>, L<Encode::Supported>
