@@ -1,0 +1,14 @@
+#!/usr/bin/env perl
+
+use strict;
+use warnings;
+use blib;
+
+use Encode qw(find_encoding decode);
+use Data::Dump qw(dd);
+
+my $enc = shift || die "Usage: $0 <enc> [<text> [<check]]\n";
+my $text = shift || "Copyright © 2010 Acme Inc";
+
+my $enc_o = find_encoding($enc) || die "Unrecognized encoding '$enc'\n";
+dd($enc_o->name, decode($enc_o, $text, @ARGV));
