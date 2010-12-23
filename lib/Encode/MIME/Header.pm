@@ -95,7 +95,7 @@ sub decode_q {
 
 my $especials =
   join( '|' => map { quotemeta( chr($_) ) }
-      unpack( "C*", qq{()<>@,;:"'/[]?.=} ) );
+      unpack( "C*", qq{()<>,;:"'/[]?=} ) );
 
 my $re_encoded_word = qr{
     =\?                # begin encoded word
