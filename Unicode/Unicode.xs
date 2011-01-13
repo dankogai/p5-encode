@@ -199,10 +199,6 @@ CODE:
 			  *hv_fetch((HV *)SvRV(obj),"Name",4,0),
 			  ord);
 		}
-		if (s+size <= e) {
-		    /* skip the next one as well */
-		    enc_unpack(aTHX_ &s,e,size,endian);
-		}
 		ord = FBCHAR;
 	    }
 	    else {
@@ -231,6 +227,7 @@ CODE:
 				  ord);
 			}
 			else {
+			    s -= size;
 			    ord = FBCHAR;
 			}
 		    }
