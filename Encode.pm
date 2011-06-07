@@ -400,30 +400,28 @@ byte has 256 possible values, it easily fits in Perl's much larger
 
 =head2 TERMINOLOGY
 
-=over 2
+=head3 character
 
-=item *
-
-I<character>: a character in the range 0 .. 2**32-1 (or more);
+A character in the range 0 .. 2**32-1 (or more);
 what Perl's strings are made of.
 
-=item *
+=head3 byte
 
-I<byte>: a character in the range 0..255;
-A special case of a Perl character.
+A character in the range 0..255;
+a special case of a Perl character.
 
-=item *
+=head3 octet
 
-I<octet>: 8 bits of data, with ordinal values 0..255;
-Term for bytes passed to or from a non-Perl context, such as a disk file.
-
-=back
+8 bits of data, with ordinal values 0..255;
+term for bytes passed to or from a non-Perl context, such as a disk file.
 
 =head1 THE PERL ENCODING API
 
-=over 2
+=head2 Basic methods
 
-=item $octets  = encode(ENCODING, STRING[, CHECK])
+=head3 encode
+
+  $octets  = encode(ENCODING, STRING[, CHECK])
 
 Encodes the scalar value I<STRING> from Perl's internal form into
 I<ENCODING> and returns a sequence of octets.  I<ENCODING> can be either a
@@ -443,7 +441,9 @@ contains a completely valid utf8 string. See L</"The UTF8 flag"> below.
 
 If the $string is C<undef>, then C<undef> is returned.
 
-=item $string = decode(ENCODING, OCTETS[, CHECK])
+=head3 decode
+
+  $string = decode(ENCODING, OCTETS[, CHECK])
 
 This function returns the string that results from decoding the scalar
 value I<OCTETS>, assumed to be a sequence of octets in I<ENCODING>, into
@@ -465,7 +465,9 @@ below.
 
 If the $string is C<undef>, then C<undef> is returned.
 
-=item [$obj =] find_encoding(ENCODING)
+=head3 find_encoding
+
+  [$obj =] find_encoding(ENCODING)
 
 Returns the I<encoding object> corresponding to I<ENCODING>.  Returns
 C<undef> if no matching I<ENCODING> is find.  The returned object is
@@ -499,7 +501,9 @@ name of the encoding object.
 
 See L<Encode::Encoding> for details.
 
-=item [$length =] from_to($octets, FROM_ENC, TO_ENC [, CHECK])
+=head3 from_to
+
+  [$length =] from_to($octets, FROM_ENC, TO_ENC [, CHECK])
 
 Converts I<in-place> data between two encodings. The data in $octets
 must be encoded as octets and I<not> as characters in Perl's internal
@@ -544,14 +548,18 @@ followed by C<encode> as follows:
 
   $octets = encode($to, decode($from, $octets, $check_from), $check_to);
 
-=item $octets = encode_utf8($string);
+=head3 encode_utf8
+
+  $octets = encode_utf8($string);
 
 Equivalent to C<$octets = encode("utf8", $string)>.  The characters in
 $string are encoded in Perl's internal format, and the result is returned
 as a sequence of octets.  Because all possible characters in Perl have a
 (loose, not strict) UTF-8 representation, this function cannot fail.
 
-=item $string = decode_utf8($octets [, CHECK]);
+=head3 decode_utf8
+
+  $string = decode_utf8($octets [, CHECK]);
 
 Equivalent to C<$string = decode("utf8", $octets [, CHECK])>.
 The sequence of octets represented by $octets is decoded
@@ -559,8 +567,6 @@ from UTF-8 into a sequence of logical characters.
 Because not all sequences of octets are valid UTF-8,
 it is quite possible for this function to fail.
 For CHECK, see L</"Handling Malformed Data">.
-
-=back
 
 =head2 Listing available encodings
 
@@ -691,11 +697,11 @@ L<Encode::Unicode> ignores I<CHECK> and it always croaks on error.
 
 =back
 
-Now here is the list of I<CHECK> values available
+=head2 List of I<CHECK> values
 
-=over 2
+=head3 FB_DEFAULT
 
-=item I<CHECK> = Encode::FB_DEFAULT ( == 0)
+  I<CHECK> = Encode::FB_DEFAULT ( == 0)
 
 If I<CHECK> is 0, encoding and decoding replace any malformed character
 with a I<substitution character>.  When you encode, I<SUBCHAR> is used.
@@ -703,13 +709,17 @@ When you decode, the Unicode REPLACEMENT CHARACTER, code point U+FFFD, is
 used.  If the data is supposed to be UTF-8, an optional lexical warning of
 warning category C<"utf8"> is given.
 
-=item I<CHECK> = Encode::FB_CROAK ( == 1)
+=head3 FB_CROAK
+
+  I<CHECK> = Encode::FB_CROAK ( == 1)
 
 If I<CHECK> is 1, methods immediately die with an error
 message.  Therefore, when I<CHECK> is 1, you should trap
 exceptions with C<eval{}>, unless you really want to let it C<die>.
 
-=item I<CHECK> = Encode::FB_QUIET
+=head3 FB_QUIET
+
+  I<CHECK> = Encode::FB_QUIET
 
 If I<CHECK> is set to C<Encode::FB_QUIET>, encoding and decoding immediately
 return the portion of the data that has been processed so far when an
@@ -726,16 +736,24 @@ code to do exactly that:
         # $buffer now contains the unprocessed partial character
     }
 
-=item I<CHECK> = Encode::FB_WARN
+=head3 FB_WARN
+
+  I<CHECK> = Encode::FB_WARN
 
 This is the same as C<FB_QUIET> above, except that instead of being silent
 on errors, it issues a warning.  This is handy for when you are debugging.
+
+=head3 FB_PERLQQ FB_HTMLCREF FB_XMLCREF
+
+=over 2
 
 =item perlqq mode (I<CHECK> = Encode::FB_PERLQQ)
 
 =item HTML charref mode (I<CHECK> = Encode::FB_HTMLCREF)
 
 =item XML charref mode (I<CHECK> = Encode::FB_XMLCREF)
+
+=back
 
 For encodings that are implemented by the C<Encode::XS> module, C<CHECK> C<==>
 C<Encode::FB_PERLQQ> puts C<encode> and C<decode> into C<perlqq> fallback mode.
@@ -752,7 +770,7 @@ XML uses C<&#xI<HHHH>;> where I<HHHH> is the hexadecimal number.
 
 In C<Encode> 2.10 or later, C<LEAVE_SRC> is also implied.
 
-=item The bitmask
+=head3 The bitmask
 
 These modes are all actually set via a bitmask.  Here is how the C<FB_I<XXX>>
 constants are laid out.  You can import the C<FB_I<XXX>> constants via
@@ -768,17 +786,13 @@ constants via C<use Encode qw(:fallback_all)>.
  HTMLCREF      0x0200
  XMLCREF       0x0400
 
-=back
+=head3 LEAVE_SRC
 
-=over 2
-
-=item Encode::LEAVE_SRC
+  Encode::LEAVE_SRC
 
 If the C<Encode::LEAVE_SRC> bit is I<not> set but I<CHECK> is set, then the
 second argument to encode() or decode() will be overwritten in place.
 If you're not interested in this, then bitwise-OR it with the bitmask.
-
-=back
 
 =head2 coderef for CHECK
 
@@ -882,9 +896,9 @@ The following API uses parts of Perl's internals in the current
 implementation.  As such, they are efficient but may change in a future
 release.
 
-=over 2
+=head3 is_utf8
 
-=item is_utf8(STRING [, CHECK])
+  is_utf8(STRING [, CHECK])
 
 [INTERNAL] Tests whether the UTF8 flag is turned on in the I<STRING>.
 If I<CHECK> is true, also checks whether I<STRING> contains well-formed
@@ -892,7 +906,9 @@ UTF-8.  Returns true if successful, false otherwise.
 
 As of Perl 5.8.1, L<utf8> also has the C<utf8::is_utf8> function.
 
-=item _utf8_on(STRING)
+=head3 _utf8_on
+
+  _utf8_on(STRING)
 
 [INTERNAL] Turns the I<STRING>'s internal UTF8 flag B<on>.  The I<STRING>
 is I<not> checked for containing only well-formed UTF-8.  Do not use this
@@ -903,7 +919,9 @@ if I<STRING> is not a string.
 
 B<NOTE>: For security reasons, this function does not work on tainted values.
 
-=item _utf8_off(STRING)
+=head3 _utf8_off
+
+  _utf8_off(STRING)
 
 [INTERNAL] Turns the I<STRING>'s internal UTF8 flag B<off>.  Do not use
 frivolously.  Returns the previous state of the UTF8 flag, or C<undef> if
@@ -912,8 +930,6 @@ success or failure, because that isn't what it means: it is only the
 previous setting.
 
 B<NOTE>: For security reasons, this function does not work on tainted values.
-
-=back
 
 =head1 UTF-8 vs. utf8 vs. UTF8
 
