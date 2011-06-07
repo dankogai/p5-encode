@@ -700,14 +700,9 @@ encountering malformed data.  Without I<CHECK>, C<Encode::FB_DEFAULT>
 As of version 2.12, C<Encode> supports coderef values for C<CHECK>;
 see below.
 
-=over 2
-
-=item B<NOTE:> Not all encodings support this feature
-
+B<NOTE:> Not all encodings support this feature.
 Some encodings ignore the I<CHECK> argument.  For example,
 L<Encode::Unicode> ignores I<CHECK> and it always croaks on error.
-
-=back
 
 =head2 List of I<CHECK> values
 
