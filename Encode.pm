@@ -503,7 +503,7 @@ You can therefore save time by reusing this object as follows;
     }
 
 Besides L</decode> and L</encode>, other methods are
-available as well.  For instance, C<< ->name >> returns the canonical
+available as well.  For instance, C<name()> returns the canonical
 name of the encoding object.
 
   find_encoding("latin1")->name; # iso-8859-1
@@ -528,7 +528,7 @@ and to convert it back:
 Because the conversion happens in place, the data to be
 converted cannot be a string constant: it must be a scalar variable.
 
-from_to() returns the length of the converted string in octets on success,
+C<from_to()> returns the length of the converted string in octets on success,
 and C<undef> on error.
 
 B<CAVEAT>: The following operations may look the same, but are not:
@@ -619,7 +619,7 @@ For example:
   Encode::resolve_alias("iso-8859-12")   # false; nonexistent
   Encode::resolve_alias($name) eq $name  # true if $name is canonical
 
-resolve_alias() does not need C<use Encode::Alias>; it can be
+C<resolve_alias()> does not need C<use Encode::Alias>; it can be
 imported via C<use Encode qw(resolve_alias)>.
 
 See L<Encode::Alias> for details.
