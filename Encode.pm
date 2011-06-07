@@ -362,16 +362,23 @@ to fit in one document.  This one itself explains the top-level APIs
 and general topics at a glance.  For other topics and more details,
 see the documentation for these modules:
 
-  Name			        Description
-  --------------------------------------------------------
-  Encode::Alias         Alias definitions to encodings
-  Encode::Encoding      Encode Implementation Base Class
-  Encode::Supported     List of Supported Encodings
-  Encode::CN            Simplified Chinese Encodings
-  Encode::JP            Japanese Encodings
-  Encode::KR            Korean Encodings
-  Encode::TW            Traditional Chinese Encodings
-  --------------------------------------------------------
+=over 2
+
+=item L<Encode::Alias> - Alias definitions to encodings
+
+=item L<Encode::Encoding> - Encode Implementation Base Class
+
+=item L<Encode::Supported> - List of Supported Encodings
+
+=item L<Encode::CN> - Simplified Chinese Encodings
+
+=item L<Encode::JP> - Japanese Encodings
+
+=item L<Encode::KR> - Korean Encodings
+
+=item L<Encode::TW> - Traditional Chinese Encodings
+
+=back
 
 =head1 DESCRIPTION
 
@@ -493,7 +500,7 @@ You can therefore save time by reusing this object as follows;
         ... # now do something with $utf8;
     }
 
-Besides C<< ->decode >> and C<< ->encode >>, other methods are
+Besides L</decode> and L</encode>, other methods are
 available as well.  For instance, C<< ->name >> returns the canonical
 name of the encoding object.
 
