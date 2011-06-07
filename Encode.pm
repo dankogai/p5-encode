@@ -405,6 +405,9 @@ process "sequences of bytes". This is not a problem for Perl: because a
 byte has 256 possible values, it easily fits in Perl's much larger
 "logical character".
 
+This document mostly explains the I<how>. L<perlunitut> and L<perlunifaq>
+explain the I<why>.
+
 =head2 TERMINOLOGY
 
 =head3 character
