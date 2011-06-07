@@ -629,7 +629,7 @@ IANA Character Set Registry, commonly seen as C<< Content-Type:
 text/plain; charset=I<WHATEVER> >>.  For most cases, the canonical name
 works, but sometimes it does not, most notably with "utf-8-strict".
 
-As of C<Encode> version 2.21, a new method C<mime_name()> is thereforeadded.
+As of C<Encode> version 2.21, a new method C<mime_name()> is therefore added.
 
   use Encode;
   my $enc = find_encoding("UTF-8");
@@ -697,9 +697,9 @@ see below.
 
 =over 2
 
-=item B<NOTE:> Not all encoding support this feature
+=item B<NOTE:> Not all encodings support this feature
 
-Some encodings ignore I<CHECK> argument.  For example,
+Some encodings ignore the I<CHECK> argument.  For example,
 L<Encode::Unicode> ignores I<CHECK> and it always croaks on error.
 
 =back
@@ -804,7 +804,7 @@ If you're not interested in this, then bitwise-OR it with the bitmask.
 =head2 coderef for CHECK
 
 As of C<Encode> 2.12, C<CHECK> can also be a code reference which takes the
-ordinal value of the unmapped caharacter as an argument and returns a string
+ordinal value of the unmapped character as an argument and returns a string
 that represents the fallback character.  For instance:
 
   $ascii = encode("ascii", $utf8, sub{ sprintf "<U+%04X>", shift });
