@@ -611,7 +611,7 @@ To add a new alias to a given encoding, use:
   define_alias(NEWNAME => ENCODING);
 
 After that, I<NEWNAME> can be used as an alias for I<ENCODING>.
-<ENCODING> may be either the name of an encoding or an
+I<ENCODING> may be either the name of an encoding or an
 I<encoding object>.
 
 Before you do that, first make sure the alias is nonexistent using
@@ -688,7 +688,7 @@ C<perlio_ok> method on it:
   perlio_ok("euc-jp")
 
 Fortunately, all encodings that come with C<Encode> core are C<PerlIO>-savvy
-except for "hz" and "ISO-2022-kr".  For the gory details, see
+except for C<hz> and C<ISO-2022-kr>.  For the gory details, see
 L<Encode::Encoding> and L<Encode::PerlIO>.
 
 =head1 Handling Malformed Data
