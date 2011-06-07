@@ -351,7 +351,9 @@ Encode - character encodings in Perl
 
 =head1 SYNOPSIS
 
-    use Encode;
+    use Encode qw(decode encode);
+    $characters = decode('UTF-8', $octets,     Encode::FB_CROAK);
+    $octets     = encode('UTF-8', $characters, Encode::FB_CROAK);
 
 =head2 Table of Contents
 
