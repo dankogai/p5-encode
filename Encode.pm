@@ -420,7 +420,9 @@ a special case of a Perl character.
 =head3 octet
 
 8 bits of data, with ordinal values 0..255;
-term for bytes passed to or from a non-Perl context, such as a disk file.
+term for bytes passed to or from a non-Perl context, such as a disk file,
+standard I/O stream, database, command-line argument, environment variable,
+socket etc.
 
 =head1 THE PERL ENCODING API
 
