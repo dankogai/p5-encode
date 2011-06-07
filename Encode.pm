@@ -1006,7 +1006,7 @@ L<perlebcdic>,
 L<perlfunc/open>,
 L<perlunicode>, L<perluniintro>, L<perlunifaq>, L<perlunitut>
 L<utf8>,
-the Perl Unicode Mailing List E<lt>perl-unicode@perl.orgE<gt>
+the Perl Unicode Mailing List L<http://lists.perl.org/list/perl-unicode.html>
 
 =head1 MAINTAINER
 
