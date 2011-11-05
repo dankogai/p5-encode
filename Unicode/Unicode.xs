@@ -199,10 +199,6 @@ CODE:
 			  *hv_fetch((HV *)SvRV(obj),"Name",4,0),
 			  ord);
 		}
-		if (s+size <= e) {
-		    /* skip the next one as well */
-		    enc_unpack(aTHX_ &s,e,size,endian);
-		}
 		ord = FBCHAR;
 	    }
 	    else {
@@ -219,6 +215,10 @@ CODE:
 		}
 		else {
 		    if (s+size > e) {
+			if (!(check & ENCODE_STOP_AT_PARTIAL))
+				croak("%"SVf":Malformed isolated HI surrogate %"UVxf,
+				      *hv_fetch((HV *)SvRV(obj),"Name",4,0),
+				      ord);
 			/* Partial character */
 			s -= size;   /* back up to 1st half */
 			break;       /* And exit loop */
@@ -231,6 +231,7 @@ CODE:
 				  ord);
 			}
 			else {
+			    s -= size;
 			    ord = FBCHAR;
 			}
 		    }
