@@ -103,19 +103,17 @@ is(index($@, 'UCS-2LE'), 0, "encode UCS-2LE: exception");
     }
 }
 
-TODO: {
-    local $TODO = 'Isoloated trailing HI surrogate should be replaced with U+FFFD';
-
+{
     my %tests = (
         'UTF-16BE' => 'n*',
         'UTF-16LE' => 'v*',
     );
 
     while (my ($enc, $pack) = each(%tests)) {
-        is(decode($enc, pack($pack, 0xD800)), "\x{FFFD}",
-          "decode $enc (HI surrogate)");
-        is(decode($enc, pack($pack, 0x263A, 0xD800)), "\x{263A}\x{FFFD}",
-          "decode $enc (WHITE SMILING FACE followed by HI surrogate)");
+        eval { decode($enc, pack($pack, 0xD800)) };
+        like($@, qr/Malformed isolated HI surrogate/, "decode $enc (HI surrogate)");
+        eval { decode($enc, pack($pack, 0x263A, 0xD800)) };
+        like($@, qr/Malformed isolated HI surrogate/, "decode $enc (HI surrogate)");
     }
 }
 

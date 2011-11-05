@@ -215,6 +215,10 @@ CODE:
 		}
 		else {
 		    if (s+size > e) {
+			if (!(check & ENCODE_STOP_AT_PARTIAL))
+				croak("%"SVf":Malformed isolated HI surrogate %"UVxf,
+				      *hv_fetch((HV *)SvRV(obj),"Name",4,0),
+				      ord);
 			/* Partial character */
 			s -= size;   /* back up to 1st half */
 			break;       /* And exit loop */
