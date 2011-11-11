@@ -356,7 +356,7 @@ CODE:
 		if (ucs2 == -1) {
 		    ucs2 = SvTRUE(attr("ucs2", 4));
 		}
-		if (ucs2) {
+		if (ucs2 || ord > 0x10FFFF) {
 		    if (check) {
 			croak("%"SVf":code point \"\\x{%"UVxf"}\" too high",
 				  *hv_fetch((HV *)SvRV(obj),"Name",4,0),ord);
