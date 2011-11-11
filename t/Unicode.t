@@ -20,7 +20,7 @@ BEGIN {
 
 use strict;
 #use Test::More 'no_plan';
-use Test::More tests => 50;
+use Test::More tests => 54;
 use Encode qw(encode decode find_encoding);
 
 #
@@ -100,6 +100,20 @@ is(index($@, 'UCS-2LE'), 0, "encode UCS-2LE: exception");
           "decode $enc (HI surrogate followed by WHITE SMILING FACE)");
         is(decode($enc, pack($pack, 0xDC00, 0x263A)), "\x{FFFD}\x{263A}", 
           "decode $enc (LO surrogate followed by WHITE SMILING FACE)");
+    }
+}
+
+{
+    my %tests = (
+        'UTF-16BE' => 'n*',
+        'UTF-16LE' => 'v*',
+    );
+
+    while (my ($enc, $pack) = each(%tests)) {
+        is(decode($enc, pack($pack, 0xD800)), "\x{FFFD}",
+          "decode $enc (HI surrogate)");
+        is(decode($enc, pack($pack, 0x263A, 0xD800)), "\x{263A}\x{FFFD}",
+          "decode $enc (WHITE SMILING FACE followed by HI surrogate)");
     }
 }
 

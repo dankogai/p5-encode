@@ -213,12 +213,23 @@ CODE:
 			ord = FBCHAR;
 		    }
 		}
-		else {
-		    if (s+size > e) {
-			/* Partial character */
-			s -= size;   /* back up to 1st half */
-			break;       /* And exit loop */
+		else if (s+size > e) {
+		    if (check) {
+		        if (check & ENCODE_STOP_AT_PARTIAL) {
+		             s -= size;
+		             break;
+		        }
+		        else {
+		             croak("%"SVf":Malformed HI surrogate %"UVxf,
+				   *hv_fetch((HV *)SvRV(obj),"Name",4,0),
+				   ord);
+		        }
 		    }
+		    else {
+		        ord = FBCHAR;
+		    }
+		}
+		else {
 		    lo = enc_unpack(aTHX_ &s,e,size,endian);
 		    if (!isLoSurrogate(lo)) {
 			if (check) {
