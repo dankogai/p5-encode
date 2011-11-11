@@ -4,6 +4,12 @@
 #
 $Revision: 2.44 $ $Date: 2011/08/09 07:49:44 $
 ! Unicode/Unicode.xs
+  t/Unicode.t
+  Bug fixes in Unicode.xs by chansen
+  https://github.com/dankogai/p5-encode/pull/5
+
+2.44 2011/08/09 07:49:44
+! Unicode/Unicode.xs
   Addressed the following:
     Date: Fri, 22 Jul 2011 13:58:43 +0200
     From: Robert Zacek <zacek@avast.com>
