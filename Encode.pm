@@ -1,10 +1,10 @@
 #
-# $Id: Encode.pm,v 2.44 2011/08/09 07:49:44 dankogai Exp dankogai $
+# $Id: Encode.pm,v 2.45 2012/08/05 23:08:49 dankogai Exp dankogai $
 #
 package Encode;
 use strict;
 use warnings;
-our $VERSION = sprintf "%d.%02d", q$Revision: 2.44 $ =~ /(\d+)/g;
+our $VERSION = sprintf "%d.%02d", q$Revision: 2.45 $ =~ /(\d+)/g;
 use constant DEBUG => !!$ENV{PERL_ENCODE_DEBUG};
 use XSLoader ();
 XSLoader::load( __PACKAGE__, $VERSION );
@@ -61,7 +61,7 @@ eval {
 };
 
 sub encodings {
-    my $class = shift;
+    #my $class = shift;
     my %enc;
     if ( @_ and $_[0] eq ":all" ) {
         %enc = ( %Encoding, %ExtModule );
@@ -247,7 +247,7 @@ sub predefine_encodings {
         package Encode::UTF_EBCDIC;
         push @Encode::UTF_EBCDIC::ISA, 'Encode::Encoding';
         *decode = sub {
-            my ( $obj, $str, $chk ) = @_;
+            my ( undef, $str, $chk ) = @_;
             my $res = '';
             for ( my $i = 0 ; $i < length($str) ; $i++ ) {
                 $res .=
@@ -259,7 +259,7 @@ sub predefine_encodings {
             return $res;
         };
         *encode = sub {
-            my ( $obj, $str, $chk ) = @_;
+            my ( undef, $str, $chk ) = @_;
             my $res = '';
             for ( my $i = 0 ; $i < length($str) ; $i++ ) {
                 $res .=
@@ -278,7 +278,7 @@ sub predefine_encodings {
         package Encode::Internal;
         push @Encode::Internal::ISA, 'Encode::Encoding';
         *decode = sub {
-            my ( $obj, $str, $chk ) = @_;
+            my ( undef, $str, $chk ) = @_;
             utf8::upgrade($str);
             $_[1] = '' if $chk;
             return $str;
@@ -303,7 +303,7 @@ sub predefine_encodings {
         else {
             Encode::DEBUG and warn __PACKAGE__, " XS off";
             *decode = sub {
-                my ( $obj, $octets, $chk ) = @_;
+                my ( undef, $octets, $chk ) = @_;
                 my $str = Encode::decode_utf8($octets);
                 if ( defined $str ) {
                     $_[1] = '' if $chk;
@@ -312,7 +312,7 @@ sub predefine_encodings {
                 return undef;
             };
             *encode = sub {
-                my ( $obj, $string, $chk ) = @_;
+                my ( undef, $string, $chk ) = @_;
                 my $octets = Encode::encode_utf8($string);
                 $_[1] = '' if $chk;
                 return $octets;
@@ -320,7 +320,7 @@ sub predefine_encodings {
         }
         *cat_decode = sub {    # ($obj, $dst, $src, $pos, $trm, $chk)
                                # currently ignores $chk
-            my ( $obj, undef, undef, $pos, $trm ) = @_;
+            my ( undef, undef, undef, $pos, $trm ) = @_;
             my ( $rdst, $rsrc, $rpos ) = \@_[ 1, 2, 3 ];
             use bytes;
             if ( ( my $npos = index( $$rsrc, $trm, $pos ) ) >= 0 ) {
