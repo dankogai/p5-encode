@@ -3,6 +3,14 @@
 # $Id: Changes,v 2.47 2012/08/15 05:36:16 dankogai Exp dankogai $
 #
 $Revision: 2.47 $ $Date: 2012/08/15 05:36:16 $
+! Encode/Makefile_PL.e2x
+  find enc2xs.bat if it works on windows.
+  https://github.com/dankogai/p5-encode/pull/7
+! t/piconv.t
+  Fix finding piconv in t/piconv.t
+  https://github.com/dankogai/p5-encode/pull/6
+
+2.47 2012/08/15 05:36:16
 ! Encode.pm
   POD Fixes: Copyright and mail address
 ! Makefile.PL
