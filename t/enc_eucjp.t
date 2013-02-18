@@ -21,6 +21,7 @@ BEGIN {
     }
 }
 
+no warnings "deprecated";
 use encoding 'euc-jp';
 
 my @c = (127, 128, 255, 256);

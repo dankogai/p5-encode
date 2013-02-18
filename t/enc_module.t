@@ -21,6 +21,7 @@ BEGIN {
 }
 use lib qw(t ext/Encode/t ../ext/Encode/t); # latter 2 for perl core
 use Mod_EUCJP;
+no warnings "deprecated";
 use encoding "euc-jp";
 use Test::More tests => 3;
 use File::Basename;

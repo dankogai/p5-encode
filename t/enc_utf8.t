@@ -17,6 +17,7 @@ BEGIN {
     }
 }
 
+no warnings "deprecated";
 use encoding 'utf8';
 
 my @c = (127, 128, 255, 256);

@@ -102,6 +102,10 @@ sub _get_locale_encoding {
 }
 
 sub import {
+    if ($] >= 5.017) {
+	warnings::warnif("deprecated",
+			 "Use of the encoding pragma is deprecated")
+    }
     my $class = shift;
     my $name  = shift;
     if (!$name){
@@ -202,6 +206,12 @@ __END__
 =head1 NAME
 
 encoding - allows you to write your script in non-ascii or non-utf8
+
+=head1 WARNING
+
+This module is deprecated under perl 5.18.  It uses a mechanism provided by
+perl that is deprecated under 5.18 and higher, and may be removed in a
+future version.
 
 =head1 SYNOPSIS
 

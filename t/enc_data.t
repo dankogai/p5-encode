@@ -22,6 +22,7 @@ BEGIN {
 
 
 use strict;
+no warnings "deprecated";
 use encoding 'euc-jp';
 use Test::More tests => 4;
 
