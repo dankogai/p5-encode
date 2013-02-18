@@ -1,10 +1,10 @@
 #
-# $Id: Encode.pm,v 2.47 2012/08/15 05:36:16 dankogai Exp dankogai $
+# $Id: Encode.pm,v 2.48 2013/02/18 02:23:56 dankogai Exp dankogai $
 #
 package Encode;
 use strict;
 use warnings;
-our $VERSION = sprintf "%d.%02d", q$Revision: 2.47 $ =~ /(\d+)/g;
+our $VERSION = sprintf "%d.%02d", q$Revision: 2.48 $ =~ /(\d+)/g;
 use constant DEBUG => !!$ENV{PERL_ENCODE_DEBUG};
 use XSLoader ();
 XSLoader::load( __PACKAGE__, $VERSION );
@@ -62,7 +62,7 @@ eval {
 
 sub encodings {
     my %enc;
-    my ( $class, $arg ) = @_;
+    my $arg  = $_[1] || '';
     if ( $arg eq ":all" ) {
         %enc = ( %Encoding, %ExtModule );
     }

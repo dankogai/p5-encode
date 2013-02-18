@@ -1,4 +1,4 @@
-# $Id: encoding.pm,v 2.10 2012/08/05 23:08:49 dankogai Exp $
+# $Id: encoding.pm,v 2.11 2013/02/18 02:23:56 dankogai Exp dankogai $
 package encoding;
 our $VERSION = '2.6_01';
 

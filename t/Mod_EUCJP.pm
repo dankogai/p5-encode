@@ -1,4 +1,4 @@
-# $Id: Mod_EUCJP.pm,v 2.0 2004/05/16 20:55:17 dankogai Exp $
+# $Id: Mod_EUCJP.pm,v 2.1 2013/02/18 02:23:56 dankogai Exp dankogai $
 # This file is in euc-jp
 package Mod_EUCJP;
 no warnings "deprecated";
