@@ -23,7 +23,7 @@ sub decode ($$;$) {
     my ( $obj, $str, $chk ) = @_;
 
     my $GB  = Encode::find_encoding('gb2312-raw');
-    my $ret = '';
+    my $ret = substr($str, 0, 0); # to propagate taintedness
     my $in_ascii = 1;    # default mode is ASCII.
 
     while ( length $str ) {
@@ -133,10 +133,10 @@ sub cat_decode {
 }
 
 sub encode($$;$) {
-    my ( $obj, $str, $chk ) = @_;
+     my ( $obj, $str, $chk ) = @_;
 
     my $GB  = Encode::find_encoding('gb2312-raw');
-    my $ret = '';
+    my $ret = substr($str, 0, 0); # to propagate taintedness;
     my $in_ascii = 1;    # default mode is ASCII.
 
     no warnings 'utf8';  # $str may be malformed UTF8 at the end of a chunk.

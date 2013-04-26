@@ -3,11 +3,18 @@
 # $Id: Changes,v 2.49 2013/03/05 03:12:49 dankogai Exp dankogai $
 #
 $Revision: 2.49 $ $Date: 2013/03/05 03:12:49 $
+! Encode.xs Unicode/Unicode.xs
+  lib/Encode/Unicode/UTF7.pm lib/CN/HZ.pm lib/Encode/GSM0338.pm
+  t/taint.t
+  Addressed: Encode::encode and Encode::decode 
+             gratuitously launders tainted data
+  Taintedness now propagates as it should.
+  https://rt.cpan.org/Ticket/Display.html?id=84879
 ! encoding.pm
-  Addressed RT#84709: 5.18 deprecation
+  Addressed: 5.18 deprecation
   https://rt.cpan.org/Ticket/Display.html?id=84709
 ! bin/piconv
-  Applied RT#84695: Update piconv documentation
+  Applied: Update piconv documentation
   https://rt.cpan.org/Ticket/Display.html?id=84695
 
 2.49 2013/03/05 03:12:49

@@ -299,9 +299,8 @@ CODE:
 	*SvEND(str) = '\0';
     }
 
-    if (!temp_result)
-	shrink_buffer(result);
-
+    if (!temp_result) shrink_buffer(result);
+    if (SvTAINTED(str)) SvTAINTED_on(result); /* propagate taintedness */
     XSRETURN(1);
 }
 
@@ -400,8 +399,8 @@ CODE:
 	*SvEND(utf8) = '\0';
     }
 
-    if (!temp_result)
-	shrink_buffer(result);
+    if (!temp_result) shrink_buffer(result);
+    if (SvTAINTED(utf8)) SvTAINTED_on(result); /* propagate taintedness */
 
     SvSETMAGIC(utf8);
 

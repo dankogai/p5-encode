@@ -171,7 +171,7 @@ our $NBSP   = "\x{00A0}";
 
 sub decode ($$;$) {
     my ( $obj, $bytes, $chk ) = @_;
-    my $str;
+    my $str = substr($bytes, 0, 0); # to propagate taintedness;
     while ( length $bytes ) {
         my $c = substr( $bytes, 0, 1, '' );
         my $u;
@@ -216,7 +216,7 @@ sub decode ($$;$) {
 
 sub encode($$;$) {
     my ( $obj, $str, $chk ) = @_;
-    my $bytes;
+    my $bytes = substr($str, 0, 0); # to propagate taintedness
     while ( length $str ) {
         my $u = substr( $str, 0, 1, '' );
         my $c;

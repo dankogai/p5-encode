@@ -105,6 +105,7 @@ encode_method(pTHX_ const encode_t * enc, const encpage_t * dir, SV * src,
     /* We allocate slen+1.
        PerlIO dumps core if this value is smaller than this. */
     SV *dst = sv_2mortal(newSV(slen+1));
+    if (SvTAINTED(src)) SvTAINTED_on(dst); /* propagate taintedness */
     U8 *d = (U8 *)SvPVX(dst);
     STRLEN dlen = SvLEN(dst)-1;
     int code = 0;
@@ -482,6 +483,7 @@ CODE:
     SvCUR_set(src, slen);
     }
     SvUTF8_on(dst);
+    if (SvTAINTED(src)) SvTAINTED_on(dst); /* propagate taintedness */
     ST(0) = dst;
     XSRETURN(1);
 }
@@ -543,6 +545,7 @@ CODE:
     }
     SvPOK_only(dst);
     SvUTF8_off(dst);
+    if (SvTAINTED(src)) SvTAINTED_on(dst); /* propagate taintedness */
     ST(0) = dst;
     XSRETURN(1);
 }
