@@ -213,6 +213,13 @@ This module is deprecated under perl 5.18.  It uses a mechanism provided by
 perl that is deprecated under 5.18 and higher, and may be removed in a
 future version.
 
+The easiest and the best alternative is to write your script in UTF-8
+and declear:
+
+  use utf8; # not use encoding ':utf8';
+
+See L<perluniintro> and L<utf8> for details.
+
 =head1 SYNOPSIS
 
   use encoding "greek";  # Perl like Greek to you?
