@@ -3,6 +3,11 @@
 # $Id: Changes,v 2.49 2013/03/05 03:12:49 dankogai Exp dankogai $
 #
 $Revision: 2.49 $ $Date: 2013/03/05 03:12:49 $
+! bin/piconv
+  Applied RT#84695: Update piconv documentation
+  https://rt.cpan.org/Ticket/Display.html?id=84695
+
+2.49 2013/03/05 03:12:49
 ! Encode.xs
   Addressed: Encoding objects leak memory if decoding fails
   https://github.com/dankogai/p5-encode/issues/8
