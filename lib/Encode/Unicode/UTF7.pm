@@ -1,5 +1,5 @@
 #
-# $Id: UTF7.pm,v 2.6 2012/08/05 23:08:49 dankogai Exp $
+# $Id: UTF7.pm,v 2.7 2013/04/26 18:30:46 dankogai Exp dankogai $
 #
 package Encode::Unicode::UTF7;
 use strict;
@@ -7,7 +7,7 @@ use warnings;
 no warnings 'redefine';
 use base qw(Encode::Encoding);
 __PACKAGE__->Define('UTF-7');
-our $VERSION = do { my @r = ( q$Revision: 2.6 $ =~ /\d+/g ); sprintf "%d." . "%02d" x $#r, @r };
+our $VERSION = do { my @r = ( q$Revision: 2.7 $ =~ /\d+/g ); sprintf "%d." . "%02d" x $#r, @r };
 use MIME::Base64;
 use Encode;
 
