@@ -1,10 +1,10 @@
 #
-# $Id: Encode.pm,v 2.50 2013/04/26 18:32:09 dankogai Exp dankogai $
+# $Id: Encode.pm,v 2.51 2013/04/29 22:19:11 dankogai Exp dankogai $
 #
 package Encode;
 use strict;
 use warnings;
-our $VERSION = sprintf "%d.%02d", q$Revision: 2.50 $ =~ /(\d+)/g;
+our $VERSION = sprintf "%d.%02d", q$Revision: 2.51 $ =~ /(\d+)/g;
 use constant DEBUG => !!$ENV{PERL_ENCODE_DEBUG};
 use XSLoader ();
 XSLoader::load( __PACKAGE__, $VERSION );
@@ -1021,7 +1021,7 @@ who submitted code to the project.
 
 =head1 COPYRIGHT
 
-Copyright 2002-2012 Dan Kogai I<< <dankogai@cpan.org> >>.
+Copyright 2002-2013 Dan Kogai I<< <dankogai@cpan.org> >>.
 
 This library is free software; you can redistribute it and/or modify
 it under the same terms as Perl itself.

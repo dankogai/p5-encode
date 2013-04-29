@@ -1,8 +1,8 @@
 # Revision history for Perl extension Encode.
 #
-# $Id: Changes,v 2.50 2013/04/26 18:30:46 dankogai Exp dankogai $
+# $Id: Changes,v 2.51 2013/04/29 22:19:11 dankogai Exp dankogai $
 #
-$Revision: 2.50 $ $Date: 2013/04/26 18:30:46 $
+$Revision: 2.51 $ $Date: 2013/04/29 22:19:11 $
 ! Encode.xs
   Addressed: Encode.xs doesn't compile with Microsoft C compiler
   https://rt.cpan.org/Public/Bug/Display.html?id=84920
