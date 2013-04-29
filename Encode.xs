@@ -101,16 +101,16 @@ encode_method(pTHX_ const encode_t * enc, const encpage_t * dir, SV * src,
     STRLEN tlen  = slen;
     STRLEN ddone = 0;
     STRLEN sdone = 0;
-
     /* We allocate slen+1.
        PerlIO dumps core if this value is smaller than this. */
     SV *dst = sv_2mortal(newSV(slen+1));
-    if (SvTAINTED(src)) SvTAINTED_on(dst); /* propagate taintedness */
     U8 *d = (U8 *)SvPVX(dst);
     STRLEN dlen = SvLEN(dst)-1;
     int code = 0;
     STRLEN trmlen = 0;
     U8 *trm = term ? (U8*) SvPV(term, trmlen) : NULL;
+
+    if (SvTAINTED(src)) SvTAINTED_on(dst); /* propagate taintedness */
 
     if (offset) {
       s += *offset;
