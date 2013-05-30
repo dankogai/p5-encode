@@ -259,7 +259,7 @@ this module.
 
 =head1 NOTES
 
-Unlike most other encodings,  the following aways croaks on error
+Unlike most other encodings,  the following always croaks on error
 for any $chk that evaluates to true.
 
   $gsm0338 = encode("gsm0338", $utf8      $chk);

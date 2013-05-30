@@ -211,7 +211,7 @@ sub init_aliases {
     define_alias( qr/^macintosh$/i => '"MacRoman"' );
     # https://rt.cpan.org/Ticket/Display.html?id=78125
     define_alias( qr/^macce$/i => '"MacCentralEurRoman"' );
-    # Ououououou. gone.  They are differente!
+    # Ououououou. gone.  They are different!
     # define_alias( qr/\bmacRomanian$/i => '"macRumanian"');
 
     # Standardize on the dashed versions.
@@ -338,7 +338,7 @@ As of Encode 1.87, the older form
 
 no longer works. 
 
-Encode up to 1.86 internally used "local $_" to implement ths older
+Encode up to 1.86 internally used "local $_" to implement this older
 form.  But consider the code below;
 
   use Encode;
