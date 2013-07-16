@@ -471,8 +471,7 @@ internal format:
 
 B<CAVEAT>: When you run C<$string = decode("utf8", $octets)>, then $string
 I<might not be equal to> $octets.  Though both contain the same data, the
-UTF8 flag for $string is on unless $octets consists entirely of ASCII data
-on ASCII machines or EBCDIC on EBCDIC machines.  See L</"The UTF8 flag">
+UTF8 flag for $string is on.  See L</"The UTF8 flag">
 below.
 
 If the $string is C<undef>, then C<undef> is returned.
