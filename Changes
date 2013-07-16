@@ -3,6 +3,13 @@
 # $Id: Changes,v 2.51 2013/04/29 22:19:11 dankogai Exp dankogai $
 #
 $Revision: 2.51 $ $Date: 2013/04/29 22:19:11 $
+! Byte/Makefile.PL CN/Makefile.PL EBCDIC/Makefile.PL
+  Encode/Makefile_PL.e2x JP/Makefile.PL KR/Makefile.PL
+  Symbol/Makefile.PL TW/Makefile.PL
+  Applied: Patch to output #includes in deterministic order
+  https://rt.cpan.org/Ticket/Display.html?id=86974
+
+2.51 2013/04/29 22:19:11
 ! Encode.xs
   Addressed: Encode.xs doesn't compile with Microsoft C compiler
   https://rt.cpan.org/Public/Bug/Display.html?id=84920
