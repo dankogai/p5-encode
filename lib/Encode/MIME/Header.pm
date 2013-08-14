@@ -135,7 +135,7 @@ sub encode($$;$) {
             $subline .= ' ' if ($subline =~ /\?=$/ and $word =~ /^=\?/);
             $subline .= $word;
         }
-        $subline and push @subline, $subline;
+        length($subline) and push @subline, $subline;
         push @line, join( "\n " => @subline );
     }
     $_[1] = '' if $chk;
