@@ -46,6 +46,11 @@ WriteMakefile(
     LICENSE     => 'perl',
     PMLIBDIRS   => \@pmlibdirs,
     INSTALLDIRS => ($] < 5.011 ? 'perl' : 'site'),
+    META_MERGE        => {
+        resources => {
+            repository  =>  'https://github.com/dankogai/p5-encode',
+        },
+    },
 );
 
 package MY;
