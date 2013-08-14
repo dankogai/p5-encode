@@ -1,8 +1,8 @@
 # Revision history for Perl extension Encode.
 #
-# $Id: Changes,v 2.51 2013/04/29 22:19:11 dankogai Exp dankogai $
+# $Id: Changes,v 2.52 2013/08/14 02:29:54 dankogai Exp $
 #
-$Revision: 2.51 $ $Date: 2013/04/29 22:19:11 $
+$Revision: 2.52 $ $Date: 2013/08/14 02:29:54 $
 ! ucm/*.ucm
   Addressed:
     Unicode Mappping tables are missing Unicode Inc. license notification
