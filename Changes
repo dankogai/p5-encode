@@ -3,6 +3,18 @@
 # $Id: Changes,v 2.53 2013/08/29 15:20:31 dankogai Exp dankogai $
 #
 $Revision: 2.53 $ $Date: 2013/08/29 15:20:31 $
+! Encode.xs
++ t/cow.t
+  Addressed: COW breakage with _utf8_on()
+  https://rt.cpan.org/Ticket/Display.html?id=88230
+! Encode.pm
+  Reverted the document accordingly to #11
+  https://github.com/dankogai/p5-encode/pull/10
++ t/decode.t
+  Unit test for decoding behavior change in #11
+  https://github.com/dankogai/p5-encode/pull/12
+
+2.53 2013/08/29 15:20:31
 ! Encode.pm
   Merged: Do not short-circuit decode_utf8 with utf8 flags
   https://github.com/dankogai/p5-encode/pull/11

@@ -1,3 +1,6 @@
+#
+# $Id$
+#
 use strict;
 use Encode qw(decode_utf8 FB_CROAK);
 use Test::More tests => 3;
