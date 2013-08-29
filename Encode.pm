@@ -209,7 +209,6 @@ my $utf8enc;
 
 sub decode_utf8($;$) {
     my ( $octets, $check ) = @_;
-    return $octets if is_utf8($octets);
     return undef unless defined $octets;
     $octets .= '' if ref $octets;
     $check   ||= 0;
