@@ -1,8 +1,8 @@
 # Revision history for Perl extension Encode.
 #
-# $Id: Changes,v 2.53 2013/08/29 15:20:31 dankogai Exp dankogai $
+# $Id: Changes,v 2.54 2013/08/29 16:47:39 dankogai Exp dankogai $
 #
-$Revision: 2.53 $ $Date: 2013/08/29 15:20:31 $
+$Revision: 2.54 $ $Date: 2013/08/29 16:47:39 $
 ! Encode.xs
 + t/cow.t
   Addressed: COW breakage with _utf8_on()
