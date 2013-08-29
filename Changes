@@ -1,8 +1,18 @@
 # Revision history for Perl extension Encode.
 #
-# $Id: Changes,v 2.52 2013/08/14 02:29:54 dankogai Exp $
+# $Id: Changes,v 2.53 2013/08/29 15:20:31 dankogai Exp dankogai $
 #
-$Revision: 2.52 $ $Date: 2013/08/14 02:29:54 $
+$Revision: 2.53 $ $Date: 2013/08/29 15:20:31 $
+! Encode.pm
+  Merged: Do not short-circuit decode_utf8 with utf8 flags
+  https://github.com/dankogai/p5-encode/pull/11
+  Merged: document decode_utf8 behaviour more precise
+  https://github.com/dankogai/p5-encode/pull/10
+! Makefile.PL
+  Added repository cpan metadata
+  https://github.com/dankogai/p5-encode/pull/9
+
+2.52 2013/08/14 02:29:54
 ! ucm/*.ucm
   Addressed:
     Unicode Mappping tables are missing Unicode Inc. license notification
