@@ -44,6 +44,9 @@ WriteMakefile(
     },
     INC         => '-I' . File::Spec->catfile( '.', 'Encode' ),
     LICENSE     => 'perl',
+    PREREQ_PM   => {
+        Exporter   => '5.57',   # use Exporter 'import';
+    },
     PMLIBDIRS   => \@pmlibdirs,
     INSTALLDIRS => ($] < 5.011 ? 'perl' : 'site'),
     META_MERGE        => {
