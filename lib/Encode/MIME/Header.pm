@@ -31,7 +31,7 @@ $Encode::Encoding{'MIME-Q'} = bless {
     Name     => 'MIME-Q',
 } => __PACKAGE__;
 
-use base qw(Encode::Encoding);
+use parent qw(Encode::Encoding);
 
 sub needs_lines { 1 }
 sub perlio_ok   { 0 }

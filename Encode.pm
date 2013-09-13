@@ -9,8 +9,7 @@ use constant DEBUG => !!$ENV{PERL_ENCODE_DEBUG};
 use XSLoader ();
 XSLoader::load( __PACKAGE__, $VERSION );
 
-require Exporter;
-use base qw/Exporter/;
+use Exporter 5.57 'import';
 
 # Public, encouraged API is exported by default
 

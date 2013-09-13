@@ -3,7 +3,7 @@ package Encode::MIME::Header::ISO_2022_JP;
 use strict;
 use warnings;
 
-use base qw(Encode::MIME::Header);
+use parent qw(Encode::MIME::Header);
 
 $Encode::Encoding{'MIME-Header-ISO_2022_JP'} =
   bless { encode => 'B', bpl => 76, Name => 'MIME-Header-ISO_2022_JP' } =>
