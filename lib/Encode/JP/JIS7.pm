@@ -16,7 +16,7 @@ for my $name ( '7bit-jis', 'iso-2022-jp', 'iso-2022-jp-1' ) {
     } => __PACKAGE__;
 }
 
-use base qw(Encode::Encoding);
+use parent qw(Encode::Encoding);
 
 # we override this to 1 so PerlIO works
 sub needs_lines { 1 }

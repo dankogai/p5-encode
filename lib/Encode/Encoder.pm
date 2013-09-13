@@ -211,7 +211,7 @@ To make the Base64 transcoder example above really work, you could
 write a module like this:
 
   package Encode::Base64;
-  use base 'Encode::Encoding';
+  use parent 'Encode::Encoding';
   __PACKAGE__->Define('base64');
   use MIME::Base64;
   sub encode{ 
