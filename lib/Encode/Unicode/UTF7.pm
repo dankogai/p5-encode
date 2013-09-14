@@ -5,7 +5,7 @@ package Encode::Unicode::UTF7;
 use strict;
 use warnings;
 no warnings 'redefine';
-use base qw(Encode::Encoding);
+use parent qw(Encode::Encoding);
 __PACKAGE__->Define('UTF-7');
 our $VERSION = do { my @r = ( q$Revision: 2.7 $ =~ /\d+/g ); sprintf "%d." . "%02d" x $#r, @r };
 use MIME::Base64;

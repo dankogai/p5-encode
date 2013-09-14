@@ -17,7 +17,7 @@ use Test::More tests => 516;
 use Encode::Encoder qw(encoder);
 use MIME::Base64;
 package Encode::Base64;
-use base 'Encode::Encoding';
+use parent 'Encode::Encoding';
 __PACKAGE__->Define('base64');
 use MIME::Base64;
 sub encode{

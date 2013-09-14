@@ -42,7 +42,7 @@ for my $name (
     } => __PACKAGE__;
 }
 
-use base qw(Encode::Encoding);
+use parent qw(Encode::Encoding);
 
 sub renew {
     my $self = shift;
