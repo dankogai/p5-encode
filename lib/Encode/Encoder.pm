@@ -1,10 +1,10 @@
 #
-# $Id: Encoder.pm,v 2.2 2011/08/09 07:49:44 dankogai Exp $
+# $Id: Encoder.pm,v 2.3 2013/09/14 07:51:59 dankogai Exp dankogai $
 #
 package Encode::Encoder;
 use strict;
 use warnings;
-our $VERSION = do { my @r = ( q$Revision: 2.2 $ =~ /\d+/g ); sprintf "%d." . "%02d" x $#r, @r };
+our $VERSION = do { my @r = ( q$Revision: 2.3 $ =~ /\d+/g ); sprintf "%d." . "%02d" x $#r, @r };
 
 require Exporter;
 our @ISA       = qw(Exporter);
