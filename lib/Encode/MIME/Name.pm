@@ -76,6 +76,7 @@ our %MIME_NAME_OF = (
     'utf8'                  => 'UTF-8',
     'utf-8-strict'          => 'UTF-8',
     'viscii'                => 'VISCII',
+    'x-viet-vps'            => 'X-VIET-VPS',
 );
 
 sub get_mime_name($) { $MIME_NAME_OF{$_[0]} };

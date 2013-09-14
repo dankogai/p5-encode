@@ -144,6 +144,7 @@ L<http://czyborra.com/charsets/iso8859.html> for details.
   Latin9 [4]    iso-8859-15
   Latin10       iso-8859-16
   Vietnamese    viscii                  cp1258  MacVietnamese
+  Vietnamese    x-viet-vps
   ----------------------------------------------------------------
 
   [1] Esperanto, Maltese, and Turkish. Turkish is now on 8859-9.

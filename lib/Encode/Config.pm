@@ -29,6 +29,7 @@ our %ExtModule = (
     'koi8-r'                => 'Encode::Byte',
     'koi8-u'                => 'Encode::Byte',
     'viscii'                => 'Encode::Byte',
+    'x-viet-vps'            => 'Encode::Byte',
     'cp424'                 => 'Encode::Byte',
     'cp437'                 => 'Encode::Byte',
     'cp737'                 => 'Encode::Byte',

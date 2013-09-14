@@ -12,6 +12,7 @@ my %tables = (
            'nextstep.ucm',
            'hp-roman8.ucm',
            'viscii.ucm',
+           'x-viet-vps.ucm',
            'adobeStdenc.ucm',
            # koi8
            'koi8-f.ucm', 'koi8-r.ucm', 'koi8-u.ucm', 
