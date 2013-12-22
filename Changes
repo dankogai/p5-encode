@@ -1,8 +1,8 @@
 # Revision history for Perl extension Encode.
 #
-# $Id: Changes,v 2.55 2013/09/14 07:51:59 dankogai Exp dankogai $
+# $Id: Changes,v 2.56 2013/12/22 13:40:00 dankogai Exp dankogai $
 #
-$Revision: 2.55 $ $Date: 2013/09/14 07:51:59 $
+$Revision: 2.56 $ $Date: 2013/12/22 13:40:00 $
 ! Encode.pm t/Encode.t
   Merged RT#91569: [PATCH] decode_utf8 and non-PVs
   https://rt.cpan.org/Ticket/Display.html?id=91569
