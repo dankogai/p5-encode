@@ -3,6 +3,11 @@
 # $Id: Changes,v 2.55 2013/09/14 07:51:59 dankogai Exp dankogai $
 #
 $Revision: 2.55 $ $Date: 2013/09/14 07:51:59 $
+! Encode.pm t/Encode.t
+  Merged RT#91569: [PATCH] decode_utf8 and non-PVs
+  https://rt.cpan.org/Ticket/Display.html?id=91569
+
+2.55 2013/09/14 07:51:59
 ! Encode.pm
   Makefile.PL
   Unicode/Unicode.pm
