@@ -3,6 +3,11 @@
 # $Id: Changes,v 2.56 2013/12/22 13:40:00 dankogai Exp dankogai $
 #
 $Revision: 2.56 $ $Date: 2013/12/22 13:40:00 $
+! bin/enc2xs
+  Merged RT#91763: POD errors
+  https://rt.cpan.org/Ticket/Display.html?id=91763
+
+2.56 2013/12/22 13:40:00
 ! Encode.pm t/Encode.t
   Merged RT#91569: [PATCH] decode_utf8 and non-PVs
   https://rt.cpan.org/Ticket/Display.html?id=91569
