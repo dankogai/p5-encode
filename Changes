@@ -3,6 +3,11 @@
 # $Id: Changes,v 2.57 2014/01/03 04:52:36 dankogai Exp dankogai $
 #
 $Revision: 2.57 $ $Date: 2014/01/03 04:52:36 $
+! Encode.pm
+  Pulled: [doc] clarify that CHECK coderefs return octets #18
+  https://github.com/dankogai/p5-encode/pull/18
+
+2.57 2014/01/03 04:52:36
 ! encengine.c
   Pulled: sun compiler (maybe others) doesn't like UTF-8 in the source
   https://github.com/dankogai/p5-encode/pull/17
