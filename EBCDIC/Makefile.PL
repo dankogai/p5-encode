@@ -77,9 +77,9 @@ Encode_XSEncoding(pTHX_ encode_t *enc, char *name)
  HV *stash = gv_stashpv("Encode::XS", TRUE);
  SV *iv    = newSViv(PTR2IV(enc));
  SV *sv    = sv_bless(newRV_noinc(iv),stash);
+ int i = 0;
  SvFLAGS(iv) |= SVp_POK;
  SvPVX(iv) = name;
- int i = 0;
  PUSHMARK(sp);
  XPUSHs(sv);
  while (enc->name[i])
