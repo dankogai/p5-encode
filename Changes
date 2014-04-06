@@ -1,8 +1,28 @@
 # Revision history for Perl extension Encode.
 #
-# $Id: Changes,v 2.58 2014/03/28 02:37:42 dankogai Exp dankogai $
+# $Id: Changes,v 2.59 2014/04/06 17:23:55 dankogai Exp $
 #
-$Revision: 2.58 $ $Date: 2014/03/28 02:37:42 $
+$Revision: 2.59 $ $Date: 2014/04/06 17:23:55 $
+! Byte/Makefile.PL
+  CN/Makefile.PL
+  EBCDIC/Makefile.PL
+  Encode.pm
+  Encode.xs
+  Encode/Makefile_PL.e2x
+  JP/Makefile.PL
+  KR/Makefile.PL
+  Symbol/Makefile.PL
+  TW/Makefile.PL
+  bin/enc2xs
+  Restored the signature of Encode_XSEncoding() to address RT#94478
+  * While https://github.com/dankogai/p5-encode/pull/20
+    pulls the symnames via argument thus breaks the compatibility
+    with Encode::XX modules with *.ucm, the restored version
+    pulls the symanmes via enc->name[0] so the added 2nd argument
+    is no longer needed.
+  https://rt.cpan.org/Public/Bug/Display.html?id=94478
+
+2.58 2014/03/28 02:37:42
 ! bin/piconv
   Addressed: piconv bug of decoding UTF-16 (with fix)
   https://github.com/dankogai/p5-encode/issues/19
