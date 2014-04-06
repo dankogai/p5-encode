@@ -41,7 +41,7 @@ UNIMPLEMENTED(_encoded_bytes_to_utf8, I32)
                                 UTF8_ALLOW_LONG))
 
 void
-Encode_XSEncoding(pTHX_ encode_t * enc, char * name)
+Encode_XSEncoding(pTHX_ encode_t * enc)
 {
     dSP;
     HV *stash = gv_stashpv("Encode::XS", TRUE);
@@ -49,7 +49,7 @@ Encode_XSEncoding(pTHX_ encode_t * enc, char * name)
     SV *sv    = sv_bless(newRV_noinc(iv),stash);
     int i = 0;
     SvFLAGS(iv) |= SVp_POK;
-    SvPVX(iv) = name;
+    SvPVX(iv) = enc->name[0];
     PUSHMARK(sp);
     XPUSHs(sv);
     while (enc->name[i]) {
