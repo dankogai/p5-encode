@@ -3,6 +3,12 @@
 # $Id: Changes,v 2.59 2014/04/06 17:23:55 dankogai Exp $
 #
 $Revision: 2.59 $ $Date: 2014/04/06 17:23:55 $
+! Encode/encode.h Encode.xs Unicode/Unicode.xs
+  removed #define U8 U8
+  https://rt.perl.org/Ticket/Display.html?id=121554
+  http://perl5.git.perl.org/perl.git/commit/2f2b4ff2c154a8e461857f2e82cb815c238d0d94
+
+2.59 2014/04/06 17:23:55
 ! Byte/Makefile.PL
   CN/Makefile.PL
   EBCDIC/Makefile.PL

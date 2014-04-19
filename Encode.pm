@@ -4,7 +4,8 @@
 package Encode;
 use strict;
 use warnings;
-our $VERSION = sprintf "%d.%02d", q$Revision: 2.59 $ =~ /(\d+)/g;
+#our $VERSION = sprintf "%d.%02d", q$Revision: 2.59 $ =~ /(\d+)/g;
+our $VERSION = "2.59_01";
 use constant DEBUG => !!$ENV{PERL_ENCODE_DEBUG};
 use XSLoader ();
 XSLoader::load( __PACKAGE__, $VERSION );
