@@ -79,7 +79,7 @@ enc_unpack(pTHX_ U8 **sp, U8 *e, STRLEN size, U8 endian)
 	if (endian == 'v')
 	    break;
 	v |= (*s++ << 16);
-	v |= (*s++ << 24);
+	v |= ((UV)*s++ << 24);
 	break;
     default:
 	croak("Unknown endian %c",(char) endian);
