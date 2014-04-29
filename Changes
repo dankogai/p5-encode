@@ -3,6 +3,11 @@
 # $Id: Changes,v 2.59 2014/04/06 17:23:55 dankogai Exp $
 #
 $Revision: 2.59 $ $Date: 2014/04/06 17:23:55 $
+! Byte/Makefile.PL CN/Makefile.PL EBCDIC/Makefile.PL
+  Encode/Makefile_PL.e2x Encode/encode.h JP/Makefile.PL KR/Makefile.PL
+  Symbol/Makefile.PL TW/Makefile.PL bin/enc2xs encengine.c
+  Applied: more Fix Windows build (of Encode) with VC++ 6.0
+  http://perl5.git.perl.org/perl.git/commit/9e9002efd1609c7d154f98af43a026320df7582c
 ! Unicode/Unicode.xs
   Addressed: sign extension issue found by Coverity #21
   https://github.com/dankogai/p5-encode/issues/21
