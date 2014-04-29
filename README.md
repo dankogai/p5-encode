@@ -1,15 +1,18 @@
 [![build status](https://secure.travis-ci.org/dankogai/p5-encode.png)](http://travis-ci.org/dankogai/p5-encode)
 
 ## NAME
-       Encode - character encodings
+
+Encode - character encodings
 
 ## SYNOPSIS
+
        use Encode;
 
 ## DESCRIPTION
-       The "Encode" module provides the interfaces between Perl's
-       strings and the rest of the system.  Perl strings are
-       sequences of characters.
+
+The "Encode" module provides the interfaces between Perl's
+strings and the rest of the system.  Perl strings are
+sequences of characters.
 
        See `perldoc Encode` for the rest of the story
 
@@ -17,22 +20,22 @@
 
 To install this module, type the following:
 
-    perl Makefile.PL
-    make
-    make test
-    make install
+       perl Makefile.PL
+       make
+       make test
+       make install
 
 To install scripts under bin/ directories also,
 
-    perl Makefile.PL MORE_SCRIPTS
-    make && make test && make install
+       perl Makefile.PL MORE_SCRIPTS
+       make && make test && make install
 
 By default, only enc2xs and piconv are installed.
 
 To install *.ucm files also, say
 
-    perl Makefile.PL INSTALL_UCM
-    make && make test && make install
+       perl Makefile.PL INSTALL_UCM
+       make && make test && make install
 
 By default, *.ucm are not installed.
 
