@@ -840,7 +840,7 @@ OUTPUT:
     RETVAL
 
 #ifndef SvIsCOW
-# define SvIsCOW (SvREADONLY(sv) && SvFAKE(sv))
+# define SvIsCOW(sv) (SvREADONLY(sv) && SvFAKE(sv))
 #endif
 
 SV *
