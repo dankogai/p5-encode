@@ -3,6 +3,17 @@
 # $Id: Changes,v 2.60 2014/04/29 16:25:06 dankogai Exp dankogai $
 #
 $Revision: 2.60 $ $Date: 2014/04/29 16:25:06 $
+! bin/piconv
+  Applied: piconv nit
+  + Better error handling when the encoding name is nonexistent
+  Message-Id: <537139A0.1000503@iki.fi>
+! Encode.xs
+  Applied: RT #95466: 
+   fallback definition of SvIsCOW() is wrong 
+   (and hence breaks on 5.8.2 and earlier)
+  https://rt.cpan.org/Ticket/Display.html?id=95466
+
+2.60 2014/04/29 16:25:06
 ! Byte/Makefile.PL 
   CN/Makefile.PL
   EBCDIC/Makefile.PL
