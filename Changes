@@ -1,8 +1,10 @@
 # Revision history for Perl extension Encode.
 #
-# $Id: Changes,v 2.61 2014/05/31 09:48:48 dankogai Exp dankogai $
+# $Id: Changes,v 2.62 2014/05/31 12:12:39 dankogai Exp dankogai $
 #
-$Revision: 2.61 $ $Date: 2014/05/31 09:48:48 $
+$Revision: 2.62 $ $Date: 2014/05/31 12:12:39 $
+! Encode.pm
+  s/2013/2014/ on COPYRIGHT section
 ! Byte/Makefile.PL
   CN/Makefile.PL
   EBCDIC/Makefile.PL
