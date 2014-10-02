@@ -686,6 +686,7 @@ CODE:
     /* require_pv(PERLIO_FILENAME); */
 
     eval_pv("require PerlIO::encoding", 0);
+    SPAGAIN;
 
     if (SvTRUE(get_sv("@", 0))) {
     ST(0) = &PL_sv_no;
@@ -703,6 +704,7 @@ CODE:
     encode_t *enc = INT2PTR(encode_t *, SvIV(SvRV(obj)));
     SV *retval;
     eval_pv("require Encode::MIME::Name", 0);
+    SPAGAIN;
 
     if (SvTRUE(get_sv("@", 0))) {
 	ST(0) = &PL_sv_undef;
