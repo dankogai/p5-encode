@@ -1,8 +1,8 @@
 # Revision history for Perl extension Encode.
 #
-# $Id: Changes,v 2.62 2014/05/31 12:12:39 dankogai Exp dankogai $
+# $Id: Changes,v 2.63 2014/10/19 07:01:15 dankogai Exp $
 #
-$Revision: 2.62 $ $Date: 2014/05/31 12:12:39 $
+$Revision: 2.63 $ $Date: 2014/10/19 07:01:15 $
 ! Encode.xs
   Applied: RT #99264: call_pv() can reallocate the stack
   https://rt.cpan.org/Ticket/Display.html?id=99264
