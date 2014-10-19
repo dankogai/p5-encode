@@ -19,8 +19,8 @@
    encode_method().  1 is recommended. 2 restores NI-S original */
 #define ENCODE_XS_USEFP   1
 
-#define UNIMPLEMENTED(x,y) y x (SV *sv, char *encoding) {dTHX;   \
-                         Perl_croak(aTHX_ "panic_unimplemented"); \
+#define UNIMPLEMENTED(x,y) y x (SV *sv, char *encoding) {		\
+			Perl_croak_nocontext("panic_unimplemented");	\
              return (y)0; /* fool picky compilers */ \
                          }
 /**/

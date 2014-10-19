@@ -184,6 +184,7 @@ END
 
   if ($cname =~ /(\w+)\.xs$/)
    {
+    print C "#define PERL_NO_GET_CONTEXT\n";
     print C "#include <EXTERN.h>\n";
     print C "#include <perl.h>\n";
     print C "#include <XSUB.h>\n";
