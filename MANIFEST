@@ -102,6 +102,7 @@ t/taint.t       test script
 t/unibench.pl	benchmark script
 t/utf8ref.t	test script
 t/utf8strict.t	test script
+t/utf8warnings.t test script
 ucm/8859-1.ucm	Unicode Character Map
 ucm/8859-10.ucm	Unicode Character Map
 ucm/8859-11.ucm	Unicode Character Map
