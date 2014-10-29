@@ -1,14 +1,19 @@
 # Revision history for Perl extension Encode.
 #
-# $Id: Changes,v 2.63 2014/10/19 07:01:15 dankogai Exp $
+# $Id: Changes,v 2.64 2014/10/29 15:37:54 dankogai Exp dankogai $
 #
-$Revision: 2.63 $ $Date: 2014/10/19 07:01:15 $
+$Revision: 2.64 $ $Date: 2014/10/29 15:37:54 $
 ! t/utf8warnings.t MANIFEST
   Retouch pull #26 so it works with perl < 5.14
 ! Encode.pm
 + t/utf8warnings.t
   Pulled: Catch and re-issue utf8 warnings at a higher level
   https://github.com/dankogai/p5-encode/pull/26
++ Encode.xs
+  Pulled: Validate continuations in the incremental UTF-X decoder
+  https://github.com/dankogai/p5-encode/pull/25
+
+2.63 2014/10/19 07:01:15
 ! Encode.xs
   Applied: RT #99264: call_pv() can reallocate the stack
   https://rt.cpan.org/Ticket/Display.html?id=99264
