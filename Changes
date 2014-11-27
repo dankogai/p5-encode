@@ -4,7 +4,10 @@
 #
 $Revision: 2.64 $ $Date: 2014/10/29 15:37:54 $
 ! Changes Encode.xs bin/enc2xs
-  "We cranked up the warnings in the core." from jhi
+  Applied 3 patches from jhi:
+    0001-For-C-don-t-use-the-array-size-in-forward-declaratiotion
+    0002-Unused-variables
+    0003-1-needs-casting-to-STRLEN
   Message-Id: <54753674.6070909@iki.fi>
 
 2.64 2014/10/29 15:37:54
