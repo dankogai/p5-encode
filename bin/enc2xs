@@ -701,7 +701,12 @@ sub addstrings
    my $cpp = ($Config{d_cplusplus} || '') eq 'define';
    my $var = $^O eq 'MacOS' || $cpp ? 'extern' : 'static';
    my $const = $cpp ? '' : 'const';
-   print $fh "$var $const encpage_t $name\[",scalar(@{$a->{'Entries'}}),"];\n";
+   my $ccflags = $Config{ccflags};
+   if (defined $Config{ccwarnflags}) {
+       $ccflags .= " " . $Config{ccwarnflags};
+   }
+   my $count = $ccflags =~ /-Wc\+\+-compat/ ? '' : scalar(@{$a->{'Entries'}});
+   print $fh "$var $const encpage_t $name\[$count];\n";
   }
  $a->{'DoneStrings'} = 1;
  foreach my $b (@{$a->{'Entries'}})

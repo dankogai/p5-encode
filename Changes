@@ -3,13 +3,18 @@
 # $Id: Changes,v 2.64 2014/10/29 15:37:54 dankogai Exp dankogai $
 #
 $Revision: 2.64 $ $Date: 2014/10/29 15:37:54 $
+! Changes Encode.xs bin/enc2xs
+  "We cranked up the warnings in the core." from jhi
+  Message-Id: <54753674.6070909@iki.fi>
+
+2.64 2014/10/29 15:37:54
 ! t/utf8warnings.t MANIFEST
   Retouch pull #26 so it works with perl < 5.14
 ! Encode.pm
 + t/utf8warnings.t
   Pulled: Catch and re-issue utf8 warnings at a higher level
   https://github.com/dankogai/p5-encode/pull/26
-+ Encode.xs
+! Encode.xs
   Pulled: Validate continuations in the incremental UTF-X decoder
   https://github.com/dankogai/p5-encode/pull/25
 
