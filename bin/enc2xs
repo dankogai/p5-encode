@@ -1008,7 +1008,8 @@ sub make_configlocal_pm {
 	$mod =~ s,/,::,og;
 	warn qq{ require $mod;\n};
 	eval qq{ require $mod; };
-	$@ and die "Can't require $mod: $@\n";
+	# $@ and die "Can't require $mod: $@\n";
+        return if $@;
 	for my $enc ( Encode->encodings() ) {
 	    no warnings;
 	    $in_core{$enc}                   and next;
