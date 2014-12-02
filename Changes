@@ -1,8 +1,13 @@
 # Revision history for Perl extension Encode.
 #
-# $Id: Changes,v 2.65 2014/11/27 14:08:33 dankogai Exp dankogai $
+# $Id: Changes,v 2.66 2014/12/02 23:30:34 dankogai Exp dankogai $
 #
-$Revision: 2.65 $ $Date: 2014/11/27 14:08:33 $
+$Revision: 2.66 $ $Date: 2014/12/02 23:30:34 $
+! bin/enc2xs
+  Resolved RT#100656: enc2xs -C fails if URL::Encode::XS is installed
+  https://rt.cpan.org/Ticket/Display.html?id=100656
+
+2.65 2014/11/27 14:08:33
 ! Changes Encode.xs bin/enc2xs
   Applied 3 patches from jhi:
     0001-For-C-don-t-use-the-array-size-in-forward-declaratiotion
