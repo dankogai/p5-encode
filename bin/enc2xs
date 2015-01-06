@@ -133,10 +133,18 @@ my %opt;
 # -o <output> to specify the output file name (else it's the first arg)
 # -f <inlist> to give a file with a list of input files (else use the args)
 # -n <name> to name the encoding (else use the basename of the input file.
-getopts('CM:SQqOo:f:n:',\%opt);
+getopts('CM:SQqOo:f:n:v',\%opt);
 
 $opt{M} and make_makefile_pl($opt{M}, @ARGV);
 $opt{C} and make_configlocal_pm($opt{C}, @ARGV);
+$opt{v} ||= $ENV{ENC2XS_VERBOSE};
+
+sub verbose {
+    print STDERR @_ if $opt{v};
+}
+sub verbosef {
+    printf STDERR @_ if $opt{v};
+}
 
 # This really should go first, else the die here causes empty (non-erroneous)
 # output files to be written.
@@ -252,7 +260,7 @@ foreach my $enc (sort cmp_name @encfiles)
 
 if ($doC)
  {
-  print "Writing compiled form\n";
+  verbose "Writing compiled form\n";
   foreach my $name (sort cmp_name keys %encoding)
    {
     my ($e2u,$u2e,$erep,$min_el,$max_el) = @{$encoding{$name}};
@@ -347,10 +355,10 @@ END
 
   my $perc_saved    = $saved/($strings + $saved) * 100;
   my $perc_subsaved = $subsave/($strings + $subsave) * 100;
-  printf "%d bytes in string tables\n",$strings;
-  printf "%d bytes (%.3g%%) saved spotting duplicates\n",
+  verbosef "%d bytes in string tables\n",$strings;
+  verbosef "%d bytes (%.3g%%) saved spotting duplicates\n",
     $saved, $perc_saved              if $saved;
-  printf "%d bytes (%.3g%%) saved using substrings\n",
+  verbosef "%d bytes (%.3g%%) saved using substrings\n",
     $subsave, $perc_subsaved         if $subsave;
  }
 elsif ($doEnc)
