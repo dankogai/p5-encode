@@ -252,7 +252,7 @@ foreach my $enc (sort cmp_name @encfiles)
 
 if ($doC)
  {
-  print STDERR "Writing compiled form\n";
+  print "Writing compiled form\n";
   foreach my $name (sort cmp_name keys %encoding)
    {
     my ($e2u,$u2e,$erep,$min_el,$max_el) = @{$encoding{$name}};
@@ -347,10 +347,10 @@ END
 
   my $perc_saved    = $saved/($strings + $saved) * 100;
   my $perc_subsaved = $subsave/($strings + $subsave) * 100;
-  printf STDERR "%d bytes in string tables\n",$strings;
-  printf STDERR "%d bytes (%.3g%%) saved spotting duplicates\n",
+  printf "%d bytes in string tables\n",$strings;
+  printf "%d bytes (%.3g%%) saved spotting duplicates\n",
     $saved, $perc_saved              if $saved;
-  printf STDERR "%d bytes (%.3g%%) saved using substrings\n",
+  printf "%d bytes (%.3g%%) saved using substrings\n",
     $subsave, $perc_subsaved         if $subsave;
  }
 elsif ($doEnc)

@@ -3,6 +3,11 @@
 # $Id: Changes,v 2.67 2014/12/04 20:13:00 dankogai Exp dankogai $
 #
 $Revision: 2.67 $ $Date: 2014/12/04 20:13:00 $
+! bin/enc2xs
+  Applied: RT#101345: [PATCH] reduce compiler warnings and stderr noise
+  https://rt.cpan.org/Public/Bug/Display.html?id=101345
+
+2.67 2014/12/04 20:13:00
 ! t/taint.t
   Now skips nonexistent methods like Encode::Detect->encode() should
   that be installed.  This resolves RT#100105.
