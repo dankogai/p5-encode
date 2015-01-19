@@ -483,7 +483,7 @@ If the $string is C<undef>, then C<undef> is returned.
 
 This function returns the string that results from decoding the scalar
 value I<OCTETS>, assumed to be a sequence of octets in I<ENCODING>, into
-Perl's internal form.  The returns the resulting string.  As with encode(),
+Perl's internal form.  As with encode(),
 I<ENCODING> can be either a canonical name or an alias. For encoding names
 and aliases, see L</"Defining Aliases">; for I<CHECK>, see L</"Handling
 Malformed Data">.
