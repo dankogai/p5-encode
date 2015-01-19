@@ -700,7 +700,7 @@ In the first version above, you let the appropriate encoding layer
 handle the conversion.  In the second, you explicitly translate
 from one encoding to the other.
 
-Unfortunately, it may be that encodings are C<PerlIO>-savvy.  You can check
+Unfortunately, it may be that encodings are not C<PerlIO>-savvy.  You can check
 to see whether your encoding is supported by C<PerlIO> by invoking the
 C<perlio_ok> method on it:
 
