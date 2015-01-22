@@ -280,8 +280,9 @@ if ($doC)
     # push(@{$encoding{$name}},outstring(\*C,$e2u->{Cname}.'_def',$erep));
    }
   my $cpp = ($Config{d_cplusplus} || '') eq 'define';
-  my $exta = $cpp ? 'extern "C" ' : "static";
-  my $extb = $cpp ? 'extern "C" ' : "";
+  my $ext  = $cpp ? 'extern "C"' : "extern";
+  my $exta = $cpp ? 'extern "C"' : "static";
+  my $extb = $cpp ? 'extern "C"' : "";
   foreach my $enc (sort cmp_name keys %encoding)
    {
     # my ($e2u,$u2e,$rep,$min_el,$max_el,$rsym) = @{$encoding{$enc}};
@@ -308,7 +309,7 @@ if ($doC)
    {
     my $sym = "${enc}_encoding";
     $sym =~ s/\W+/_/g;
-    print H "extern encode_t $sym;\n";
+    print H "${ext} encode_t $sym;\n";
     print D " Encode_XSEncoding(aTHX_ &$sym);\n";
    }
 
