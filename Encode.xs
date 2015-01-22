@@ -7,6 +7,7 @@
 #include "perl.h"
 #include "XSUB.h"
 #include "encode.h"
+#include "def_t.h"
 
 # define PERLIO_MODNAME  "PerlIO::encoding"
 # define PERLIO_FILENAME "PerlIO/encoding.pm"
@@ -1002,6 +1003,5 @@ OUTPUT:
 
 BOOT:
 {
-#include "def_t.h"
 #include "def_t.exh"
 }
