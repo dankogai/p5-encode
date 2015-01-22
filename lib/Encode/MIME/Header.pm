@@ -139,7 +139,7 @@ sub encode($$;$) {
         push @line, join( "\n " => @subline );
     }
     $_[1] = '' if $chk;
-    return join( "\n", @line );
+    return (substr($str, 0, 0) . join( "\n", @line ));
 }
 
 use constant HEAD   => '=?UTF-8?';
