@@ -31,7 +31,7 @@ Unicode/Makefile.PL	Encode extension
 Unicode/Unicode.pm	Encode extension
 Unicode/Unicode.xs	Encode extension
 bin/enc2xs	Encode module generator
-bin/encguess	CLI for Ecode::Guess
+bin/encguess	Guess the encoding of file(s)
 bin/piconv	iconv by perl
 bin/ucm2table	Table Generator for testing
 bin/ucmlint	A UCM Lint utility
