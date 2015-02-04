@@ -3,6 +3,21 @@
 # $Id: Changes,v 2.68 2015/01/22 10:17:32 dankogai Exp dankogai $
 #
 $Revision: 2.68 $ $Date: 2015/01/22 10:17:32 $
+! bin/encguess
+  Refactored so that
+  * does not depend on non-core module (File::Slurp in particular)
+  * better document
+  * -s "encA encB" to -s encA,encB which is more shell-friendly
+  * and more
+! MANIFEST
++ bin/encguess
+  Pulled: Added CLI wrapper for Encode::Guess
+  https://github.com/dankogai/p5-encode/pull/32 
+! Unicode/Unicode.pm
+  Pulled: Bump $VERSION in module changed since Encode-2.60
+  https://github.com/dankogai/p5-encode/pull/31
+
+2.68 2015/01/22 10:17:32
 ! Pulled: Fix C++ build on Windows with VC++
   https://github.com/dankogai/p5-encode/pull/30
   https://rt.cpan.org/Public/Bug/Display.html?id=82897

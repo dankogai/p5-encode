@@ -1,90 +1,141 @@
 #!/usr/bin/perl
-
+use 5.008001;
 use strict;
 use warnings;
 use Encode;
 use Getopt::Std;
-use File::Slurp;
-
+use Carp;
 use Encode::Guess;
 $Getopt::Std::STANDARD_HELP_VERSION = 1;
 
 my %opt;
-getopts("uSs:", \%opt);
+getopts( "uSs:", \%opt );
 
 my @suspect_list;
-if ($opt{S}) {
-	list_valid_suspects();
-	exit;
-} elsif ($opt{s}) {
-	@suspect_list = split(' ', $opt{s});
-} else {
-	HELP_MESSAGE();
-	exit;
-}
+list_valid_suspects() and exit if $opt{S};
+@suspect_list = split /:,/, $opt{s} if $opt{s};
 
-while (my $filename = shift) {
-	do_guess($filename);
+HELP_MESSAGE() unless @ARGV;
+do_guess($_) for @ARGV;
+
+sub read_file {
+    my $filename = shift;
+    local $/;
+    open my $fh, '<:raw', $filename or croak "$filename:$!";
+    my $content = <$fh>;
+    close $fh;
+    return $content;
 }
 
 sub do_guess {
-	my $filename = shift;
-	
-	my $data = read_file( $filename, { binmode => ':raw' } ) ;
-	my $enc = guess_encoding($data, @suspect_list);
-
-	if (!ref($enc) && $opt{u}) {
-		return 1;
-	}
-	
-	print "$filename\t";
-	if (ref($enc)) {
-		print $enc->mime_name();
-	} else {
-		print "unknown";
-	}
-	print "\n";
-
-	return 1;
+    my $filename = shift;
+    my $data     = read_file($filename);
+    my $enc      = guess_encoding( $data, @suspect_list );
+    if ( !ref($enc) && $opt{u} ) {
+        return 1;
+    }
+    print "$filename\t";
+    if ( ref($enc) ) {
+        print $enc->mime_name();
+    }
+    else {
+        print "unknown";
+    }
+    print "\n";
+    return 1;
 }
 
 sub list_valid_suspects {
-	print join("\n", Encode->encodings(":all"));
-	print "\n";
-	return 1;
+    print join( "\n", Encode->encodings(":all") );
+    print "\n";
+    return 1;
 }
 
 sub HELP_MESSAGE {
-    print STDERR <<"EOT";
+    exec 'pod2usage', $0 or die "pod2usage: $!" 
+}
+__END__
+=head1 NAME
 
-Usage: encguess [switches] filename(s)
-  -s specify a list of "suspect encoding types" to test, quoted and seperated by a space
-  -S output a list of all acceptable encoding types that can be used with the -s param
-  -u suppress display of unidentified types
+encguess - guess character encodings of files
 
-Suspect Encoding Type(s):
+=head1 VERSION
 
-The encoding identification is done by checking one encoding type at a time until all but the right type are eliminated. The set of encoding types to try is defined by the -s parameter and defaults to ascii, utf8 and UTF-16/32 with BOM. This can be overridden by passing one or more encoding types via the -s parameter. If you need to pass in multiple suspect encoding types, use a quoted string with the a space separating each value.
+$Id: encguess,v 0.1 2013/04/15 00:29:54 dankogai Exp dankogai $
 
-Examples:
+=head1 SYNOPSIS
 
-1. Guess encoding of a file named test.txt, using only the default suspect types.
+  encguess [switches] filename...
+
+=head2 SWITCHES
+
+=over 2
+
+=item -s
+
+specify a list of "suspect encoding types" to test, 
+seperated by either C<:> or C<,>
+
+=item -S
+
+output a list of all acceptable encoding types that can be used with
+the -s param
+
+=item -u
+
+suppress display of unidentified types
+
+=back
+
+=head2 EXAMPLES:
+
+=over 2
+
+=item *
+
+Guess encoding of a file named C<test.txt>, using only the default
+suspect types.
 
    encguess test.txt
 
-2. Guess the encoding type of a file named test.txt, using the suspect types euc-jp, shiftjis and 7bit-jis.
+=item *
 
-   encguess -s "euc-jp shiftjis 7bit-jis" test.txt
+Guess the encoding type of a file named C<test.txt>, using the suspect
+types C<euc-jp,shiftjis,7bit-jis>.
 
-3. Guess the encoding type of several files, do not display results for unidentified files
+   encguess -s euc-jp,shiftjis,7bit-jis test.txt
 
-   encguess -us "euc-jp shiftjis 7bit-jis" test.txt test1.txt test2.txt
+=item *
 
-More Info:
+Guess the encoding type of several files, do not display results for
+unidentified files
 
-This is a wrapper script around the Perl module Encode::Guess. As such, you can find much more information on this module by using the command 'perldoc Encode::Guess' to display it's documentation.
-EOT
+   encguess -us euc-jp,shiftjis,7bit-jis test*.txt
 
-return 1;
-}
+=back
 
+=head1 DESCRIPTION
+
+The encoding identification is done by checking one encoding type at a
+time until all but the right type are eliminated. The set of
+encoding types to try is defined by the -s parameter and defaults
+to ascii, utf8 and UTF-16/32 with BOM. This can be overridden by
+passing one or more encoding types via the -s parameter. If you
+need to pass in multiple suspect encoding types, use a quoted
+string with the a space separating each value. 
+
+=head1 SEE ALSO
+
+L<Encode::Guess>
+
+=head1 LICENSE AND COPYRIGHT
+
+Copyright 2015 Michael LaGrasta and Dan Kogai.
+
+This program is free software; you can redistribute it and/or modify it
+under the terms of the the Artistic License (2.0). You may obtain a
+copy of the full license at:
+
+L<http://www.perlfoundation.org/artistic_license_2_0>
+
+=cut
