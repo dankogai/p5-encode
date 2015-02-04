@@ -1,0 +1,90 @@
+#!/usr/bin/perl
+
+use strict;
+use warnings;
+use Encode;
+use Getopt::Std;
+use File::Slurp;
+
+use Encode::Guess;
+$Getopt::Std::STANDARD_HELP_VERSION = 1;
+
+my %opt;
+getopts("uSs:", \%opt);
+
+my @suspect_list;
+if ($opt{S}) {
+	list_valid_suspects();
+	exit;
+} elsif ($opt{s}) {
+	@suspect_list = split(' ', $opt{s});
+} else {
+	HELP_MESSAGE();
+	exit;
+}
+
+while (my $filename = shift) {
+	do_guess($filename);
+}
+
+sub do_guess {
+	my $filename = shift;
+	
+	my $data = read_file( $filename, { binmode => ':raw' } ) ;
+	my $enc = guess_encoding($data, @suspect_list);
+
+	if (!ref($enc) && $opt{u}) {
+		return 1;
+	}
+	
+	print "$filename\t";
+	if (ref($enc)) {
+		print $enc->mime_name();
+	} else {
+		print "unknown";
+	}
+	print "\n";
+
+	return 1;
+}
+
+sub list_valid_suspects {
+	print join("\n", Encode->encodings(":all"));
+	print "\n";
+	return 1;
+}
+
+sub HELP_MESSAGE {
+    print STDERR <<"EOT";
+
+Usage: encguess [switches] filename(s)
+  -s specify a list of "suspect encoding types" to test, quoted and seperated by a space
+  -S output a list of all acceptable encoding types that can be used with the -s param
+  -u suppress display of unidentified types
+
+Suspect Encoding Type(s):
+
+The encoding identification is done by checking one encoding type at a time until all but the right type are eliminated. The set of encoding types to try is defined by the -s parameter and defaults to ascii, utf8 and UTF-16/32 with BOM. This can be overridden by passing one or more encoding types via the -s parameter. If you need to pass in multiple suspect encoding types, use a quoted string with the a space separating each value.
+
+Examples:
+
+1. Guess encoding of a file named test.txt, using only the default suspect types.
+
+   encguess test.txt
+
+2. Guess the encoding type of a file named test.txt, using the suspect types euc-jp, shiftjis and 7bit-jis.
+
+   encguess -s "euc-jp shiftjis 7bit-jis" test.txt
+
+3. Guess the encoding type of several files, do not display results for unidentified files
+
+   encguess -us "euc-jp shiftjis 7bit-jis" test.txt test1.txt test2.txt
+
+More Info:
+
+This is a wrapper script around the Perl module Encode::Guess. As such, you can find much more information on this module by using the command 'perldoc Encode::Guess' to display it's documentation.
+EOT
+
+return 1;
+}
+
