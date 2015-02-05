@@ -1,12 +1,12 @@
 # Revision history for Perl extension Encode.
 #
-# $Id: Changes,v 2.68 2015/01/22 10:17:32 dankogai Exp dankogai $
+# $Id: Changes,v 2.69 2015/02/05 10:35:11 dankogai Exp dankogai $
 #
-$Revision: 2.68 $ $Date: 2015/01/22 10:17:32 $
+$Revision: 2.69 $ $Date: 2015/02/05 10:35:11 $
 ! bin/encguess
   Refactored so that
   * does not depend on non-core module (File::Slurp in particular)
-  * better document
+  * PODified document
   * -s "encA encB" to -s encA,encB which is more shell-friendly
   * and more
 ! MANIFEST

@@ -1,4 +1,4 @@
-#!/usr/bin/perl
+#!./perl
 use 5.008001;
 use strict;
 use warnings;
@@ -9,12 +9,11 @@ use Encode::Guess;
 $Getopt::Std::STANDARD_HELP_VERSION = 1;
 
 my %opt;
-getopts( "uSs:", \%opt );
-
+getopts( "huSs:", \%opt );
 my @suspect_list;
 list_valid_suspects() and exit if $opt{S};
 @suspect_list = split /:,/, $opt{s} if $opt{s};
-
+HELP_MESSAGE() if $opt{h};
 HELP_MESSAGE() unless @ARGV;
 do_guess($_) for @ARGV;
 
@@ -61,7 +60,7 @@ encguess - guess character encodings of files
 
 =head1 VERSION
 
-$Id: encguess,v 0.1 2013/04/15 00:29:54 dankogai Exp dankogai $
+$Id: encguess,v 0.1 2015/02/05 10:34:19 dankogai Exp $
 
 =head1 SYNOPSIS
 
@@ -70,6 +69,10 @@ $Id: encguess,v 0.1 2013/04/15 00:29:54 dankogai Exp dankogai $
 =head2 SWITCHES
 
 =over 2
+
+=item -h
+
+show this message and exit.
 
 =item -s
 
@@ -104,11 +107,12 @@ Guess the encoding type of a file named C<test.txt>, using the suspect
 types C<euc-jp,shiftjis,7bit-jis>.
 
    encguess -s euc-jp,shiftjis,7bit-jis test.txt
+   encguess -s euc-jp:shiftjis:7bit-jis test.txt
 
 =item *
 
 Guess the encoding type of several files, do not display results for
-unidentified files
+unidentified files.
 
    encguess -us euc-jp,shiftjis,7bit-jis test*.txt
 
@@ -117,16 +121,16 @@ unidentified files
 =head1 DESCRIPTION
 
 The encoding identification is done by checking one encoding type at a
-time until all but the right type are eliminated. The set of
-encoding types to try is defined by the -s parameter and defaults
-to ascii, utf8 and UTF-16/32 with BOM. This can be overridden by
-passing one or more encoding types via the -s parameter. If you
-need to pass in multiple suspect encoding types, use a quoted
-string with the a space separating each value. 
+time until all but the right type are eliminated. The set of encoding
+types to try is defined by the -s parameter and defaults to ascii,
+utf8 and UTF-16/32 with BOM. This can be overridden by passing one or
+more encoding types via the -s parameter. If you need to pass in
+multiple suspect encoding types, use a quoted string with the a space
+separating each value.
 
 =head1 SEE ALSO
 
-L<Encode::Guess>
+L<Encode::Guess>, L<Encode::Detect>
 
 =head1 LICENSE AND COPYRIGHT
 
