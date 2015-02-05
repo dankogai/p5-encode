@@ -43,3 +43,24 @@ Thumbs.db
 attic/**/*
 node_modules/**/*
 tmp/**/*
+
+# Build artifacts
+Byte/
+CN/
+EBCDIC/
+Encode.bs
+Encode.c
+JP/
+KR/
+MYMETA.json
+MYMETA.yml
+Makefile
+Symbol/
+TW/
+Unicode/
+blib/
+def_t.c
+def_t.exh
+def_t.fnm
+def_t.h
+pm_to_blib
