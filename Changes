@@ -1,8 +1,12 @@
 # Revision history for Perl extension Encode.
 #
-# $Id: Changes,v 2.69 2015/02/05 10:35:11 dankogai Exp dankogai $
+# $Id: Changes,v 2.70 2015/02/05 10:53:00 dankogai Exp dankogai $
 #
-$Revision: 2.69 $ $Date: 2015/02/05 10:35:11 $
+$Revision: 2.70 $ $Date: 2015/02/05 10:53:00 $
+! Makefile.PL
+  add bin/encguess to EXE_FILES
+
+2.69 2015/02/05 10:35:11
 ! bin/encguess
   Refactored so that
   * does not depend on non-core module (File::Slurp in particular)
