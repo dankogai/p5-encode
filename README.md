@@ -8,6 +8,13 @@ Encode - character encodings
 
        use Encode;
 
+## COMMAND LINE
+
+       $ encguess README.md
+       README.md	US-ASCII
+
+See `encguess -h` for more options.
+
 ## DESCRIPTION
 
 The "Encode" module provides the interfaces between Perl's
