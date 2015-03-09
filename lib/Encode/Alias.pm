@@ -256,6 +256,10 @@ sub init_aliases {
         define_alias( qr/\bhk(?:scs)?[-_]?big5$/i => '"big5-hkscs"' );
     }
 
+    # https://github.com/dankogai/p5-encode/issues/37
+    define_alias(qr/cp65000/i => '"UTF-7"');
+    define_alias(qr/cp65001/i => '"utf-8-strict"');
+
     # utf8 is blessed :)
     define_alias( qr/\bUTF-8$/i => '"utf-8-strict"' );
 

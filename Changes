@@ -3,6 +3,17 @@
 # $Id: Changes,v 2.70 2015/02/05 10:53:00 dankogai Exp dankogai $
 #
 $Revision: 2.70 $ $Date: 2015/02/05 10:53:00 $
+! lib/Encode/Alias.pm t/Aliases.t
+  Add cp65000 => UTF-7 and cp65001 => utf-8-strict
+  https://github.com/dankogai/p5-encode/issues/37
+! encoding.pm
+  Sync w/ bleadperl
+  https://github.com/dankogai/p5-encode/pull/36
+! bin/encguess
+  Pulled: show encguess example per #33
+  https://github.com/dankogai/p5-encode/pull/34
+
+2.70 2015/02/05 10:53:00
 ! Makefile.PL
   add bin/encguess to EXE_FILES
 
