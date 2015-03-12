@@ -1,8 +1,11 @@
 # Revision history for Perl extension Encode.
 #
-# $Id: Changes,v 2.70 2015/02/05 10:53:00 dankogai Exp dankogai $
+# $Id: Changes,v 2.71 2015/03/12 00:03:52 dankogai Exp $
 #
-$Revision: 2.70 $ $Date: 2015/02/05 10:53:00 $
+$Revision: 2.71 $ $Date: 2015/03/12 00:03:52 $
+! encoding.pm
+  Pulled: Don't fail 'no encoding' on EBCDIC
+  https://github.com/dankogai/p5-encode/pull/38
 ! lib/Encode/Alias.pm t/Aliases.t
   Add cp65000 => UTF-7 and cp65001 => utf-8-strict
   https://github.com/dankogai/p5-encode/issues/37
