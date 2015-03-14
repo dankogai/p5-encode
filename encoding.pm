@@ -1,12 +1,19 @@
-# $Id: encoding.pm,v 2.13 2015/03/12 00:03:52 dankogai Exp $
+# $Id: encoding.pm,v 2.14 2015/03/14 02:44:39 dankogai Exp dankogai $
 package encoding;
-our $VERSION = sprintf "%d.%02d", q$Revision: 2.13 $ =~ /(\d+)/g;
+our $VERSION = sprintf "%d.%02d", q$Revision: 2.14 $ =~ /(\d+)/g;
 
 use Encode;
 use strict;
 use warnings;
 
 use constant DEBUG => !!$ENV{PERL_ENCODE_DEBUG};
+
+BEGIN {
+    if ( ord("A") == 193 ) {
+        require Carp;
+        Carp::croak("encoding: pragma does not support EBCDIC platforms");
+    }
+}
 
 our $HAS_PERLIO = 0;
 eval { require PerlIO::encoding };
@@ -95,11 +102,6 @@ sub _get_locale_encoding {
 }
 
 sub import {
-    if ( ord("A") == 193 ) {
-        require Carp;
-        Carp::croak("encoding: pragma does not support EBCDIC platforms");
-    }
-
     if ($] >= 5.017) {
 	warnings::warnif("deprecated",
 			 "Use of the encoding pragma is deprecated")

@@ -1,8 +1,13 @@
 # Revision history for Perl extension Encode.
 #
-# $Id: Changes,v 2.71 2015/03/12 00:03:52 dankogai Exp $
+# $Id: Changes,v 2.72 2015/03/14 02:44:39 dankogai Exp dankogai $
 #
-$Revision: 2.71 $ $Date: 2015/03/12 00:03:52 $
+$Revision: 2.72 $ $Date: 2015/03/14 02:44:39 $
+! encoding.pm
+  Copied from bleadperl to be in sync with it again.
+  http://www.nntp.perl.org/group/perl.perl5.porters/2015/03/msg226576.html
+
+2.71 2015/03/12 00:03:52
 ! encoding.pm
   Pulled: Don't fail 'no encoding' on EBCDIC
   https://github.com/dankogai/p5-encode/pull/38
