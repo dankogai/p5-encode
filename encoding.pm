@@ -9,6 +9,7 @@ use warnings;
 use constant {
     DEBUG => !!$ENV{PERL_ENCODE_DEBUG},
     HAS_PERLIO => eval { require PerlIO::encoding; PerlIO::encoding->VERSION(0.02) },
+    PERL_5_21_7 => $^V && $^V ge v5.21.7,
 };
 
 BEGIN {
@@ -129,7 +130,7 @@ sub import {
     unless ( $arg{Filter} ) {
         DEBUG and warn "_exception($name) = ", _exception($name);
         if (! _exception($name)) {
-            if (!$^V || $^V lt v5.21.7) {
+            if (!PERL_5_21_7) {
                 ${^ENCODING} = $enc;
             }
             else {
@@ -144,7 +145,7 @@ sub import {
     }
     else {
         defined( ${^ENCODING} ) and undef ${^ENCODING};
-        undef ${^E_NCODING} if $^V && $^V ge v5.21.7;
+        undef ${^E_NCODING} if PERL_5_21_7;
 
         # implicitly 'use utf8'
         require utf8;      # to fetch $utf8::hint_bits;
@@ -194,7 +195,7 @@ sub import {
 sub unimport {
     no warnings;
     undef ${^ENCODING};
-    undef ${^E_NCODING} if $^V && $^V ge v5.21.7;
+    undef ${^E_NCODING} if PERL_5_21_7;
     if (HAS_PERLIO) {
         binmode( STDIN,  ":raw" );
         binmode( STDOUT, ":raw" );
