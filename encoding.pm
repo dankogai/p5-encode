@@ -6,19 +6,17 @@ use Encode;
 use strict;
 use warnings;
 
-use constant DEBUG => !!$ENV{PERL_ENCODE_DEBUG};
+use constant {
+    DEBUG => !!$ENV{PERL_ENCODE_DEBUG},
+    HAS_PERLIO => eval { require PerlIO::encoding; PerlIO::encoding->VERSION(0.02) },
+    PERL_5_21_7 => $^V && $^V ge v5.21.7,
+};
 
 BEGIN {
     if ( ord("A") == 193 ) {
         require Carp;
         Carp::croak("encoding: pragma does not support EBCDIC platforms");
     }
-}
-
-our $HAS_PERLIO = 0;
-eval { require PerlIO::encoding };
-unless ($@) {
-    $HAS_PERLIO = ( PerlIO::encoding->VERSION >= 0.02 );
 }
 
 sub _exception {
@@ -132,7 +130,7 @@ sub import {
     unless ( $arg{Filter} ) {
         DEBUG and warn "_exception($name) = ", _exception($name);
         if (! _exception($name)) {
-            if (!$^V || $^V lt v5.21.7) {
+            if (!PERL_5_21_7) {
                 ${^ENCODING} = $enc;
             }
             else {
@@ -143,11 +141,11 @@ sub import {
                 ${^E_NCODING} = $enc;
             }
         }
-        $HAS_PERLIO or return 1;
+        HAS_PERLIO or return 1;
     }
     else {
         defined( ${^ENCODING} ) and undef ${^ENCODING};
-        undef ${^E_NCODING} if $^V && $^V ge v5.21.7;
+        undef ${^E_NCODING} if PERL_5_21_7;
 
         # implicitly 'use utf8'
         require utf8;      # to fetch $utf8::hint_bits;
@@ -197,8 +195,8 @@ sub import {
 sub unimport {
     no warnings;
     undef ${^ENCODING};
-    undef ${^E_NCODING} if $^V && $^V ge v5.21.7;
-    if ($HAS_PERLIO) {
+    undef ${^E_NCODING} if PERL_5_21_7;
+    if (HAS_PERLIO) {
         binmode( STDIN,  ":raw" );
         binmode( STDOUT, ":raw" );
     }
