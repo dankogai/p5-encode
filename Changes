@@ -3,6 +3,8 @@
 # $Id: Changes,v 2.72 2015/03/14 02:44:39 dankogai Exp dankogai $
 #
 $Revision: 2.72 $ $Date: 2015/03/14 02:44:39 $
+! MANIFEST
++ t/isa.t
 ! Encode.pm
   Addressed RT#103253: Encode::XS does not inherit from Encode::Encoding
   https://rt.cpan.org/Public/Bug/Display.html?id=103253

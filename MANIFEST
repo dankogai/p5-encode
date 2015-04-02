@@ -83,6 +83,7 @@ t/gb2312.utf	test data
 t/grow.t	test script
 t/gsm0338.t	test script
 t/guess.t	test script
+t/isa.t         test script
 t/jis7-fallback.t	test script
 t/jisx0201.enc	test data
 t/jisx0201.utf	test data
