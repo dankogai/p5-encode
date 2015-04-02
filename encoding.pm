@@ -37,64 +37,79 @@ sub in_locale { $^H & ( $locale::hint_bits || 0 ) }
 sub _get_locale_encoding {
     my $locale_encoding;
 
+    if ($^O eq 'MSWin32') {
+        my @tries = (
+            # First try to get the OutputCP. This will work only if we
+            # are attached to a console
+            'Win32.pm' => 'Win32::GetConsoleOutputCP',
+            'Win32/Console.pm' => 'Win32::Console::OutputCP',
+            # If above failed, this means that we are a GUI app
+            # Let's assume that the ANSI codepage is what matters
+            'Win32.pm' => 'Win32::GetACP',
+        );
+        while (@tries) {
+            my $cp = eval {
+                require $tries[0];
+                no strict 'refs';
+                &{$tries[1]}()
+            };
+            if ($cp) {
+                if ($cp == 65001) { # Code page for UTF-8
+                    $locale_encoding = 'UTF-8';
+                } else {
+                    $locale_encoding = 'cp' . $cp;
+                }
+                return $locale_encoding;
+            }
+            splice(@tries, 0, 2)
+        }
+    }
+
     # I18N::Langinfo isn't available everywhere
-    eval {
+    $locale_encoding = eval {
         require I18N::Langinfo;
-        I18N::Langinfo->import(qw(langinfo CODESET));
-        $locale_encoding = langinfo( CODESET() );
+        find_encoding(
+            I18N::Langinfo::langinfo( I18N::Langinfo::CODESET() )
+        )->name
     };
+    return $locale_encoding if defined $locale_encoding;
 
-    my $country_language;
-
-    no warnings 'uninitialized';
-
-    if ( (not $locale_encoding) && in_locale() ) {
-        if ( $ENV{LC_ALL} =~ /^([^.]+)\.([^.@]+)(@.*)?$/ ) {
+    eval {
+        require POSIX;
+        # Get the current locale
+        # Remember that MSVCRT impl is quite different from Unixes
+        my $locale = POSIX::setlocale(POSIX::LC_CTYPE());
+        if ( $locale =~ /^([^.]+)\.([^.@]+)(?:@.*)?$/ ) {
+            my $country_language;
             ( $country_language, $locale_encoding ) = ( $1, $2 );
-        }
-        elsif ( $ENV{LANG} =~ /^([^.]+)\.([^.@]+)(@.*)?$/ ) {
-            ( $country_language, $locale_encoding ) = ( $1, $2 );
-        }
 
-        # LANGUAGE affects only LC_MESSAGES only on glibc
-    }
-    elsif ( not $locale_encoding ) {
-        if (   $ENV{LC_ALL} =~ /\butf-?8\b/i
-            || $ENV{LANG} =~ /\butf-?8\b/i )
-        {
-            $locale_encoding = 'utf8';
+            # Could do more heuristics based on the country and language
+            # since we have Locale::Country and Locale::Language available.
+            # TODO: get a database of Language -> Encoding mappings
+            # (the Estonian database at http://www.eki.ee/letter/
+            # would be excellent!) --jhi
+            if (lc($locale_encoding) eq 'euc') {
+                if ( $country_language =~ /^ja_JP|japan(?:ese)?$/i ) {
+                    $locale_encoding = 'euc-jp';
+                }
+                elsif ( $country_language =~ /^ko_KR|korean?$/i ) {
+                    $locale_encoding = 'euc-kr';
+                }
+                elsif ( $country_language =~ /^zh_CN|chin(?:a|ese)$/i ) {
+                    $locale_encoding = 'euc-cn';
+                }
+                elsif ( $country_language =~ /^zh_TW|taiwan(?:ese)?$/i ) {
+                    $locale_encoding = 'euc-tw';
+                }
+                else {
+                    require Carp;
+                    Carp::croak(
+                        "encoding: Locale encoding '$locale_encoding' too ambiguous"
+                    );
+                }
+            }
         }
-
-        # Could do more heuristics based on the country and language
-        # parts of LC_ALL and LANG (the parts before the dot (if any)),
-        # since we have Locale::Country and Locale::Language available.
-        # TODO: get a database of Language -> Encoding mappings
-        # (the Estonian database at http://www.eki.ee/letter/
-        # would be excellent!) --jhi
-    }
-    if (   defined $locale_encoding
-        && lc($locale_encoding) eq 'euc'
-        && defined $country_language )
-    {
-        if ( $country_language =~ /^ja_JP|japan(?:ese)?$/i ) {
-            $locale_encoding = 'euc-jp';
-        }
-        elsif ( $country_language =~ /^ko_KR|korean?$/i ) {
-            $locale_encoding = 'euc-kr';
-        }
-        elsif ( $country_language =~ /^zh_CN|chin(?:a|ese)$/i ) {
-            $locale_encoding = 'euc-cn';
-        }
-        elsif ( $country_language =~ /^zh_TW|taiwan(?:ese)?$/i ) {
-            $locale_encoding = 'euc-tw';
-        }
-        else {
-            require Carp;
-            Carp::croak(
-                "encoding: Locale encoding '$locale_encoding' too ambiguous"
-            );
-        }
-    }
+    };
 
     return $locale_encoding;
 }
