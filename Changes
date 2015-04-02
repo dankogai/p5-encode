@@ -3,6 +3,17 @@
 # $Id: Changes,v 2.72 2015/03/14 02:44:39 dankogai Exp dankogai $
 #
 $Revision: 2.72 $ $Date: 2015/03/14 02:44:39 $
+! Encode.pm
+  Addressed RT#103253: Encode::XS does not inherit from Encode::Encoding
+  https://rt.cpan.org/Public/Bug/Display.html?id=103253
+! encoding.pm
++ t/encoding-locale.t
+  Pulled: Rewrite of encoding::_get_locale_encoding for more portability #40
+! encoding.pm
+  Pulled: encoding.pm: more inlining #39
+  https://github.com/dankogai/p5-encode/pull/39
+
+2.72 2015/03/14 02:44:39
 ! encoding.pm
   Copied from bleadperl to be in sync with it again.
   http://www.nntp.perl.org/group/perl.perl5.porters/2015/03/msg226576.html

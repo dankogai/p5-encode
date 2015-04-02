@@ -311,7 +311,11 @@ sub predefine_encodings {
         $Encode::Encoding{Unicode} =
           bless { Name => "Internal" } => "Encode::Internal";
     }
-
+    {
+        # https://rt.cpan.org/Public/Bug/Display.html?id=103253
+        package Encode::XS;
+        push @Encode::XS::ISA, 'Encode::Encoding';
+    }
     {
 
         # was in Encode::utf8
