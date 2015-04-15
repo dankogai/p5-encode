@@ -1,5 +1,5 @@
 #
-# $Id$
+# $Id: isa.t,v 1.1 2015/04/02 12:08:24 dankogai Exp $
 #
 use strict;
 use Encode qw/find_encoding/;

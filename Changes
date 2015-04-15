@@ -1,8 +1,8 @@
 # Revision history for Perl extension Encode.
 #
-# $Id: Changes,v 2.72 2015/03/14 02:44:39 dankogai Exp dankogai $
+# $Id: Changes,v 2.73 2015/04/15 23:14:01 dankogai Exp dankogai $
 #
-$Revision: 2.72 $ $Date: 2015/03/14 02:44:39 $
+$Revision: 2.73 $ $Date: 2015/04/15 23:14:01 $
 ! MANIFEST
 + t/isa.t
 ! Encode.pm
