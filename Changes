@@ -3,6 +3,12 @@
 # $Id: Changes,v 2.73 2015/04/15 23:14:01 dankogai Exp dankogai $
 #
 $Revision: 2.73 $ $Date: 2015/04/15 23:14:01 $
+! lib/Encode/MIME/Header.pm
+  Addressed: RT#104422
+     decode('MIME-header') does not properly join similar Q encoded-words
+  https://rt.cpan.org/Ticket/Display.html?id=104422
+
+2.73 2015/04/15 23:14:01
 ! MANIFEST
 + t/isa.t
 ! Encode.pm

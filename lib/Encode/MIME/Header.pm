@@ -47,7 +47,7 @@ sub decode($$;$) {
     $str =~ s/(?:\r\n|[\r\n])[ \t]//gos;
 
     1 while ( $str =~
-        s/(=\?[-0-9A-Za-z_]+\?[Qq]\?)(.*?)\?=\1(.*?\?=)/$1$2$3/ )
+              s/(=\?[-0-9A-Za-z_]+\?[Qq]\?)([^?]*?)\?=\1([^?]*?\?=)/$1$2$3/ )
       ;    # Concat consecutive QP encoded mime headers
            # Fixes breaking inside multi-byte characters
 
