@@ -3,6 +3,21 @@
 # $Id: Changes,v 2.73 2015/04/15 23:14:01 dankogai Exp dankogai $
 #
 $Revision: 2.73 $ $Date: 2015/04/15 23:14:01 $
+! bin/enc2xs
+  Applied patch: #105471: make Encode build with -pedantic
+  https://rt.cpan.org/Ticket/Display.html?id=105471
+! Byte/Makefile.PL
+  CN/Makefile.PL
+  EBCDIC/Makefile.PL
+  JP/Makefile.PL
+  KR/Makefile.PL
+  Makefile.PL
+  Symbol/Makefile.PL
+  TW/Makefile.PL
+  Applied patch: #102826: non-deterministic Makefiles
+  https://rt.cpan.org/Ticket/Display.html?id=102826
+
+2.73 2015/04/15 23:14:01
 ! lib/Encode/MIME/Header.pm
   Addressed: RT#104422
      decode('MIME-header') does not properly join similar Q encoded-words
