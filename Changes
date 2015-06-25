@@ -3,6 +3,9 @@
 # $Id: Changes,v 2.73 2015/04/15 23:14:01 dankogai Exp dankogai $
 #
 $Revision: 2.73 $ $Date: 2015/04/15 23:14:01 $
+! Unicode/Unicode.xs
+  Applied: #101486: [PATCH] reduce compiler warnings and stderr noise (again)
+  https://rt.cpan.org/Ticket/Display.html?id=101486
 ! bin/enc2xs
   Applied patch: #105471: make Encode build with -pedantic
   https://rt.cpan.org/Ticket/Display.html?id=105471
