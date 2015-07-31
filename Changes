@@ -1,8 +1,13 @@
 # Revision history for Perl extension Encode.
 #
-# $Id: Changes,v 2.75 2015/06/30 09:59:53 dankogai Exp dankogai $
+# $Id: Changes,v 2.76 2015/07/31 02:18:28 dankogai Exp dankogai $
 #
-$Revision: 2.75 $ $Date: 2015/06/30 09:59:53 $
+$Revision: 2.76 $ $Date: 2015/07/31 02:18:28 $
+! ucm/koi8-u.ucm
+  Pulled: Fix 0x95
+  https://github.com/dankogai/p5-encode/pull/41
+
+2.75 2015/06/30 09:59:53
 ! Unicode/Unicode.pm Unicode/Unicode.xs encoding.pm
   VERSION++'ed to make bleadperl happy
   Message-Id: <CADED=K4QjMxGFAOLEuZUx3OtN-d-hokhurr4BYBE2E3okoxA7g@mail.gmail.com>

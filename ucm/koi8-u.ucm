@@ -1,7 +1,7 @@
 #
-# $Id: koi8-u.ucm,v 2.1 2013/08/14 02:29:54 dankogai Exp $
+# $Id: koi8-u.ucm,v 2.2 2015/07/31 02:18:28 dankogai Exp dankogai $
 #
-# Written $Id: koi8-u.ucm,v 2.1 2013/08/14 02:29:54 dankogai Exp $
+# Written $Id: koi8-u.ucm,v 2.2 2015/07/31 02:18:28 dankogai Exp dankogai $
 # ./compile -n koi8-u -o Encode/koi8-u.ucm Encode/koi8-u.enc
 #
 # Original table can be obtained at
