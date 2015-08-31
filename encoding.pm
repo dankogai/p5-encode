@@ -12,13 +12,6 @@ use constant {
     PERL_5_21_7 => $^V && $^V ge v5.21.7,
 };
 
-BEGIN {
-    if ( ord("A") == 193 ) {
-        require Carp;
-        Carp::croak("encoding: pragma does not support EBCDIC platforms");
-    }
-}
-
 sub _exception {
     my $name = shift;
     $] > 5.008 and return 0;    # 5.8.1 or higher then no
@@ -115,6 +108,12 @@ sub _get_locale_encoding {
 }
 
 sub import {
+
+    if ( ord("A") == 193 ) {
+        require Carp;
+        Carp::croak("encoding: pragma does not support EBCDIC platforms");
+    }
+
     if ($] >= 5.017) {
 	warnings::warnif("deprecated",
 			 "Use of the encoding pragma is deprecated")
