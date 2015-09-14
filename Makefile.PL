@@ -18,6 +18,7 @@ my %tables =
            '8859-1.ucm',
            'null.ucm',
            'ctrl.ucm',
+           '1252.ucm',
            ]
      );
 
