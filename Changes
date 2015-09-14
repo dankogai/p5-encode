@@ -3,6 +3,13 @@
 # $Id: Changes,v 2.76 2015/07/31 02:18:28 dankogai Exp dankogai $
 #
 $Revision: 2.76 $ $Date: 2015/07/31 02:18:28 $
+! Makefile.PL encoding.t
+  Mend pull/42
+! Encode.xs Makefile.PL encoding.pm encoding.t
+  Pulled: precompile 1252 table as that is now the Pod::Simple default
+  https://github.com/dankogai/p5-encode/pull/42
+
+2.76 2015/07/31 02:18:28
 ! ucm/koi8-u.ucm
   Pulled: Fix 0x95
   https://github.com/dankogai/p5-encode/pull/41

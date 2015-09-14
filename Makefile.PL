@@ -15,10 +15,9 @@ $ENV{PERL_CORE} ||= $ARGV{PERL_CORE} if $ARGV{PERL_CORE};
 my %tables = 
     (
      def_t => ['ascii.ucm',
-           '8859-1.ucm',
+           '8859-1.ucm', # cp1252 is an alias thereof
            'null.ucm',
            'ctrl.ucm',
-           '1252.ucm',
            ]
      );
 
