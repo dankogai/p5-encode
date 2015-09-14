@@ -206,7 +206,10 @@ print "ok 28\n";
 
 # Order of finding the above-Latin1 code point should not matter: both should
 # assume Latin1/Unicode encoding
-print "not " if "\xDF\x{100}" =~ /\x{3af}\x{100}/;
-print "ok 32\n";
-print "not " if "\x{100}\xDF" =~ /\x{100}\x{3af}/;
-print "ok 33\n";
+{
+    use bytes;
+    print "not " if "\xDF\x{100}" =~ /\x{3af}\x{100}/;
+    print "ok 32\n";
+    print "not " if "\x{100}\xDF" =~ /\x{100}\x{3af}/;
+    print "ok 33\n";
+}
