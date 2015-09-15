@@ -166,9 +166,19 @@ CODE:
 		endian = 'V';
 	    }
 	    else {
-		croak("%"SVf":Unrecognised BOM %"UVxf,
-		      *hv_fetch((HV *)SvRV(obj),"Name",4,0),
-		      bom);
+               /* No BOM found, use big-endian fallback as specified in
+                * RFC2781 and the Unicode Standard version 8.0:
+                *
+                *  The UTF-16 encoding scheme may or may not begin with
+                *  a BOM. However, when there is no BOM, and in the
+                *  absence of a higher-level protocol, the byte order
+                *  of the UTF-16 encoding scheme is big-endian.
+                *
+                *  If the first two octets of the text is not 0xFE
+                *  followed by 0xFF, and is not 0xFF followed by 0xFE,
+                *  then the text SHOULD be interpreted as big-endian.
+                */
+                s -= size;
 	    }
 	}
 #if 1

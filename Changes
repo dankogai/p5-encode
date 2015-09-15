@@ -3,6 +3,12 @@
 # $Id: Changes,v 2.76 2015/07/31 02:18:28 dankogai Exp dankogai $
 #
 $Revision: 2.76 $ $Date: 2015/07/31 02:18:28 $
+! Unicode/Unicode.xs Unicode/Unicode.pm
+  Address RT#107043: If no BOM is found, the routine dies.
+  When you decode from UTF-(16|32) without -BE or LE without BOM,
+  Encode now assumes BE accordingly to RFC2781 and the Unicode
+  Standard version 8.0
+  https://rt.cpan.org/Public/Bug/Display.html?id=107043
 ! Makefile.PL encoding.t
   Mend pull/42
 ! Encode.xs Makefile.PL encoding.pm encoding.t
