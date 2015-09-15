@@ -1,8 +1,8 @@
 # Revision history for Perl extension Encode.
 #
-# $Id: Changes,v 2.76 2015/07/31 02:18:28 dankogai Exp dankogai $
+# $Id: Changes,v 2.77 2015/09/15 13:53:27 dankogai Exp dankogai $
 #
-$Revision: 2.76 $ $Date: 2015/07/31 02:18:28 $
+$Revision: 2.77 $ $Date: 2015/09/15 13:53:27 $
 ! Unicode/Unicode.xs Unicode/Unicode.pm
   Address RT#107043: If no BOM is found, the routine dies.
   When you decode from UTF-(16|32) without -BE or LE without BOM,
