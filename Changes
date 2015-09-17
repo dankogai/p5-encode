@@ -3,6 +3,11 @@
 # $Id: Changes,v 2.77 2015/09/15 13:53:27 dankogai Exp dankogai $
 #
 $Revision: 2.77 $ $Date: 2015/09/15 13:53:27 $
+! lib/Encode/Supported.pod
+  Applied: RT#107146: [PATCH] fix a spelling mistake
+  https://rt.cpan.org/Public/Bug/Display.html?id=107146
+
+2.77 2015/09/15 13:53:27
 ! Unicode/Unicode.xs Unicode/Unicode.pm
   Address RT#107043: If no BOM is found, the routine dies.
   When you decode from UTF-(16|32) without -BE or LE without BOM,
