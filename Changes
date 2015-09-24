@@ -3,6 +3,8 @@
 # $Id: Changes,v 2.77 2015/09/15 13:53:27 dankogai Exp dankogai $
 #
 $Revision: 2.77 $ $Date: 2015/09/15 13:53:27 $
+! Makefile.PL
+  Mend pull/42 again.  This time correctly.
 ! lib/Encode/Supported.pod
   Applied: RT#107146: [PATCH] fix a spelling mistake
   https://rt.cpan.org/Public/Bug/Display.html?id=107146
