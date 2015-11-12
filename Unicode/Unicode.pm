@@ -178,7 +178,9 @@ When BE or LE is omitted during decode(), it checks if BOM is at the
 beginning of the string; if one is found, the endianness is set to
 what the BOM says.  
 
-=item Default Byte Order
+=item *
+
+Default Byte Order
 
 When no BOM is found, Encode 2.76 and blow croaked.  Since Encode
 2.77, it falls back to BE accordingly to RFC2781 and the Unicode
