@@ -89,7 +89,7 @@ enc_unpack(pTHX_ U8 **sp, U8 *e, STRLEN size, U8 endian)
     return v;
 }
 
-void
+static void
 enc_pack(pTHX_ SV *result, STRLEN size, U8 endian, UV value)
 {
     U8 *d = (U8 *) SvPV_nolen(result);
