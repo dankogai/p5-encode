@@ -1,8 +1,8 @@
 # Revision history for Perl extension Encode.
 #
-# $Id: Changes,v 2.78 2015/09/24 02:19:21 dankogai Exp dankogai $
+# $Id: Changes,v 2.79 2016/01/22 06:44:53 dankogai Exp dankogai $
 #
-$Revision: 2.78 $ $Date: 2015/09/24 02:19:21 $
+$Revision: 2.79 $ $Date: 2016/01/22 06:44:53 $
 ! lib/Encode/MIME/Header.pm t/mime-header.t
   Address: #88717:
     encode('MIME-Header') does not find word boundaries correctly
@@ -11,7 +11,6 @@ $Revision: 2.78 $ $Date: 2015/09/24 02:19:21 $
 ! lib/Encode/MIME/Header.pm
   Address RT#107775: Inserts an empty line in an encoded header field
   https://rt.cpan.org/Ticket/Display.html?id=107775
-2.78 2015/09/24 02:19:21
 ! lib/Encode/Alias.pm
   Pulled: Update Alias.pm
   https://github.com/dankogai/p5-encode/pull/47
@@ -21,6 +20,10 @@ $Revision: 2.78 $ $Date: 2015/09/24 02:19:21 $
 ! Unicode/Unicode.pm
   Pulled: Unicode.pm: Fix POD error
   https://github.com/dankogai/p5-encode/pull/45
+- META.yml
+! MANIFEST
+  META.yml should not be included in the dist file.
+  It is also obsolete.
 
 2.78 2015/09/24 02:19:21
 ! Makefile.PL
