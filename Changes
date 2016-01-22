@@ -3,6 +3,21 @@
 # $Id: Changes,v 2.78 2015/09/24 02:19:21 dankogai Exp dankogai $
 #
 $Revision: 2.78 $ $Date: 2015/09/24 02:19:21 $
+! lib/Encode/MIME/Header.pm
+  Address RT#107775: Inserts an empty line in an encoded header field
+  https://rt.cpan.org/Ticket/Display.html?id=107775
+2.78 2015/09/24 02:19:21
+! lib/Encode/Alias.pm
+  Pulled: Update Alias.pm
+  https://github.com/dankogai/p5-encode/pull/47
+! Encode.xs Unicode/Unicode.xs
+  Pulled: static funcs in Encode.xs and Unicode.xs
+  https://github.com/dankogai/p5-encode/pull/46
+! Unicode/Unicode.pm
+  Pulled: Unicode.pm: Fix POD error
+  https://github.com/dankogai/p5-encode/pull/45
+
+2.78 2015/09/24 02:19:21
 ! Makefile.PL
   Mend pull/42 again.  This time correctly.
 ! lib/Encode/Supported.pod

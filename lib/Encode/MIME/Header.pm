@@ -136,7 +136,7 @@ sub encode($$;$) {
             $subline .= $word;
         }
         length($subline) and push @subline, $subline;
-        push @line, join( "\n " => @subline );
+        push @line, join( "\n " => grep !/^$/, @subline );
     }
     $_[1] = '' if $chk;
     return (substr($str, 0, 0) . join( "\n", @line ));
