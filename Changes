@@ -3,6 +3,11 @@
 # $Id: Changes,v 2.78 2015/09/24 02:19:21 dankogai Exp dankogai $
 #
 $Revision: 2.78 $ $Date: 2015/09/24 02:19:21 $
+! lib/Encode/MIME/Header.pm t/mime-header.t
+  Address: #88717:
+    encode('MIME-Header') does not find word boundaries correctly
+  By addressing this age-old bug, many other open RTs will be closed.
+  https://rt.cpan.org/Ticket/Display.html?id=88717
 ! lib/Encode/MIME/Header.pm
   Address RT#107775: Inserts an empty line in an encoded header field
   https://rt.cpan.org/Ticket/Display.html?id=107775
