@@ -23,7 +23,7 @@ no utf8;
 
 use strict;
 #use Test::More qw(no_plan);
-use Test::More tests => 14;
+use Test::More tests => 21;
 use_ok("Encode::MIME::Header");
 
 my $eheader =<<'EOS';
@@ -129,4 +129,20 @@ is(Encode::encode('MIME-Q', $rt42627),
 
 # RT87831
 is(Encode::encode('MIME-Header', '0'), '=?UTF-8?B?MA==?=', 'RT87831');
+
+# More from RFC2047 pp.11-12
+my @rfc2047 = (
+    # RFC2047 p.11
+    "(=?ISO-8859-1?Q?a?=)" => '(a)',
+    "(=?ISO-8859-1?Q?a?= b)" => '(a b)',
+    "(=?ISO-8859-1?Q?a?= =?ISO-8859-1?Q?b?=)" => '(ab)',
+    "(=?ISO-8859-1?Q?a?=  =?ISO-8859-1?Q?b?=)" => '(ab)',
+    "(=?ISO-8859-1?Q?a?=\r\n\t=?ISO-8859-1?Q?b?=)" => '(ab)',
+    # RFC2047 p.12
+    "(=?ISO-8859-1?Q?a_b?=)" => '(a b)',
+    "(=?ISO-8859-1?Q?a?= =?ISO-8859-2?Q?_b?=)" => '(a b)'
+    );
+while (my ($e, $d) = splice @rfc2047, 0, 2) {
+    is Encode::decode('MIME-Header', $e) => $d, "rfc2047: $e => $d";
+}
 __END__;
