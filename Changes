@@ -3,6 +3,10 @@
 # $Id: Changes,v 2.80 2016/01/25 14:54:13 dankogai Exp dankogai $
 #
 $Revision: 2.80 $ $Date: 2016/01/25 14:54:13 $
+! t/mime-header.t
+  Add more test vectors from RFC2047, pp.11-12
+
+2.80 2016/01/25 14:54:13
 ! lib/Encode/MIME/Header.pm t/mime-header.t
   Address #111417: 2.79 breaks Email-MIME-1.936 tests
   https://rt.cpan.org/Ticket/Display.html?id=111417
