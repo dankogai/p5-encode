@@ -146,37 +146,39 @@ while (my ($e, $d) = splice @rfc2047, 0, 2) {
     is Encode::decode('MIME-Header', $e) => $d, "rfc2047: $e => $d";
 }
 
-# Encoded words adjacency:
-my @examples_with_apostrophe = (
-    "Hackerangreb mod it-leverandør bag app til DSB's grænsekontrol",
-    'Finansminister i opgør med kommunerne: Hjort smækker kassen i',
+SKIP: {
+    skip "Perl v5.10 or better required", 30, unless $] > 5.010;
+    # Encoded words adjacency:
+    my @examples_with_apostrophe = (
+        "Hackerangreb mod it-leverandør bag app til DSB's grænsekontrol",
+        'Finansminister i opgør med kommunerne: Hjort smækker kassen i',
 'Politikere afviser Vederlagskommissionen: Det kan godt være, at vi er nogle tøsedrenge',
-    "Hackerangreb mod it-leverandør bag app til DSB's grænsekontrol",
-    "Stjernespækket rock'n'roll-stumfilm får premiere på Copenhell",
-    'The Game: Store Vega, København, Mandag d. 25-01-2016 [3/6]',
-);
-foreach my $example (@examples_with_apostrophe) {
-    my $encoded = Encode::encode( 'MIME-Q', $example );
-    unlike(
-        $encoded,
-        qr/([:]\Q=?\E|\Q?=\E[',]|'$)/m,
-        "encoded-word does not have adjacent non-whitespace"
+        "Hackerangreb mod it-leverandør bag app til DSB's grænsekontrol",
+        "Stjernespækket rock'n'roll-stumfilm får premiere på Copenhell",
+        'The Game: Store Vega, København, Mandag d. 25-01-2016 [3/6]',
     );
-}
+    foreach my $example (@examples_with_apostrophe) {
+        my $encoded = Encode::encode( 'MIME-Q', $example );
+        unlike(
+            $encoded,
+            qr/([:]\Q=?\E|\Q?=\E[',]|'$)/m,
+            "encoded-word does not have adjacent non-whitespace"
+        );
+    }
 
-# Introducing whitespace within "words":
-my @examples_with_comma = (
-    'Amerikaner kan vinde rekordsum på 6,4 milliarder i lotto',
+    # Introducing whitespace within "words":
+    my @examples_with_comma = (
+        'Amerikaner kan vinde rekordsum på 6,4 milliarder i lotto',
 'Time Warner Cable says data from up to 320,000 customers was probably just stolen',
 "I've played the Powerball simulator for 1,092 years and have lost 91% of my money",
 "Independent economists: TPP will kill 450,000 US jobs; 75,000 Japanese jobs, 58,000 Canadian jobs",
-);
-foreach my $example (@examples_with_comma) {
-    my $encoded = Encode::encode( 'MIME-Q', $example );
-    unlike( $encoded, qr/(^ ,|,$)/m, 'number with comma kept' );
-}
+    );
+    foreach my $example (@examples_with_comma) {
+        my $encoded = Encode::encode( 'MIME-Q', $example );
+        unlike( $encoded, qr/(^ ,|,$)/m, 'number with comma kept' );
+    }
 
-my @examples_with_split = (
+    my @examples_with_split = (
 "Fancy a few days a week in Irvine, CA?, Irvine, CA, United States (Perl Careers)",
 "Web Developer/Software Engineer, Ladera Ranch, CA, United States (IntelliSurvey, Inc.)",
 "Perl Web App Development (MRTG and DNS Management), Philadelphia, PA (Quonix)",
@@ -198,11 +200,12 @@ my @examples_with_split = (
 "UK's GCHQ spy agency pushes VOIP crypto protocol that 'facilitates mass surveillance,' says researcher",
 "Disney's prized theme-park no-fly zone means it can't use drones in its firework shows",
 "The Police Use of Force project: a scorecard for America's police-department policies",
-);
-foreach my $example (@examples_with_split) {
-    my $encoded = Encode::encode( 'MIME-Q', $example );
-    unlike( $encoded, qr/[('"\/]$/m,
-        'parenthesis/apostrophes/quotation mark/slash not split' );
-}
+    );
+    foreach my $example (@examples_with_split) {
+        my $encoded = Encode::encode( 'MIME-Q', $example );
+        unlike( $encoded, qr/[('"\/]$/m,
+            'parenthesis/apostrophes/quotation mark/slash not split' );
+    }
 
+}
 __END__
