@@ -4,9 +4,6 @@
 #
 $Revision: 2.80 $ $Date: 2016/01/25 14:54:13 $
 ! t/mime-header.t
-  merge t/mime-header.t @ https://github.com/asjo/p5-encode
-  https://github.com/asjo/p5-encode/commit/19dcbff63e71909ffda7c151a73c5baaffe2976c
-! t/mime-header.t
   Add more test vectors from RFC2047, pp.11-12
 
 2.80 2016/01/25 14:54:13

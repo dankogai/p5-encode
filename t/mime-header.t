@@ -23,7 +23,7 @@ no utf8;
 
 use strict;
 #use Test::More qw(no_plan);
-use Test::More tests => 52;
+use Test::More tests => 21;
 use_ok("Encode::MIME::Header");
 
 my $eheader =<<'EOS';
@@ -144,68 +144,5 @@ my @rfc2047 = (
     );
 while (my ($e, $d) = splice @rfc2047, 0, 2) {
     is Encode::decode('MIME-Header', $e) => $d, "rfc2047: $e => $d";
-}
-
-SKIP: {
-    skip "Perl v5.10 or better required", 30, unless $] > 5.010;
-    # Encoded words adjacency:
-    my @examples_with_apostrophe = (
-        "Hackerangreb mod it-leverandør bag app til DSB's grænsekontrol",
-        'Finansminister i opgør med kommunerne: Hjort smækker kassen i',
-'Politikere afviser Vederlagskommissionen: Det kan godt være, at vi er nogle tøsedrenge',
-        "Hackerangreb mod it-leverandør bag app til DSB's grænsekontrol",
-        "Stjernespækket rock'n'roll-stumfilm får premiere på Copenhell",
-        'The Game: Store Vega, København, Mandag d. 25-01-2016 [3/6]',
-    );
-    foreach my $example (@examples_with_apostrophe) {
-        my $encoded = Encode::encode( 'MIME-Q', $example );
-        unlike(
-            $encoded,
-            qr/([:]\Q=?\E|\Q?=\E[',]|'$)/m,
-            "encoded-word does not have adjacent non-whitespace"
-        );
-    }
-
-    # Introducing whitespace within "words":
-    my @examples_with_comma = (
-        'Amerikaner kan vinde rekordsum på 6,4 milliarder i lotto',
-'Time Warner Cable says data from up to 320,000 customers was probably just stolen',
-"I've played the Powerball simulator for 1,092 years and have lost 91% of my money",
-"Independent economists: TPP will kill 450,000 US jobs; 75,000 Japanese jobs, 58,000 Canadian jobs",
-    );
-    foreach my $example (@examples_with_comma) {
-        my $encoded = Encode::encode( 'MIME-Q', $example );
-        unlike( $encoded, qr/(^ ,|,$)/m, 'number with comma kept' );
-    }
-
-    my @examples_with_split = (
-"Fancy a few days a week in Irvine, CA?, Irvine, CA, United States (Perl Careers)",
-"Web Developer/Software Engineer, Ladera Ranch, CA, United States (IntelliSurvey, Inc.)",
-"Perl Web App Development (MRTG and DNS Management), Philadelphia, PA (Quonix)",
-"Perl Developer for Reporting & Analysis, South West London, UK (Brainbox Digital)",
-"automated mobile app API feed classification, telecommute (company based in Northern Virginia) (Synthima)",
-"Senior Perl Developer, Newtown, Kolkata, West Bengal, India (Tata Consultancy Services)",
-"Perl/CGI Web Developer Contract, Lafayette, CA, United States (WebScheduler LLC)",
-"Senior Perl Developer - Do you love customers?, London, United Kingdom (Perl Careers)",
-"University of Maryland claims sponsor's chocolate milk helps concussion recovery",
-"3D Systems abandons its Cube printers, but DRM means you can't buy filament from anyone else",
-"Oregon's domestic terrorists just got 55 gal of lube to go with all those dildos",
-'UK Home Secretary auditions for a Python sketch: "UK does not undertake mass surveillance"',
-"Elderly birdwatcher makes mincemeat out of Oregon domestic terrorist/mall ninja",
-"Listen to the late actor Alan Rickman read a Tibetan exile's real-life torture testimony",
-"India's Internet activists have a SOPA moment: no \"poor Internet for poor people\"",
-"Jeremy Corbyn proposes ban on dividends from companies that don't pay living wages",
-"Revealed: the hidden web of big-business money backing Europe and America's pro-TTIP \"think tanks\"",
-"TV networks are pissed at Netflix for not disclosing data on what you're watching",
-"UK's GCHQ spy agency pushes VOIP crypto protocol that 'facilitates mass surveillance,' says researcher",
-"Disney's prized theme-park no-fly zone means it can't use drones in its firework shows",
-"The Police Use of Force project: a scorecard for America's police-department policies",
-    );
-    foreach my $example (@examples_with_split) {
-        my $encoded = Encode::encode( 'MIME-Q', $example );
-        unlike( $encoded, qr/[('"\/]$/m,
-            'parenthesis/apostrophes/quotation mark/slash not split' );
-    }
-
 }
 __END__
