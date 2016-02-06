@@ -23,7 +23,7 @@ no utf8;
 
 use strict;
 #use Test::More qw(no_plan);
-use Test::More tests => 21;
+use Test::More tests => 28;
 use_ok("Encode::MIME::Header");
 
 my $eheader =<<'EOS';
@@ -72,40 +72,38 @@ To: dankogai@dan.co.jp (小飼=Kogai, 弾=Dan)
 Subject: 漢字、カタカナ、ひらがなを含む、非常に長いタイトル行が一体全体どのようにしてEncodeされるのか？
 EOS
 
-my $bheader =<<'EOS';
-From: =?UTF-8?B?5bCP6aO8IOW8viA8ZGFua29nYWlAZGFuLmNvLmpwPg==?=
-To: =?UTF-8?B?ZGFua29nYWlAZGFuLmNvLmpwICjlsI/po7w9S29nYWksIOW8vj1EYW4p?=
-Subject: 
- =?UTF-8?B?5ryi5a2X44CB44Kr44K/44Kr44OK44CB44Gy44KJ44GM44Gq44KS5ZCr44KA?=
- =?UTF-8?B?44CB6Z2e5bi444Gr6ZW344GE44K/44Kk44OI44Or6KGM44GM5LiA5L2T5YWo?=
- =?UTF-8?B?5L2T44Gp44Gu44KI44GG44Gr44GX44GmRW5jb2Rl44GV44KM44KL44Gu44GL?=
- =?UTF-8?B?77yf?=
+my $bheader =<<EOS;
+From: =?UTF-8?B?5bCP6aO8IOW8vg==?= <dankogai\@dan.co.jp>
+To: dankogai\@dan.co.jp =?UTF-8?B?KOWwj+mjvD1Lb2dhaSwg5by+PURhbik=?=
+Subject: =?UTF-8?B?5ryi5a2X44CB44Kr44K/44Kr44OK44CB44Gy44KJ44GM44Gq44KS?=\r
+ =?UTF-8?B?5ZCr44KA44CB6Z2e5bi444Gr6ZW344GE44K/44Kk44OI44Or6KGM44GM5LiA?=\r
+ =?UTF-8?B?5L2T5YWo5L2T44Gp44Gu44KI44GG44Gr44GX44GmRW5jb2Rl44GV44KM44KL?=\r
+ =?UTF-8?B?44Gu44GL77yf?=
 EOS
 
-my $qheader=<<'EOS';
-From: =?UTF-8?Q?=E5=B0=8F=E9=A3=BC=20=E5=BC=BE=20=3Cdankogai=40?=
- =?UTF-8?Q?dan=2Eco=2Ejp=3E?=
-To: =?UTF-8?Q?dankogai=40dan=2Eco=2Ejp=20=28?=
- =?UTF-8?Q?=E5=B0=8F=E9=A3=BC=3DKogai=2C=20=E5=BC=BE=3DDan?= =?UTF-8?Q?=29?=
-Subject: 
- =?UTF-8?Q?=E6=BC=A2=E5=AD=97=E3=80=81=E3=82=AB=E3=82=BF=E3=82=AB=E3=83=8A?=
- =?UTF-8?Q?=E3=80=81=E3=81=B2=E3=82=89=E3=81=8C=E3=81=AA=E3=82=92=E5=90=AB?=
- =?UTF-8?Q?=E3=82=80=E3=80=81=E9=9D=9E=E5=B8=B8=E3=81=AB=E9=95=B7=E3=81=84?=
- =?UTF-8?Q?=E3=82=BF=E3=82=A4=E3=83=88=E3=83=AB=E8=A1=8C=E3=81=8C=E4=B8=80?=
- =?UTF-8?Q?=E4=BD=93=E5=85=A8=E4=BD=93=E3=81=A9=E3=81=AE=E3=82=88=E3=81=86?=
- =?UTF-8?Q?=E3=81=AB=E3=81=97=E3=81=A6Encode=E3=81=95=E3=82=8C?=
- =?UTF-8?Q?=E3=82=8B=E3=81=AE=E3=81=8B=EF=BC=9F?=
+my $qheader=<<EOS;
+From: =?UTF-8?Q?=E5=B0=8F=E9=A3=BC=20=E5=BC=BE?= <dankogai\@dan.co.jp>
+To: dankogai\@dan.co.jp\r
+ =?UTF-8?Q?=28=E5=B0=8F=E9=A3=BC=3DKogai=2C=20=E5=BC=BE=3DDa?=\r
+ =?UTF-8?Q?n=29?=
+Subject: =?UTF-8?Q?=E6=BC=A2=E5=AD=97=E3=80=81=E3=82=AB=E3=82=BF=E3=82=AB?=\r
+ =?UTF-8?Q?=E3=83=8A=E3=80=81=E3=81=B2=E3=82=89=E3=81=8C=E3=81=AA=E3=82=92?=\r
+ =?UTF-8?Q?=E5=90=AB=E3=82=80=E3=80=81=E9=9D=9E=E5=B8=B8=E3=81=AB=E9=95=B7?=\r
+ =?UTF-8?Q?=E3=81=84=E3=82=BF=E3=82=A4=E3=83=88=E3=83=AB=E8=A1=8C=E3=81=8C?=\r
+ =?UTF-8?Q?=E4=B8=80=E4=BD=93=E5=85=A8=E4=BD=93=E3=81=A9=E3=81=AE=E3=82=88?=\r
+ =?UTF-8?Q?=E3=81=86=E3=81=AB=E3=81=97=E3=81=A6Encode=E3=81=95?=\r
+ =?UTF-8?Q?=E3=82=8C=E3=82=8B=E3=81=AE=E3=81=8B=EF=BC=9F?=
 EOS
 
 is(Encode::decode('MIME-Header', $bheader), $dheader, "decode B");
 is(Encode::decode('MIME-Header', $qheader), $dheader, "decode Q");
-is(Encode::encode('MIME-B', $dheader)."\n", $bheader, "encode B");
-is(Encode::encode('MIME-Q', $dheader)."\n", $qheader, "encode Q");
+is(Encode::encode('MIME-B', $dheader), $bheader, "encode B");
+is(Encode::encode('MIME-Q', $dheader), $qheader, "encode Q");
 
 $dheader = "What is =?UTF-8?B?w4RwZmVs?= ?";
 $bheader = "=?UTF-8?B?V2hhdCBpcyA9P1VURi04P0I/dzRSd1ptVnM/PSA/?=";
 $qheader = "=?UTF-8?Q?What=20is=20=3D=3FUTF=2D8=3FB=3Fw4R?="
-         . "\n " . "=?UTF-8?Q?wZmVs=3F=3D=20=3F?=";
+         . "\r\n " . "=?UTF-8?Q?wZmVs=3F=3D=20=3F?=";
 is(Encode::encode('MIME-B', $dheader), $bheader, "Double decode B");
 is(Encode::encode('MIME-Q', $dheader), $qheader, "Double decode Q");
 {
@@ -116,9 +114,12 @@ is(Encode::encode('MIME-Q', $dheader), $qheader, "Double decode Q");
     my $pound_1024 = "\N{POUND SIGN}1024";
     is(Encode::encode('MIME-Q' => $pound_1024), '=?UTF-8?Q?=C2=A31024?=',
        'pound 1024');
+    is(Encode::decode('MIME-Q' => Encode::encode('MIME-Q' => $pound_1024)),
+       $pound_1024, 'pound 1024 identity');
 }
 
 is(Encode::encode('MIME-Q', "\x{fc}"), '=?UTF-8?Q?=C3=BC?=', 'Encode latin1 characters');
+is(Encode::decode('MIME-Q', Encode::encode('MIME-Q', "\x{fc}")), "\x{fc}", 'latin1 characters identity');
 
 # RT42627
 
@@ -126,6 +127,9 @@ my $rt42627 = Encode::decode_utf8("\x{c2}\x{a3}xxxxxxxxxxxxxxxxxxx0");
 is(Encode::encode('MIME-Q', $rt42627), 
    '=?UTF-8?Q?=C2=A3xxxxxxxxxxxxxxxxxxx?= =?UTF-8?Q?0?=',
    'MIME-Q encoding does not truncate trailing zeros');
+is(Encode::decode('MIME-Q', Encode::encode('MIME-Q', $rt42627)),
+   $rt42627,
+   'MIMQ-Q trailing zeros identity');
 
 # RT87831
 is(Encode::encode('MIME-Header', '0'), '=?UTF-8?B?MA==?=', 'RT87831');
@@ -145,4 +149,9 @@ my @rfc2047 = (
 while (my ($e, $d) = splice @rfc2047, 0, 2) {
     is Encode::decode('MIME-Header', $e) => $d, "rfc2047: $e => $d";
 }
+
+is(Encode::encode('MIME-Q', 'From: mailbox@host, encoded string'), 'From: mailbox@host, =?UTF-8?Q?encoded=20string?=');
+is(Encode::encode('MIME-Q', 'From: Phrase with spaces <mailbox@host>'), 'From: =?UTF-8?Q?Phrase=20with=20spaces?= <mailbox@host>');
+is(Encode::encode('MIME-Q', 'From: Phrase' . "\x{fc}" . ' <mailbox@host>'), 'From: =?UTF-8?Q?Phrase=C3=BC?= <mailbox@host>');
+is(Encode::encode('MIME-Q', 'From: Phrase' . "\x{fc}" . ' (comment with spaces) ' . "\x{fc}" . '<mailbox@host>, mailbox2@host (comment )'), 'From: =?UTF-8?Q?Phrase=C3=BC?= (comment with spaces)' . "\r\n " . '=?UTF-8?Q?=C3=BC=3Cmailbox=40host=3E=2C?= mailbox2@host (comment )');
 __END__

@@ -6,7 +6,7 @@ use warnings;
 use parent qw(Encode::MIME::Header);
 
 $Encode::Encoding{'MIME-Header-ISO_2022_JP'} =
-  bless { encode => 'B', bpl => 76, Name => 'MIME-Header-ISO_2022_JP' } =>
+  bless { decode_b => '1', decode_q => '1', encode => 'B', bpl => 76, Name => 'MIME-Header-ISO_2022_JP' } =>
   __PACKAGE__;
 
 use constant HEAD => '=?ISO-2022-JP?B?';
