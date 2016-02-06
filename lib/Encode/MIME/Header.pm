@@ -26,7 +26,7 @@ $Encode::Encoding{'MIME-B'} = bless {
 
 $Encode::Encoding{'MIME-Q'} = bless {
     %seed,
-    decode_q => 1,
+    decode_b => 0,
     encode   => 'Q',
     Name     => 'MIME-Q',
 } => __PACKAGE__;
@@ -36,36 +36,37 @@ use parent qw(Encode::Encoding);
 sub needs_lines { 1 }
 sub perlio_ok   { 0 }
 
+# RFC 2047 and RFC 2231 grammar
+my $re_charset = qr/[-0-9A-Za-z_]+/;
+my $re_language = qr/[A-Za-z]{1,8}(?:-[A-Za-z]{1,8})*/;
+my $re_encoding = qr/[QqBb]/;
+my $re_encoded_text = qr/[^\?\s]*/;
+my $re_encoded_word = qr/=\?$re_charset(?:\*$re_language)?\?$re_encoding\?$re_encoded_text\?=/;
+my $re_capture_encoded_word = qr/=\?($re_charset)((?:\*$re_language)?)\?($re_encoding)\?($re_encoded_text)\?=/;
+
 sub decode($$;$) {
     use utf8;
     my ( $obj, $str, $chk ) = @_;
+
     # zap spaces between encoded words
-    $str =~ s/\?=\s+=\?/\?==\?/gos;
-    
+    1 while $str =~ s/($re_encoded_word)\s+($re_encoded_word)/$1$2/gos;
+
     # multi-line header to single line
-    $str =~ s/(?:\r\n|[\r\n])[ \t]//gos;
+    $str =~ s/(?:\r\n|[\r\n])([ \t])/$1/gos;
 
-    1 while ( $str =~
-              s/(=\?[-0-9A-Za-z_]+\?[Qq]\?)([^?]*?)\?=\1([^?]*?\?=)/$1$2$3/ )
-      ;    # Concat consecutive QP encoded mime headers
-           # Fixes breaking inside multi-byte characters
+    # concat consecutive encoded mime words with same charset, language and encoding
+    # fixes breaking inside multi-byte characters
+    1 while $str =~ s/$re_capture_encoded_word=\?\1\2\?\3\?($re_encoded_text)\?=/=\?$1$2\?$3\?$4$5\?=/o;
 
-    $str =~ s{
-        =\?              # begin encoded word
-        ([-0-9A-Za-z_]+) # charset (encoding)
-        (?:\*[A-Za-z]{1,8}(?:-[A-Za-z]{1,8})*)? # language (RFC 2231)
-        \?([QqBb])\?     # delimiter
-        (.*?)            # Base64-encodede contents
-        \?=              # end encoded word
-    }{
-        if      (uc($2) eq 'B'){
+    $str =~ s{$re_capture_encoded_word}{
+        if      (uc($3) eq 'B'){
             $obj->{decode_b} or croak qq(MIME "B" unsupported);
-            decode_b($1, $3, $chk);
-        } elsif (uc($2) eq 'Q'){
+            decode_b($1, $4, $chk);
+        } elsif (uc($3) eq 'Q'){
             $obj->{decode_q} or croak qq(MIME "Q" unsupported);
-            decode_q($1, $3, $chk);
+            decode_q($1, $4, $chk);
         } else {
-            croak qq(MIME "$2" encoding is nonexistent!);
+            croak qq(MIME "$3" encoding is nonexistent!);
         }
     }egox;
     $_[1] = $str if $chk;
@@ -92,53 +93,76 @@ sub decode_q {
       : $d->decode( $q, $chk || Encode::FB_PERLQQ );
 }
 
-my $especials =
-  join( '|' => map { quotemeta( chr($_) ) }
-      unpack( "C*", qq{()<>,;:"'/[]?=} ) );
-
-my $re_encoded_word = qr{
-    =\?                # begin encoded word
-    (?:[-0-9A-Za-z_]+) # charset (encoding)
-    (?:\*[A-Za-z]{1,8}(?:-[A-Za-z]{1,8})*)? # language (RFC 2231)
-    \?(?:[QqBb])\?     # delimiter
-    (?:.*?)            # Base64-encodede contents
-    \?=                # end encoded word
-}xo;
-
-my $re_especials = qr{$re_encoded_word|$especials}xo;
-
-# cf:
-#    https://rt.cpan.org/Ticket/Display.html?id=88717
-#    https://www.ietf.org/rfc/rfc0822.txt
-my $re_linear_white_space = qr{(?:[ \t]|\r\n?)};
-
 sub encode($$;$) {
     my ( $obj, $str, $chk ) = @_;
-    my @line = ();
-    for my $line ( split /\r\n|[\r\n]/o, $str ) {
-        my ( @word, @subline );
-        if ($line =~ /\A([\w\-]+:\s+)(.*)\z/o) {
-            push @word, $1, $obj->_encode($2); # "X-Header-Name: ..."
-        } else {
-            push @word, $obj->_encode($line);  # anything else
-        }
-        my $subline = '';
-        for my $word (@word) {
-            use bytes ();
-            if ( bytes::length($subline) + bytes::length($word) >
-                $obj->{bpl} - 1 )
-            {
-                push @subline, $subline;
-                $subline = '';
-            }
-            $subline .= ' ' if ($subline =~ /\?=$/ and $word =~ /^=\?/);
-            $subline .= $word;
-        }
-        length($subline) and push @subline, $subline;
-        push @line, join( "\n " => grep !/^$/, @subline );
+
+    my @input = split /(\r\n|\r|\n)/o, $str;
+    my $output = substr($str, 0, 0); # to propagate taintedness
+
+    while ( @input ) {
+        my $line = shift @input;
+        my $sep = shift @input;
+        my $encoded = _encode_line($line, $obj);
+        $output .= _fold_line($encoded, $obj);
+        $output .= $sep if defined $sep;
     }
-    $_[1] = '' if $chk;
-    return (substr($str, 0, 0) . join( "\n", @line ));
+
+    return $output;
+}
+
+sub _fold_line {
+    my ($line, $obj) = @_;
+    my $bpl = $obj->{bpl};
+    my $output = '';
+
+    while ( length $line ) {
+        if ( $line =~ s/^(.{0,$bpl})(\s|\z)// ) {
+            $output .= $1;
+            $output .= "\r\n" . $2 if length $line;
+        } elsif ( $line =~ s/(\s)(.*)$// ) {
+            $output .= $line;
+            $line = $2;
+            $output .= "\r\n" . $1 if length $line;
+        } else {
+            $output .= $line;
+            last;
+        }
+    }
+
+    return $output;
+}
+
+sub _encode_line {
+    my ($line, $obj) = @_;
+    my $bpl = $obj->{bpl};
+    my $output = '';
+
+    # try to detect header name and do not encode it
+    # needed for backward compatibility...
+    my $header_length = 0;
+    if ( $line =~ s/^([A-Za-z-]+:[ \t]+)//o ) {
+        $output .= $1;
+        $header_length = length($1);
+    }
+
+    my $safe_chars = q=!#$%&'*+,-./0-9:;A-Z[\\]^_`a-z{|}~=;
+    my $re_comment = qr/\([$safe_chars <>@]{1,$bpl}\)/;
+    my $re_addr = qr/[$safe_chars]{1,$bpl}\@[$safe_chars]{1,$bpl}/;
+    my $re_angle_addr = qr/<$re_addr>/;
+    my $re_not_encode = qr/(?:[ \t]+|\A)(?:$re_comment|$re_addr|$re_angle_addr)(?:[ \t]+|\z)/;
+
+    # try to detect substrings which looks like comment or email address and do not encode them if it is possible
+    # needed for backward compatibility but still should generate valid and correct mixed MIME encoded string
+    while ( $line =~ s/($re_not_encode)(.*)//o ) {
+        $output .= $obj->_encode($line, $header_length) if length $line;
+        $output .= $1;
+        $line = $2;
+        $header_length = 0 if $header_length;
+    }
+
+    $output .= $obj->_encode($line, $header_length) if length $line;
+
+    return $output;
 }
 
 use constant HEAD   => '=?UTF-8?';
@@ -146,25 +170,26 @@ use constant TAIL   => '?=';
 use constant SINGLE => { B => \&_encode_b, Q => \&_encode_q, };
 
 sub _encode {
-    my ( $o, $str ) = @_;
+    my ( $o, $str, $skip ) = @_;
     my $enc  = $o->{encode};
     my $llen = ( $o->{bpl} - length(HEAD) - 2 - length(TAIL) );
 
     # to coerce a floating-point arithmetics, the following contains
     # .0 in numbers -- dankogai
+    my $skip_llen = ( $llen - $skip ) * ( $enc eq 'B' ? 3.0 / 4.0 : 1.0 / 3.0 );
     $llen *= $enc eq 'B' ? 3.0 / 4.0 : 1.0 / 3.0;
     my @result = ();
     my $chunk  = '';
     while ( length( my $chr = substr( $str, 0, 1, '' ) ) ) {
         use bytes ();
-        if ( bytes::length($chunk) + bytes::length($chr) > $llen ) {
+        if ( bytes::length($chunk) + bytes::length($chr) > ( @result ? $llen : $skip_llen ) ) {
             push @result, SINGLE->{$enc}($chunk);
             $chunk = '';
         }
         $chunk .= $chr;
     }
     length($chunk) and push @result, SINGLE->{$enc}($chunk);
-    return @result;
+    return join(' ', @result);
 }
 
 sub _encode_b {
@@ -221,6 +246,17 @@ encode are left as is and long lines are folded within 76 bytes per
 line.
 
 =head1 BUGS
+
+Before version 2.81 this module had broken both decoder and encoder.
+It caused that module inserted additional spaces and produced invalid
+MIME encoded strings. Decoder lot of times discarded white space
+characters, incorrectly interpreted data or decoded Base64 string as
+Quoted-Printable.
+
+As of version 2.81 encoder should be fully compliant of RFC 2047.
+Due to bugs in previous versions decoder is less strict and allows
+to decode also incorrectly encoded strings by previous versions of
+this module. But decoded strings will be slightly different.
 
 It would be nice to support encoding to non-UTF8, such as =?ISO-2022-JP?
 and =?ISO-8859-1?= but that makes the implementation too complicated.
