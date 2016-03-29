@@ -180,7 +180,7 @@ sub _encode_b_len {
     return bytes::length($chunk) * 4 / 3;
 }
 
-my $valid_q_chars = '0-9A-Za-z !*+-/';
+my $valid_q_chars = '0-9A-Za-z !*+\-/';
 
 sub _encode_q {
     my ( $chunk ) = @_;
