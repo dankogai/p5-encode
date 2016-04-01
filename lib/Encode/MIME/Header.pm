@@ -204,7 +204,7 @@ __END__
 
 =head1 NAME
 
-Encode::MIME::Header -- MIME 'B' and 'Q' header encoding
+Encode::MIME::Header -- MIME 'B' and 'Q' encoding for unstructured header
 
 =head1 SYNOPSIS
 
@@ -214,7 +214,8 @@ Encode::MIME::Header -- MIME 'B' and 'Q' header encoding
 
 =head1 ABSTRACT
 
-This module implements RFC 2047 Mime Header Encoding.  There are 3
+This module implements RFC 2047 MIME encoding for unstructured header.
+It cannot be used for structured headers like From or To.  There are 3
 variant encoding names; C<MIME-Header>, C<MIME-B> and C<MIME-Q>.  The
 difference is described below
 
