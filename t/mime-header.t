@@ -24,7 +24,7 @@ use strict;
 use utf8;
 use charnames ":full";
 
-use Test::More tests => 115;
+use Test::More tests => 130;
 use_ok("Encode::MIME::Header");
 
 my @decode_tests = (
@@ -105,6 +105,11 @@ my @encode_tests = (
     "0" => "=?UTF-8?B?MA==?=", "=?UTF-8?Q?0?=",
     # RT88717
     "Hey foo\x{2024}bar:whee" => "=?UTF-8?B?SGV5IGZvb+KApGJhcjp3aGVl?=", "=?UTF-8?Q?Hey_foo=E2=80=A4bar=3Awhee?=",
+    # valid q chars
+    "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz !*+-/" => "=?UTF-8?B?MDEyMzQ1Njc4OUFCQ0RFRkdISUpLTE1OT1BRUlNUVVZXWFlaYWJjZGVmZ2hpams=?=\r\n =?UTF-8?B?bG1ub3BxcnN0dXZ3eHl6ICEqKy0v?=", "=?UTF-8?Q?0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz_?=\r\n =?UTF-8?Q?!*+-/?=",
+    # invalid q chars
+    "." => "=?UTF-8?B?Lg==?=", "=?UTF-8?Q?=2E?=",
+    "," => "=?UTF-8?B?LA==?=", "=?UTF-8?Q?=2C?=",
 );
 
 sub info {
