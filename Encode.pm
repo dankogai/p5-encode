@@ -468,6 +468,10 @@ I<ENCODING> and returns a sequence of octets.  I<ENCODING> can be either a
 canonical name or an alias.  For encoding names and aliases, see
 L</"Defining Aliases">.  For CHECK, see L</"Handling Malformed Data">.
 
+B<CAVEAT>: the input scalar I<STRING> might be modified in-place depending
+on what is set in CHECK. See L</LEAVE_SRC> if you want your inputs to be
+left unchanged.
+
 For example, to convert a string from Perl's internal format into
 ISO-8859-1, also known as Latin1:
 
@@ -491,6 +495,10 @@ Perl's internal form.  As with encode(),
 I<ENCODING> can be either a canonical name or an alias. For encoding names
 and aliases, see L</"Defining Aliases">; for I<CHECK>, see L</"Handling
 Malformed Data">.
+
+B<CAVEAT>: the input scalar I<OCTETS> might be modified in-place depending
+on what is set in CHECK. See L</LEAVE_SRC> if you want your inputs to be
+left unchanged.
 
 For example, to convert ISO-8859-1 data into a string in Perl's
 internal format:
@@ -606,6 +614,10 @@ from UTF-8 into a sequence of logical characters.
 Because not all sequences of octets are valid UTF-8,
 it is quite possible for this function to fail.
 For CHECK, see L</"Handling Malformed Data">.
+
+B<CAVEAT>: the input I<$octets> might be modified in-place depending on
+what is set in CHECK. See L</LEAVE_SRC> if you want your inputs to be
+left unchanged.
 
 =head2 Listing available encodings
 
