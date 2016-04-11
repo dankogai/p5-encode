@@ -1,8 +1,17 @@
 # Revision history for Perl extension Encode.
 #
-# $Id: Changes,v 2.83 2016/03/24 07:49:54 dankogai Exp $
+# $Id: Changes,v 2.84 2016/04/11 07:17:02 dankogai Exp dankogai $
 #
-$Revision: 2.83 $ $Date: 2016/03/24 07:49:54 $
+$Revision: 2.84 $ $Date: 2016/04/11 07:17:02 $
+! lib/Encode/MIME/Header.pm
+  Pulled: Encode::MIME::Header:
+    Update description that this module is only for unstructured header
+  https://github.com/dankogai/p5-encode/pull/53
+! lib/Encode/MIME/Header.pm t/mime-header.t
+  Pulled: Encode::MIME::Header: Fix valid_q_chars, '-' needs to be escaped
+  https://github.com/dankogai/p5-encode/pull/52
+
+2.83 2016/03/24 07:49:54
 ! lib/Encode/MIME/Header.pm t/mime-header.t
   Both decoder and encoder are rewritten by Pali Rohár.
   Encoder should be now fully compliant of RFC 2047.

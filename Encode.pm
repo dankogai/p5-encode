@@ -1,10 +1,10 @@
 #
-# $Id: Encode.pm,v 2.83 2016/03/24 07:49:36 dankogai Exp $
+# $Id: Encode.pm,v 2.84 2016/04/11 07:16:52 dankogai Exp $
 #
 package Encode;
 use strict;
 use warnings;
-our $VERSION = sprintf "%d.%02d", q$Revision: 2.83 $ =~ /(\d+)/g;
+our $VERSION = sprintf "%d.%02d", q$Revision: 2.84 $ =~ /(\d+)/g;
 use constant DEBUG => !!$ENV{PERL_ENCODE_DEBUG};
 use XSLoader ();
 XSLoader::load( __PACKAGE__, $VERSION );
