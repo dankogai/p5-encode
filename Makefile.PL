@@ -51,6 +51,9 @@ WriteMakefile(
         Exporter   => '5.57',   # use Exporter 'import';
 	parent     => '0.221',  # version bundled with 5.10.1
     },
+    TEST_REQUIRES => {
+        'Test::More' => '0.81_01',
+    },
     PMLIBDIRS   => \@pmlibdirs,
     INSTALLDIRS => ($] < 5.011 ? 'perl' : 'site'),
     META_MERGE        => {
