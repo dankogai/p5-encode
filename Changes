@@ -3,6 +3,18 @@
 # $Id: Changes,v 2.84 2016/04/11 07:17:02 dankogai Exp dankogai $
 #
 $Revision: 2.84 $ $Date: 2016/04/11 07:17:02 $
+  Merged: RT#115168:
+    [PATCH] Passing regex globals to decode() results in wrong result
+  https://rt.cpan.org/Ticket/Display.html?id=115168
+! Makefile.pl
+  Pulled: t/encoding-locale.t fails with Test::More@0.80 or before.
+  https://github.com/dankogai/p5-encode/pull/55
+! Encode.pm
+  Pulled: In-place modifications made explicit in docs for encode(),
+  decode() and decode_utf8()
+  https://github.com/dankogai/p5-encode/pull/54
+
+2.84 2016/04/11 07:17:02
 ! lib/Encode/MIME/Header.pm
   Pulled: Encode::MIME::Header:
     Update description that this module is only for unstructured header

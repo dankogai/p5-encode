@@ -25,7 +25,7 @@ my @character_set = ('0'..'9', 'A'..'Z', 'a'..'z');
 my @source = qw(ascii iso8859-1 cp1250);
 my @destiny = qw(cp1047 cp37 posix-bc);
 my @ebcdic_sets = qw(cp1047 cp37 posix-bc);
-plan test => 38+$n*@encodings + 2*@source*@destiny*@character_set + 2*@ebcdic_sets*256 + 6 + 5;
+plan test => 38+$n*@encodings + 2*@source*@destiny*@character_set + 2*@ebcdic_sets*256 + 6 + 5 + 2;
 my $str = join('',map(chr($_),0x20..0x7E));
 my $cpy = $str;
 ok(length($str),from_to($cpy,'iso8859-1','Unicode'),"Length Wrong");
@@ -164,3 +164,11 @@ $key = (keys %{{ "whatever" => '' }})[0];
 $kopy = $key;
 decode("UTF-16LE", $kopy, Encode::FB_CROAK);
 ok $key, "whatever", 'decode with shared hash key scalars';
+
+my $latin1 = find_encoding('latin1');
+my $orig = "\316";
+$orig =~ /(.)/;
+ok $latin1->encode($1), $orig, '[cpan #115168] passing magic regex globals to encode';
+
+*a = $orig;
+ok $latin1->encode(*a), '*main::'.$orig, '[cpan #115168] passing typeglobs to encode';
