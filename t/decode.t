@@ -27,6 +27,8 @@ my $latin1 = find_encoding('latin1');
 $orig = "\N{U+0080}";
 $orig =~ /(.)/;
 is($latin1->decode($1), $orig, '[cpan #115168] passing magic regex globals to decode');
-
-*a = $orig;
-is($latin1->decode(*a), '*main::'.$orig, '[cpan #115168] passing typeglobs to decode');
+SKIP: {
+    skip "Perl Version ($]) is older than v5.16", 1 if $] < 5.016;
+    *a = $orig;
+    is($latin1->decode(*a), '*main::'.$orig, '[cpan #115168] passing typeglobs to decode');
+}

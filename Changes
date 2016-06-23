@@ -3,6 +3,8 @@
 # $Id: Changes,v 2.84 2016/04/11 07:17:02 dankogai Exp dankogai $
 #
 $Revision: 2.84 $ $Date: 2016/04/11 07:17:02 $
+! t/decode.t
+  Skip test #5: passing typeglobs to decode if perl < v5.16
 ! Encode.xs t/cow.t
   Patched: #115540 (from_to affecting COW strings)
   https://rt.cpan.org/Ticket/Display.html?id=115540
