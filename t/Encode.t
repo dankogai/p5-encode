@@ -169,6 +169,8 @@ my $latin1 = find_encoding('latin1');
 my $orig = "\316";
 $orig =~ /(.)/;
 ok $latin1->encode($1), $orig, '[cpan #115168] passing magic regex globals to encode';
-
-*a = $orig;
-ok $latin1->encode(*a), '*main::'.$orig, '[cpan #115168] passing typeglobs to encode';
+SKIP: {
+    skip "Perl Version ($]) is older than v5.16", 1 if $] < 5.016;
+    *a = $orig;
+    ok $latin1->encode(*a), '*main::'.$orig, '[cpan #115168] passing typeglobs to encode';
+}
