@@ -680,10 +680,14 @@ CODE:
     SV *fallback_cb = &PL_sv_undef;
     encode_t *enc = INT2PTR(encode_t *, SvIV(SvRV(obj)));
     if (SvREADONLY(src) || SvSMAGICAL(src) || SvGMAGICAL(src) || !SvPOK(src)) {
+        /*
         SV *tmp;
         tmp = sv_newmortal();
         sv_copypv(tmp, src);
         src = tmp;
+        */
+        src = sv_mortalcopy(src);
+        SvPV_force_nolen(src);
     }
     sv_utf8_upgrade(src);
     if (SvROK(check_sv)){
