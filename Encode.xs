@@ -455,9 +455,10 @@ CODE:
 {
     dSP; ENTER; SAVETMPS;
     if (src == &PL_sv_undef || SvROK(src)) src = sv_2mortal(newSV(0));
+    check = SvROK(check_sv) ? ENCODE_PERLQQ|ENCODE_LEAVE_SRC : SvIV(check_sv);
+    if (!(check & ENCODE_LEAVE_SRC) && SvIsCOW(src)) sv_force_normal(src); // disassociate from any other scalars before doing in-place modifications
     s = (U8 *) SvPV(src, slen);
     e = (U8 *) SvEND(src);
-    check = SvROK(check_sv) ? ENCODE_PERLQQ|ENCODE_LEAVE_SRC : SvIV(check_sv);
     /* 
      * PerlIO check -- we assume the object is of PerlIO if renewed
      */

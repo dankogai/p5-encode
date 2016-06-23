@@ -3,6 +3,10 @@
 # $Id: Changes,v 2.84 2016/04/11 07:17:02 dankogai Exp dankogai $
 #
 $Revision: 2.84 $ $Date: 2016/04/11 07:17:02 $
+! Encode.xs t/cow.t
+  Patched: #115540 (from_to affecting COW strings)
+  https://rt.cpan.org/Ticket/Display.html?id=115540
+! Encode.xs t/Encode.t t/decode.t
   Merged: RT#115168:
     [PATCH] Passing regex globals to decode() results in wrong result
   https://rt.cpan.org/Ticket/Display.html?id=115168
