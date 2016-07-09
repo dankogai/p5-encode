@@ -318,6 +318,32 @@ strict_utf8(pTHX_ SV* sv)
     return SvTRUE(*svp);
 }
 
+static UV
+convert_utf8_multi_seq(U8* s, STRLEN len, bool strict)
+{
+    UV uv;
+
+    if (strict && len > 4)
+        return 0;
+
+    uv = NATIVE_TO_UTF(*s) & UTF_START_MASK(len);
+
+    len--;
+    s++;
+
+    while (len--) {
+        if (!UTF8_IS_CONTINUATION(*s))
+            return 0;
+        uv = UTF8_ACCUMULATE(uv, *s);
+        s++;
+    }
+
+    if (strict && (UNICODE_IS_SURROGATE(uv) || UNICODE_IS_NONCHAR(uv) || uv > PERL_UNICODE_MAX))
+        return 0;
+
+    return uv;
+}
+
 static U8*
 process_utf8(pTHX_ SV* dst, U8* s, U8* e, SV *check_sv,
              bool encode, bool strict, bool stop_at_partial)
@@ -366,19 +392,12 @@ process_utf8(pTHX_ SV* dst, U8* s, U8* e, SV *check_sv,
                 goto malformed_byte;
             }
 
-            uv = utf8n_to_uvuni(s, e - s, &ulen,
-                                UTF8_CHECK_ONLY | (strict ? UTF8_ALLOW_STRICT :
-                                                            UTF8_ALLOW_NONSTRICT)
-                               );
-#if 1 /* perl-5.8.6 and older do not check UTF8_ALLOW_LONG */
-        if (strict && uv > PERL_UNICODE_MAX)
-        ulen = (STRLEN) -1;
-#endif
-            if (ulen == (STRLEN) -1) {
+            ulen = skip;
+            uv = convert_utf8_multi_seq(s, skip, strict);
+            if (uv == 0) {
                 if (strict) {
-                    uv = utf8n_to_uvuni(s, e - s, &ulen,
-                                        UTF8_CHECK_ONLY | UTF8_ALLOW_NONSTRICT);
-                    if (ulen == (STRLEN) -1)
+                    uv = convert_utf8_multi_seq(s, skip, 0);
+                    if (uv == 0)
                         goto malformed_byte;
                     goto malformed;
                 }
