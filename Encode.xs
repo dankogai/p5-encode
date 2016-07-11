@@ -318,32 +318,6 @@ strict_utf8(pTHX_ SV* sv)
     return SvTRUE(*svp);
 }
 
-static UV
-convert_utf8_multi_seq(U8* s, STRLEN len, bool strict)
-{
-    UV uv;
-
-    if (strict && len > 4)
-        return 0;
-
-    uv = NATIVE_TO_UTF(*s) & UTF_START_MASK(len);
-
-    len--;
-    s++;
-
-    while (len--) {
-        if (!UTF8_IS_CONTINUATION(*s))
-            return 0;
-        uv = UTF8_ACCUMULATE(uv, *s);
-        s++;
-    }
-
-    if (strict && (UNICODE_IS_SURROGATE(uv) || UNICODE_IS_NONCHAR(uv) || uv > PERL_UNICODE_MAX))
-        return 0;
-
-    return uv;
-}
-
 static U8*
 process_utf8(pTHX_ SV* dst, U8* s, U8* e, SV *check_sv,
              bool encode, bool strict, bool stop_at_partial)
@@ -352,8 +326,6 @@ process_utf8(pTHX_ SV* dst, U8* s, U8* e, SV *check_sv,
     STRLEN ulen;
     SV *fallback_cb;
     int check;
-    U8 *d;
-    STRLEN dlen;
 
     if (SvROK(check_sv)) {
 	/* croak("UTF-8 decoder doesn't support callback CHECK"); */
@@ -368,12 +340,10 @@ process_utf8(pTHX_ SV* dst, U8* s, U8* e, SV *check_sv,
     SvPOK_only(dst);
     SvCUR_set(dst,0);
 
-    dlen = (s && e && s < e) ? e-s+1 : 1;
-    d = (U8 *) SvGROW(dst, dlen);
-
     while (s < e) {
         if (UTF8_IS_INVARIANT(*s)) {
-            *d++ = *s++;
+            sv_catpvn(dst, (char *)s, 1);
+            s++;
             continue;
         }
 
@@ -392,12 +362,19 @@ process_utf8(pTHX_ SV* dst, U8* s, U8* e, SV *check_sv,
                 goto malformed_byte;
             }
 
-            ulen = skip;
-            uv = convert_utf8_multi_seq(s, skip, strict);
-            if (uv == 0) {
+            uv = utf8n_to_uvuni(s, e - s, &ulen,
+                                UTF8_CHECK_ONLY | (strict ? UTF8_ALLOW_STRICT :
+                                                            UTF8_ALLOW_NONSTRICT)
+                               );
+#if 1 /* perl-5.8.6 and older do not check UTF8_ALLOW_LONG */
+        if (strict && uv > PERL_UNICODE_MAX)
+        ulen = (STRLEN) -1;
+#endif
+            if (ulen == (STRLEN) -1) {
                 if (strict) {
-                    uv = convert_utf8_multi_seq(s, skip, 0);
-                    if (uv == 0)
+                    uv = utf8n_to_uvuni(s, e - s, &ulen,
+                                        UTF8_CHECK_ONLY | UTF8_ALLOW_NONSTRICT);
+                    if (ulen == (STRLEN) -1)
                         goto malformed_byte;
                     goto malformed;
                 }
@@ -406,8 +383,7 @@ process_utf8(pTHX_ SV* dst, U8* s, U8* e, SV *check_sv,
 
 
              /* Whole char is good */
-             memcpy(d, s, skip);
-             d += skip;
+             sv_catpvn(dst,(char *)s,skip);
              s += skip;
              continue;
         }
@@ -446,25 +422,13 @@ process_utf8(pTHX_ SV* dst, U8* s, U8* e, SV *check_sv,
 	    if (encode){
 		SvUTF8_off(subchar); /* make sure no decoded string gets in */
 	    }
-            dlen += SvCUR(subchar) - ulen;
-            SvCUR_set(dst, d-(U8 *)SvPVX(dst));
-            *SvEND(dst) = '\0';
             sv_catsv(dst, subchar);
             SvREFCNT_dec(subchar);
-            d = (U8 *) SvGROW(dst, dlen) + SvCUR(dst);
         } else {
-            STRLEN fbcharlen = strlen(FBCHAR_UTF8);
-            dlen += fbcharlen - ulen;
-            if (SvLEN(dst) < dlen) {
-                SvCUR_set(dst, d-(U8 *)SvPVX(dst));
-                d = (U8 *) sv_grow(dst, dlen) + SvCUR(dst);
-            }
-            memcpy(d, FBCHAR_UTF8, fbcharlen);
-            d += fbcharlen;
+            sv_catpv(dst, FBCHAR_UTF8);
         }
         s += ulen;
     }
-    SvCUR_set(dst, d-(U8 *)SvPVX(dst));
     *SvEND(dst) = '\0';
 
     return s;
