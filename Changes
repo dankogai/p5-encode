@@ -3,8 +3,6 @@
 # $Id: Changes,v 2.84 2016/04/11 07:17:02 dankogai Exp dankogai $
 #
 $Revision: 2.84 $ $Date: 2016/04/11 07:17:02 $
-! t/Encode.t
-  s/use Test/use Test::More/
 ! t/Encode.t t/decode.t
   Skip tests that pass typeglobs to decode if perl < v5.16
 ! Encode.xs t/cow.t
