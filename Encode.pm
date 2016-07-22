@@ -218,8 +218,34 @@ sub from_to($$$;$) {
         require Carp;
         Carp::croak("Unknown encoding '$to'");
     }
-    my $uni = $f->decode($string);
-    $_[0] = $string = $t->encode( $uni, $check );
+
+    # For Unicode, warnings need to be caught and re-issued at this level
+    # so that callers can disable utf8 warnings lexically.
+    my $uni;
+    if ( ref($f) eq 'Encode::Unicode' ) {
+        my $warn = '';
+        {
+            local $SIG{__WARN__} = sub { $warn = shift };
+            $uni = $f->decode($string);
+        }
+        warnings::warnif('utf8', $warn) if length $warn;
+    }
+    else {
+        $uni = $f->decode($string);
+    }
+
+    if ( ref($t) eq 'Encode::Unicode' ) {
+        my $warn = '';
+        {
+            local $SIG{__WARN__} = sub { $warn = shift };
+            $_[0] = $string = $t->encode( $uni, $check );
+        }
+        warnings::warnif('utf8', $warn) if length $warn;
+    }
+    else {
+        $_[0] = $string = $t->encode( $uni, $check );
+    }
+
     return undef if ( $check && length($uni) );
     return defined( $_[0] ) ? length($string) : undef;
 }
