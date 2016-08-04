@@ -1,8 +1,18 @@
 # Revision history for Perl extension Encode.
 #
-# $Id: Changes,v 2.84 2016/04/11 07:17:02 dankogai Exp dankogai $
+# $Id: Changes,v 2.85 2016/08/04 03:15:58 dankogai Exp dankogai $
 #
-$Revision: 2.84 $ $Date: 2016/04/11 07:17:02 $
+$Revision: 2.85 $ $Date: 2016/08/04 03:15:58 $
+! Encode.pm bin/enc2xs bin/encguess bin/piconv bin/ucmlint bin/unidump
+  Pulled: CVE-2016-1238: avoid loading optional modules from .
+  https://github.com/dankogai/p5-encode/pull/58
+! Encode.pm t/utf8warnings.t
+  Pulled: Rethrow 'utf8' warnings in from_to as well #57
+  https://github.com/dankogai/p5-encode/pull/57
+! Encode.xs
+  Pulled and fixed:
+    Encode::utf8: Performance optimization for strict UTF-8 encoder #56
+  https://github.com/dankogai/p5-encode/pull/56
 ! t/Encode.t
   s/use Test/use Test::More/
 ! t/Encode.t t/decode.t
