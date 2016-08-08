@@ -155,7 +155,9 @@ sub import {
                 ${^E_NCODING} = $enc;
             }
         }
-        HAS_PERLIO or return 1;
+        if (! HAS_PERLIO ) {
+            return 1;
+        }
     }
     else {
         defined( ${^ENCODING} ) and undef ${^ENCODING};
