@@ -3,6 +3,11 @@
 # $Id: Changes,v 2.85 2016/08/04 03:15:58 dankogai Exp dankogai $
 #
 $Revision: 2.85 $ $Date: 2016/08/04 03:15:58 $
+! Encode.xs
+  Patched: RT#116817 [PATCH] Avoid a C++ comment
+  https://rt.cpan.org/Ticket/Display.html?id=116817
+
+2.85 2016/08/04 03:15:58
 ! Encode.pm bin/enc2xs bin/encguess bin/piconv bin/ucmlint bin/unidump
   Pulled: CVE-2016-1238: avoid loading optional modules from .
   https://github.com/dankogai/p5-encode/pull/58
