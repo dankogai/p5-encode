@@ -482,6 +482,10 @@ MODULE = Encode		PACKAGE = Encode::utf8	PREFIX = Method_
 
 PROTOTYPES: DISABLE
 
+#ifndef SvIsCOW
+# define SvIsCOW(sv) (SvREADONLY(sv) && SvFAKE(sv))
+#endif
+
 void
 Method_decode_xs(obj,src,check_sv = &PL_sv_no)
 SV *	obj
@@ -718,6 +722,17 @@ CODE:
     XSRETURN(1);
 }
 
+
+#ifndef SvPV_force_nolen
+#   define SvPV_force_nolen(sv) SvPV_force_flags_nolen(sv, SV_GMAGIC)
+#endif
+
+#ifndef SvPV_force_flags_nolen
+#   define SvPV_force_flags_nolen(sv, flags) \
+        ((SvFLAGS(sv) & (SVf_POK|SVf_THINKFIRST)) == SVf_POK \
+        ? SvPVX(sv) : sv_pvn_force_flags(sv, &PL_na, flags))
+#endif
+
 void
 Method_encode(obj,src,check_sv = &PL_sv_no)
 SV *	obj
@@ -928,10 +943,6 @@ CODE:
 }
 OUTPUT:
     RETVAL
-
-#ifndef SvIsCOW
-# define SvIsCOW(sv) (SvREADONLY(sv) && SvFAKE(sv))
-#endif
 
 SV *
 _utf8_on(sv)
