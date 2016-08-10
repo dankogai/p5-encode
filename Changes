@@ -3,6 +3,10 @@
 # $Id: Changes,v 2.85 2016/08/04 03:15:58 dankogai Exp dankogai $
 #
 $Revision: 2.85 $ $Date: 2016/08/04 03:15:58 $
+! encoding.pm t/enc_data.t t/enc_eucjp.t t/enc_module.t t/enc_utf8.t
+  t/encoding.t t/jperl.t
+  Fixed: #116196: [PATCH] Synchronize encoding.pm with blead
+  https://rt.cpan.org/Ticket/Display.html?id=116196
 ! Byte/Makefile.PL
   Patched: #111421: Won't build with statically built perls
   https://rt.cpan.org/Public/Bug/Display.html?id=111421
