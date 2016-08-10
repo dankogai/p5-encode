@@ -1,8 +1,8 @@
 # Revision history for Perl extension Encode.
 #
-# $Id: Changes,v 2.85 2016/08/04 03:15:58 dankogai Exp dankogai $
+# $Id: Changes,v 2.86 2016/08/10 18:08:45 dankogai Exp dankogai $
 #
-$Revision: 2.85 $ $Date: 2016/08/04 03:15:58 $
+$Revision: 2.86 $ $Date: 2016/08/10 18:08:45 $
 ! encoding.pm t/enc_data.t t/enc_eucjp.t t/enc_module.t t/enc_utf8.t
   t/encoding.t t/jperl.t
   Fixed: #116196: [PATCH] Synchronize encoding.pm with blead
