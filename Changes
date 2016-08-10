@@ -3,6 +3,12 @@
 # $Id: Changes,v 2.85 2016/08/04 03:15:58 dankogai Exp dankogai $
 #
 $Revision: 2.85 $ $Date: 2016/08/04 03:15:58 $
+! Byte/Makefile.PL
+  Patched: #111421: Won't build with statically built perls
+  https://rt.cpan.org/Public/Bug/Display.html?id=111421
+! Encode.xs encoding.pm
+  Pulled: Fixes for 5.8.x compilation failures
+  https://github.com/dankogai/p5-encode/pull/60
 ! Encode.xs
   Patched: RT#116817 [PATCH] Avoid a C++ comment
   https://rt.cpan.org/Ticket/Display.html?id=116817
