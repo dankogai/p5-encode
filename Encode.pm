@@ -254,6 +254,7 @@ sub from_to($$$;$) {
 
 sub encode_utf8($) {
     my ($str) = @_;
+    return undef unless defined $str;
     utf8::encode($str);
     return $str;
 }
