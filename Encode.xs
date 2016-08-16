@@ -325,13 +325,20 @@ strict_utf8(pTHX_ SV* sv)
 #define UNICODE_IS_NONCHAR(c) ((c >= 0xFDD0 && c <= 0xFDEF) || (c & 0xFFFE) == 0xFFFE)
 #endif
 
+#ifndef UNICODE_IS_SUPER
+#define UNICODE_IS_SUPER(c) (c > PERL_UNICODE_MAX)
+#endif
+
+#define UNICODE_IS_STRICT(c) (!UNICODE_IS_SURROGATE(c) && !UNICODE_IS_NONCHAR(c) && !UNICODE_IS_SUPER(c))
+
+/*
+ * Convert non strict utf8 sequence of len >= 2 to unicode codepoint
+ */
 static UV
-convert_utf8_multi_seq(U8* s, STRLEN len, bool strict)
+convert_utf8_multi_seq(U8* s, STRLEN len, STRLEN *rlen)
 {
     UV uv;
-
-    if (strict && len > 4)
-        return 0;
+    U8 *ptr = s;
 
     uv = NATIVE_TO_UTF(*s) & UTF_START_MASK(len);
 
@@ -339,15 +346,15 @@ convert_utf8_multi_seq(U8* s, STRLEN len, bool strict)
     s++;
 
     while (len--) {
-        if (!UTF8_IS_CONTINUATION(*s))
+        if (!UTF8_IS_CONTINUATION(*s)) {
+            *rlen = s-ptr;
             return 0;
+        }
         uv = UTF8_ACCUMULATE(uv, *s);
         s++;
     }
 
-    if (strict && (UNICODE_IS_SURROGATE(uv) || UNICODE_IS_NONCHAR(uv) || uv > PERL_UNICODE_MAX))
-        return 0;
-
+    *rlen = s-ptr;
     return uv;
 }
 
@@ -384,32 +391,30 @@ process_utf8(pTHX_ SV* dst, U8* s, U8* e, SV *check_sv,
             continue;
         }
 
+        ulen = 1;
         if (UTF8_IS_START(*s)) {
             U8 skip = UTF8SKIP(s);
             if ((s + skip) > e) {
                 if (stop_at_partial || (check & ENCODE_STOP_AT_PARTIAL)) {
                     const U8 *p = s + 1;
                     for (; p < e; p++) {
-                        if (!UTF8_IS_CONTINUATION(*p))
+                        if (!UTF8_IS_CONTINUATION(*p)) {
+                            ulen = p-s;
                             goto malformed_byte;
+                        }
                     }
                     break;
                 }
 
+                ulen = e-s;
                 goto malformed_byte;
             }
 
-            ulen = skip;
-            uv = convert_utf8_multi_seq(s, skip, strict);
-            if (uv == 0) {
-                if (strict) {
-                    uv = convert_utf8_multi_seq(s, skip, 0);
-                    if (uv == 0)
-                        goto malformed_byte;
-                    goto malformed;
-                }
+            uv = convert_utf8_multi_seq(s, skip, &ulen);
+            if (uv == 0)
                 goto malformed_byte;
-            }
+            else if (strict && !UNICODE_IS_STRICT(uv))
+                goto malformed;
 
 
              /* Whole char is good */
@@ -422,7 +427,8 @@ process_utf8(pTHX_ SV* dst, U8* s, U8* e, SV *check_sv,
         /* If we get here there is something wrong with alleged UTF-8 */
     malformed_byte:
         uv = (UV)*s;
-        ulen = 1;
+        if (ulen == 0)
+            ulen = 1;
 
     malformed:
         if (check & ENCODE_DIE_ON_ERR){
