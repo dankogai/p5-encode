@@ -331,6 +331,13 @@ strict_utf8(pTHX_ SV* sv)
 
 #define UNICODE_IS_STRICT(c) (!UNICODE_IS_SURROGATE(c) && !UNICODE_IS_NONCHAR(c) && !UNICODE_IS_SUPER(c))
 
+#ifndef UTF_ACCUMULATION_OVERFLOW_MASK
+#ifndef CHARBITS
+#define CHARBITS CHAR_BIT
+#endif
+#define UTF_ACCUMULATION_OVERFLOW_MASK (((UV) UTF_CONTINUATION_MASK) << ((sizeof(UV) * CHARBITS) - UTF_ACCUMULATION_SHIFT))
+#endif
+
 /*
  * Convert non strict utf8 sequence of len >= 2 to unicode codepoint
  */
@@ -339,6 +346,7 @@ convert_utf8_multi_seq(U8* s, STRLEN len, STRLEN *rlen)
 {
     UV uv;
     U8 *ptr = s;
+    bool overflowed = 0;
 
     uv = NATIVE_TO_UTF(*s) & UTF_START_MASK(len);
 
@@ -350,11 +358,17 @@ convert_utf8_multi_seq(U8* s, STRLEN len, STRLEN *rlen)
             *rlen = s-ptr;
             return 0;
         }
+        if (uv & UTF_ACCUMULATION_OVERFLOW_MASK)
+            overflowed = 1;
         uv = UTF8_ACCUMULATE(uv, *s);
         s++;
     }
 
     *rlen = s-ptr;
+
+    if (overflowed || *rlen > (STRLEN)UNISKIP(uv))
+        return 0;
+
     return uv;
 }
 
