@@ -366,8 +366,10 @@ convert_utf8_multi_seq(U8* s, STRLEN len, STRLEN *rlen)
 
     *rlen = s-ptr;
 
-    if (overflowed || *rlen > (STRLEN)UNISKIP(uv))
+    if (overflowed || *rlen > (STRLEN)UNISKIP(uv)) {
+        *rlen = 1;
         return 0;
+    }
 
     return uv;
 }
