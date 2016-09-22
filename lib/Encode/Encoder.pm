@@ -85,7 +85,9 @@ sub AUTOLOAD {
         from_to( $self->{data}, $self->{encoding}, $obj->name, 1 );
     }
     else {
-        $self->{data} = $obj->encode( $self->{data}, 1 );
+        if ( defined($self->{data}) ) {
+            $self->{data} = $obj->encode( $self->{data}, 1 );
+        }
     }
     $self->{encoding} = $obj->name;
     return $self;
