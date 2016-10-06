@@ -3,6 +3,7 @@ use strict;
 use warnings;
 our $VERSION = do { my @r = ( q$Revision: 1.1 $ =~ /\d+/g ); sprintf "%d." . "%02d" x $#r, @r };
 
+# NOTE: This table must be 1:1 mapping
 our %MIME_NAME_OF = (
     'AdobeStandardEncoding' => 'Adobe-Standard-Encoding',
     'AdobeSymbol'           => 'Adobe-Symbol-Encoding',
@@ -73,12 +74,19 @@ our %MIME_NAME_OF = (
     'UTF-32BE'              => 'UTF-32BE',
     'UTF-32LE'              => 'UTF-32LE',
     'UTF-7'                 => 'UTF-7',
-    'utf8'                  => 'UTF-8',
     'utf-8-strict'          => 'UTF-8',
     'viscii'                => 'VISCII',
 );
 
+# NOTE: %MIME_NAME_OF is still 1:1 mapping
+our %ENCODE_NAME_OF = map { uc $MIME_NAME_OF{$_} => $_ } keys %MIME_NAME_OF;
+
+# Add additional 1:N mapping
+$MIME_NAME_OF{'utf8'} = 'UTF-8';
+
 sub get_mime_name($) { $MIME_NAME_OF{$_[0]} };
+
+sub get_encode_name($) { $ENCODE_NAME_OF{uc $_[0]} };
 
 1;
 __END__
