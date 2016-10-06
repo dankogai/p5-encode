@@ -177,11 +177,12 @@ sub _encode_line {
     my ($obj, $str) = @_;
     my $enc = $obj->{encode};
     my $enc_len = $enc . '_len';
-    my $llen = ( $obj->{bpl} - length(HEAD) - 2 - length(TAIL) );
+    my $llen = $obj->{bpl};
 
     my @result = ();
     my $chunk = '';
     while ( length( my $chr = substr($str, 0, 1, '') ) ) {
+        my $chr = Encode::encode_utf8($chr);
         if ( SINGLE->{$enc_len}($chunk . $chr) > $llen ) {
             push @result, SINGLE->{$enc}($chunk);
             $chunk = '';
@@ -194,21 +195,19 @@ sub _encode_line {
 
 sub _encode_b {
     my ($chunk) = @_;
-    return HEAD . 'B?' . MIME::Base64::encode(Encode::encode_utf8($chunk), '') . TAIL;
+    return HEAD . 'B?' . MIME::Base64::encode($chunk, '') . TAIL;
 }
 
 sub _encode_b_len {
     my ($chunk) = @_;
-    use bytes ();
-    return bytes::length($chunk) * 4 / 3;
+    return length(HEAD . 'B?' . TAIL) + ( length($chunk) + 2 ) / 3 * 4;
 }
 
-my $valid_q_chars = '0-9A-Za-z !*+\-/';
+my $re_invalid_q_char = qr/[^0-9A-Za-z !*+\-\/]/;
 
 sub _encode_q {
     my ($chunk) = @_;
-    $chunk = Encode::encode_utf8($chunk);
-    $chunk =~ s{([^$valid_q_chars])}{
+    $chunk =~ s{($re_invalid_q_char)}{
         join('', map { sprintf('=%02X', $_) } unpack('C*', $1))
     }egox;
     $chunk =~ s/ /_/go;
@@ -217,9 +216,8 @@ sub _encode_q {
 
 sub _encode_q_len {
     my ($chunk) = @_;
-    use bytes ();
-    my $valid_count = () = $chunk =~ /[$valid_q_chars]/sgo;
-    return ( bytes::length($chunk) - $valid_count ) * 3 + $valid_count;
+    my $invalid_count = () = $chunk =~ /$re_invalid_q_char/sgo;
+    return length(HEAD . 'Q?' . TAIL) + ( $invalid_count * 3 ) + ( length($chunk) - $invalid_count );
 }
 
 1;

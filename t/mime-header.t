@@ -24,7 +24,7 @@ use strict;
 use utf8;
 use charnames ":full";
 
-use Test::More tests => 150;
+use Test::More tests => 186;
 
 BEGIN {
     use_ok("Encode::MIME::Header");
@@ -132,41 +132,58 @@ my @encode_tests = (
     # RT88717
     "Hey foo\x{2024}bar:whee" => "=?UTF-8?B?SGV5IGZvb+KApGJhcjp3aGVl?=", "=?UTF-8?Q?Hey_foo=E2=80=A4bar=3Awhee?=",
     # valid q chars
-    "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz !*+-/" => "=?UTF-8?B?MDEyMzQ1Njc4OUFCQ0RFRkdISUpLTE1OT1BRUlNUVVZXWFlaYWJjZGVmZ2hpams=?=\r\n =?UTF-8?B?bG1ub3BxcnN0dXZ3eHl6ICEqKy0v?=", "=?UTF-8?Q?0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz_?=\r\n =?UTF-8?Q?!*+-/?=",
+    "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz !*+-/" => "=?UTF-8?B?MDEyMzQ1Njc4OUFCQ0RFRkdISUpLTE1OT1BRUlNUVVZXWFlaYWJjZGVmZ2hp?=\r\n =?UTF-8?B?amtsbW5vcHFyc3R1dnd4eXogISorLS8=?=", "=?UTF-8?Q?0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz_?=\r\n =?UTF-8?Q?!*+-/?=",
     # invalid q chars
     "." => "=?UTF-8?B?Lg==?=", "=?UTF-8?Q?=2E?=",
     "," => "=?UTF-8?B?LA==?=", "=?UTF-8?Q?=2C?=",
+    # long ascii sequence
+    "a" x 100 => "=?UTF-8?B?YWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFh?=\r\n =?UTF-8?B?YWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFh?=\r\n =?UTF-8?B?YWFhYWFhYWFhYQ==?=", "=?UTF-8?Q?aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa?=\r\n =?UTF-8?Q?aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa?=",
+    # long unicode sequence
+    "😀" x 100 => "=?UTF-8?B?8J+YgPCfmIDwn5iA8J+YgPCfmIDwn5iA8J+YgPCfmIDwn5iA8J+YgPCfmIA=?=\r\n " x 9 . "=?UTF-8?B?8J+YgA==?=", join("\r\n ", ("=?UTF-8?Q?=F0=9F=98=80=F0=9F=98=80=F0=9F=98=80=F0=9F=98=80=F0=9F=98=80?=") x 20),
 );
 
 sub info {
-    my ($str) = @_;
+    my ($str, $str1, $str2) = @_;
+    substr $str1, 1000, -3, "..." if defined $str1 and length $str1 > 1000;
+    substr $str2, 1000, -3, "..." if defined $str2 and length $str2 > 1000;
+    $str .= ": $str1" if defined $str1;
+    $str .= " => $str2" if defined $str2;
     $str = Encode::encode_utf8($str);
     $str =~ s/\r/\\r/gs;
     $str =~ s/\n/\\n/gs;
     return $str;
 }
 
+sub check_length {
+    my ($str) = @_;
+    my @lines = split /\r\n /, $str;
+    my @long = grep { length($_) > 75 } @lines;
+    return scalar @long == 0;
+}
+
 my @splice;
 
 @splice = @encode_tests;
 while (my ($d, $b, $q) = splice @splice, 0, 3) {
-    is Encode::encode('MIME-Header', $d) => $b, info("encode default: $d => $b");
-    is Encode::encode('MIME-B', $d) => $b, info("encode base64: $d => $b");
-    is Encode::encode('MIME-Q', $d) => $q, info("encode qp: $d => $q");
-    is Encode::decode('MIME-B', $b) => $d, info("decode base64: $b => $d");
-    is Encode::decode('MIME-Q', $q) => $d, info("decode qp: $b => $d");
+    is Encode::encode("MIME-Header", $d) => $b, info("encode default", $d => $b);
+    is Encode::encode("MIME-B", $d) => $b, info("encode base64", $d => $b);
+    is Encode::encode("MIME-Q", $d) => $q, info("encode qp", $d => $q);
+    is Encode::decode("MIME-B", $b) => $d, info("decode base64", $b => $d);
+    is Encode::decode("MIME-Q", $q) => $d, info("decode qp", $b => $d);
+    ok check_length($b), info("correct encoded length base64", $b);
+    ok check_length($q), info("correct encoded length qp", $q);
 }
 
 @splice = @decode_default_tests;
 while (my ($e, $d) = splice @splice, 0, 2) {
-    is Encode::decode('MIME-Header', $e) => $d, info("decode default: $e => $d");
+    is Encode::decode("MIME-Header", $e) => $d, info("decode default", $e => $d);
 }
 
 local $Encode::MIME::Header::STRICT_DECODE = 1;
 
 @splice = @decode_strict_tests;
 while (my ($e, $d) = splice @splice, 0, 2) {
-    is Encode::decode('MIME-Header', $e) => $d, info("decode strict: $e => $d");
+    is Encode::decode("MIME-Header", $e) => $d, info("decode strict", $e => $d);
 }
 
 __END__
