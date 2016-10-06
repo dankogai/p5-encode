@@ -24,7 +24,7 @@ use strict;
 use utf8;
 use charnames ":full";
 
-use Test::More tests => 142;
+use Test::More tests => 150;
 
 BEGIN {
     use_ok("Encode::MIME::Header");
@@ -93,12 +93,25 @@ my @decode_default_tests = (
     "[=?UTF-8?B?ZsOzcnVt?=]=?UTF-8?B?IHNwcsOhdmE=?=" => "[fórum] správa",
     "test:=?UTF-8?B?IHNwcsOhdmE=?=" => "test: správa",
     "=?UTF-8?B?dMOpc3Q=?=:=?UTF-8?B?IHNwcsOhdmE=?=", "tést: správa",
+    # multiple base64 parts in one b word
+    "=?us-ascii?b?Zg==Zg==?=" => "ff",
+    # b word with invalid characters
+    "=?us-ascii?b?Zm!!9!v?=" => "foo",
+    # concat consecutive words (with same parameters) and join them into one utf-8 symbol
+    "=?UTF-8?Q?=C3?= =?UTF-8?Q?=A1?=" => "á",
 );
 
 my @decode_strict_tests = (
     @decode_tests,
     '=?us-ascii?q?foo=20=3cbar=40baz=2efoo=3e=20bar?=' => 'foo <bar@baz.foo> bar',
     '"=?us-ascii?q?foo=20=3cbar=40baz=2efoo=3e=20bar?="' => '"=?us-ascii?q?foo=20=3cbar=40baz=2efoo=3e=20bar?="',
+    # do not decode invalid q words
+    "=?us-ascii?q?foo=?=" => "=?us-ascii?q?foo=?=",
+    "=?us-ascii?q?foo=?= =?us-ascii?q?foo?=" => "=?us-ascii?q?foo=?= foo",
+    # do not decode invalid b words
+    "=?us-ascii?b?----?=" => "=?us-ascii?b?----?=",
+    "=?us-ascii?b?Zm8=-?= =?us-ascii?b?Zm9v?= and =?us-ascii?b?Zg==?=" => "=?us-ascii?b?Zm8=-?= foo and f",
+    "=?us-ascii?b?----?= =?us-ascii?b?Zm9v?= and =?us-ascii?b?Zg==?=" => "=?us-ascii?b?----?= foo and f",
 );
 
 my @encode_tests = (

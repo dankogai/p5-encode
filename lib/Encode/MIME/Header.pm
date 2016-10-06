@@ -44,13 +44,37 @@ my $re_language = qr/[A-Za-z]{1,8}(?:-[A-Za-z]{1,8})*/;
 my $re_encoding = qr/[QqBb]/;
 my $re_encoded_text = qr/[^\?\s]*/;
 my $re_encoded_word = qr/=\?$re_charset(?:\*$re_language)?\?$re_encoding\?$re_encoded_text\?=/;
-my $re_capture_encoded_word = qr/=\?($re_charset)((?:\*$re_language)?)\?($re_encoding)\?($re_encoded_text)\?=/;
+my $re_capture_encoded_word = qr/=\?($re_charset)((?:\*$re_language)?)\?($re_encoding\?$re_encoded_text)\?=/;
+my $re_capture_encoded_word_split = qr/=\?($re_charset)((?:\*$re_language)?)\?($re_encoding)\?($re_encoded_text)\?=/;
+
+# in strict mode check also for valid base64 characters and also for valid quoted printable codes
+my $re_encoding_strict_b = qr/[Bb]/;
+my $re_encoding_strict_q = qr/[Qq]/;
+my $re_encoded_text_strict_b = qr/[0-9A-Za-z\+\/]*={0,2}/;
+my $re_encoded_text_strict_q = qr/(?:[^\?\s=]|=[0-9A-Fa-f]{2})*/;
+my $re_encoded_word_strict = qr/=\?$re_charset(?:\*$re_language)?\?(?:$re_encoding_strict_b\?$re_encoded_text_strict_b|$re_encoding_strict_q\?$re_encoded_text_strict_q)\?=/;
+my $re_capture_encoded_word_strict = qr/=\?($re_charset)((?:\*$re_language)?)\?($re_encoding_strict_b\?$re_encoded_text_strict_b|$re_encoding_strict_q\?$re_encoded_text_strict_q)\?=/;
+
+# in strict mode encoded words must be always separated by spaces or tabs
+# except in comments when separator between words and comment round brackets can be omitted
+my $re_word_begin_strict = qr/(?:[ \t\n]|\A)\(?/;
+my $re_word_sep_strict = qr/[ \t]+/;
+my $re_word_end_strict = qr/\)?(?:[ \t\n]|\z)/;
+
+my $re_match = qr/()((?:$re_encoded_word\s*)*$re_encoded_word)()/;
+my $re_match_strict = qr/($re_word_begin_strict)((?:$re_encoded_word_strict$re_word_sep_strict)*$re_encoded_word_strict)(?=$re_word_end_strict)/;
+
+my $re_capture = qr/$re_capture_encoded_word(?:\s*)?/;
+my $re_capture_strict = qr/$re_capture_encoded_word_strict$re_word_sep_strict?/;
 
 our $STRICT_DECODE = 0;
 
 sub decode($$;$) {
     use utf8;
     my ($obj, $str, $chk) = @_;
+
+    my $re_match_decode = $STRICT_DECODE ? $re_match_strict : $re_match;
+    my $re_capture_decode = $STRICT_DECODE ? $re_capture_strict : $re_capture;
 
     # multi-line header to single line
     $str =~ s/(?:\r\n|[\r\n])([ \t])/$1/gos;
@@ -64,28 +88,22 @@ sub decode($$;$) {
         my $line = shift @input;
         my $sep = shift @input;
 
-        # in strict mode encoded words must be always separated by spaces or tabs
-        # except in comments when separator between words and comment round brackets can be omitted
-        my $re_word_begin = $STRICT_DECODE ? qr/(?:[ \t\n]|\A)\(?/ : qr//;
-        my $re_word_sep = $STRICT_DECODE ? qr/[ \t]+/ : qr/\s*/;
-        my $re_word_end = $STRICT_DECODE ? qr/\)?(?:[ \t\n]|\z)/ : qr//;
-
-        # concat consecutive encoded mime words with same charset, language and encoding
+        # in non strict mode concat consecutive encoded mime words with same charset, language and encoding
         # fixes breaking inside multi-byte characters
-        1 while $line =~ s/($re_word_begin)$re_capture_encoded_word$re_word_sep=\?\2\3\?\4\?($re_encoded_text)\?=(?=$re_word_end)/$1=\?$2$3\?$4\?$5$6\?=/;
+        1 while not $STRICT_DECODE and $line =~ s/$re_capture_encoded_word_split\s*=\?\1\2\?\3\?($re_encoded_text)\?=/=\?$1$2\?$3\?$4$5\?=/o;
 
-        $line =~ s{($re_word_begin)((?:$re_encoded_word$re_word_sep)*$re_encoded_word)(?=$re_word_end)}{
+        $line =~ s{$re_match_decode}{
             my $begin = $1;
             my $words = $2;
-            $words =~ s{$re_capture_encoded_word$re_word_sep?}{
-                if ( uc($3) eq 'B' ) {
+            $words =~ s{$re_capture_decode}{
+                my $charset = $1;
+                my ($enc, $text) = split /\?/, $3;
+                if ( uc($enc) eq 'B' ) {
                     $obj->{decode_b} or Carp::croak qq(MIME "B" unsupported);
-                    decode_b($1, $4, $chk);
-                } elsif ( uc($3) eq 'Q' ) {
-                    $obj->{decode_q} or Carp::croak qq(MIME "Q" unsupported);
-                    decode_q($1, $4, $chk);
+                    decode_b($charset, $text, $chk);
                 } else {
-                    Carp::croak qq(MIME "$3" encoding is nonexistent!);
+                    $obj->{decode_q} or Carp::croak qq(MIME "Q" unsupported);
+                    decode_q($charset, $text, $chk);
                 }
             }eg;
             $begin . $words;
@@ -104,8 +122,10 @@ sub decode_b {
     my ($enc, $b, $chk) = @_;
     my $d = Encode::find_encoding($enc) or Carp::croak qq(Unknown encoding "$enc");
     # MIME::Base64::decode ignores everything after a '=' padding character
-    # split string after each sequence of padding characters and decode each substring
-    my $db64 = join('', map { MIME::Base64::decode($_) } split /(?<==)(?=[^=])/, $b);
+    # in non strict mode split string after each sequence of padding characters and decode each substring
+    my $db64 = $STRICT_DECODE ?
+        MIME::Base64::decode($b) :
+        join('', map { MIME::Base64::decode($_) } split /(?<==)(?=[^=])/, $b);
     return $d->name eq 'utf8'
       ? Encode::decode_utf8($db64)
       : $d->decode($db64, $chk || Encode::FB_PERLQQ);
