@@ -24,7 +24,7 @@ use strict;
 use utf8;
 use charnames ":full";
 
-use Test::More tests => 130;
+use Test::More tests => 142;
 
 BEGIN {
     use_ok("Encode::MIME::Header");
@@ -57,6 +57,14 @@ my @decode_tests = (
     "=?ISO-8859-1*da-DK?Q?Keld_J=F8rn_Simonsen?=" => "Keld Jørn Simonsen",
     "=?ISO-8859-1*fr-BE?Q?Andr=E9?= Pirard" => "André Pirard",
     "=?ISO-8859-1*en?B?SWYgeW91IGNhbiByZWFkIHRoaXMgeW8=?= =?ISO-8859-2?B?dSB1bmRlcnN0YW5kIHRoZSBleGFtcGxlLg==?=" => "If you can read this you understand the example.",
+    # multiple (separated by CRLF)
+    "=?US-ASCII?Q?a?=\r\n=?US-ASCII?Q?b?=" => "a\r\nb",
+    "a\r\nb" => "a\r\nb",
+    "a\r\n\r\nb" => "a\r\n\r\nb",
+    "a\r\n\r\nb\r\n" => "a\r\n\r\nb\r\n",
+    # multiple multiline (separated by CRLF)
+    "=?US-ASCII?Q?a?=\r\n =?US-ASCII?Q?b?=\r\n=?US-ASCII?Q?c?=" => "ab\r\nc",
+    "a\r\n b\r\nc" => "a b\r\nc",
     # RT67569
     "foo =?us-ascii?q?bar?=" => "foo bar",
     "foo\r\n =?us-ascii?q?bar?=" => "foo bar",
