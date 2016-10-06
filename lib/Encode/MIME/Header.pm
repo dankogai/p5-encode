@@ -305,69 +305,109 @@ __END__
 
 =head1 NAME
 
-Encode::MIME::Header -- MIME 'B' and 'Q' encoding for unstructured header
+Encode::MIME::Header -- MIME encoding for an unstructured email header
 
 =head1 SYNOPSIS
 
-    use Encode qw/encode decode/;
-    $utf8   = decode('MIME-Header', $header);
-    $header = encode('MIME-Header', $utf8);
+    use Encode qw(encode decode);
+
+    my $mime_str = encode("MIME-Header", "Sample:Text \N{U+263A}");
+    # $mime_str is "=?UTF-8?B?U2FtcGxlOlRleHQg4pi6?="
+
+    my $mime_q_str = encode("MIME-Q", "Sample:Text \N{U+263A}");
+    # $mime_q_str is "=?UTF-8?Q?Sample=3AText_=E2=98=BA?="
+
+    my $str = decode("MIME-Header",
+        "=?ISO-8859-1?B?SWYgeW91IGNhbiByZWFkIHRoaXMgeW8=?=\r\n " .
+        "=?ISO-8859-2?B?dSB1bmRlcnN0YW5kIHRoZSBleGFtcGxlLg==?="
+    );
+    # $str is "If you can read this you understand the example."
+
+    use Encode qw(decode :fallbacks);
+    use Encode::MIME::Header;
+    local $Encode::MIME::Header::STRICT_DECODE = 1;
+    my $strict_string = decode("MIME-Header", $mime_string, FB_CROAK);
+    # use strict decoding and croak on errors
 
 =head1 ABSTRACT
 
-This module implements RFC 2047 MIME encoding for unstructured header.
-It cannot be used for structured headers like From or To.  There are 3
-variant encoding names; C<MIME-Header>, C<MIME-B> and C<MIME-Q>.  The
-difference is described below
-
-              decode()          encode()
-  ----------------------------------------------
-  MIME-Header Both B and Q      =?UTF-8?B?....?=
-  MIME-B      B only; Q croaks  =?UTF-8?B?....?=
-  MIME-Q      Q only; B croaks  =?UTF-8?Q?....?=
+This module implements L<RFC 2047|https://tools.ietf.org/html/rfc2047> MIME
+encoding for an unstructured field body of the email header.  It can also be
+used for L<RFC 822|https://tools.ietf.org/html/rfc822> 'text' token.  However,
+it cannot be used directly for the whole header with the field name or for the
+structured header fields like From, To, Cc, Message-Id, etc...  There are 3
+encoding names supported by this module: C<MIME-Header>, C<MIME-B> and
+C<MIME-Q>.
 
 =head1 DESCRIPTION
 
-When you decode(=?I<encoding>?I<X>?I<ENCODED WORD>?=), I<ENCODED WORD>
-is extracted and decoded for I<X> encoding (B for Base64, Q for
-Quoted-Printable). Then the decoded chunk is fed to
-decode(I<encoding>).  So long as I<encoding> is supported by Encode,
-any source encoding is fine.
+Decode method takes an unstructured field body of the email header (or
+L<RFC 822|https://tools.ietf.org/html/rfc822> 'text' token) as its input and
+decodes each MIME encoded-word from input string to a sequence of bytes
+according to L<RFC 2047|https://tools.ietf.org/html/rfc2047> and
+L<RFC 2231|https://tools.ietf.org/html/rfc2231>.  Subsequently, each sequence
+of bytes with the corresponding MIME charset is decoded with
+L<the Encode module|Encode> and finally, one output string is returned.  Text
+parts of the input string which do not contain MIME encoded-word stay
+unmodified in the output string.  Folded newlines between two consecutive MIME
+encoded-words are discarded, others are preserved in the output string.
+C<MIME-B> can decode Base64 variant, C<MIME-Q> can decode Quoted-Printable
+variant and C<MIME-Header> can decode both of them.  If L<Encode module|Encode>
+does not support particular MIME charset or chosen variant then an action based
+on L<CHECK flags|Encode/Handling Malformed Data> is performed (by default, the
+MIME encoded-word is not decoded).
 
-When you encode, it just encodes UTF-8 string with I<X> encoding then
-quoted with =?UTF-8?I<X>?....?= .  The parts that RFC 2047 forbids to
-encode are left as is and long lines are folded within 76 bytes per
-line.
+Encode method takes a scalar string as its input and uses
+L<strict UTF-8|Encode/UTF-8 vs. utf8 vs. UTF8> encoder for encoding it to UTF-8
+bytes.  Then a sequence of UTF-8 bytes is encoded into MIME encoded-words
+(C<MIME-Header> and C<MIME-B> use a Base64 variant while C<MIME-Q> uses a
+Quoted-Printable variant) where each MIME encoded-word is limited to 75
+characters.  MIME encoded-words are separated by C<CRLF SPACE> and joined to
+one output string.  Output string is suitable for unstructured field body of
+the email header.
+
+Both encode and decode methods propagate
+L<CHECK flags|Encode/Handling Malformed Data> when encoding and decoding the
+MIME charset.
 
 =head1 BUGS
 
-Before version 2.83 this module had broken both decoder and encoder.
-Encoder inserted additional spaces, incorrectly encoded input data
-and produced invalid MIME strings. Decoder lot of times discarded
-white space characters, incorrectly interpreted data or decoded
-Base64 string as Quoted-Printable.
+Versions prior to 2.22 (part of Encode 2.83) have a malfunctioning decoder
+and encoder.  The MIME encoder infamously inserted additional spaces or
+discarded white spaces between consecutive MIME encoded-words, which led to
+invalid MIME headers produced by this module.  The MIME decoder had a tendency
+to discard white spaces, incorrectly interpret data or attempt to decode Base64
+MIME encoded-words as Quoted-Printable.  These problems were fixed in version
+2.22.  It is highly recommended not to use any version prior 2.22!
 
-As of version 2.83 encoder should be fully compliant of RFC 2047.
-Due to bugs in previous versions of encoder, decoder is by default in
-less strict compatible mode. It should be able to decode strings
-encoded by pre 2.83 version of this module. But this default mode is
-not correct according to RFC 2047.
+Versions prior to 2.24 (part of Encode 2.87) ignored
+L<CHECK flags|Encode/Handling Malformed Data>.  The MIME encoder used
+L<not strict utf8|Encode/UTF-8 vs. utf8 vs. UTF8> encoder for input Unicode
+strings which could lead to invalid UTF-8 sequences.  MIME decoder used also
+L<not strict utf8|Encode/UTF-8 vs. utf8 vs. UTF8> decoder and additionally
+called the decode method with a C<Encode::FB_PERLQQ> flag (thus user-specified
+L<CHECK flags|Encode/Handling Malformed Data> were ignored).  Moreover, it
+automatically croaked when a MIME encoded-word contained unknown encoding.
+Since version 2.24, this module uses
+L<strict UTF-8|Encode/UTF-8 vs. utf8 vs. UTF8> encoder and decoder.  And
+L<CHECK flags|Encode/Handling Malformed Data> are correctly propagated.
 
-In default mode decoder try to decode every substring which looks like
-MIME encoded data. So it means that MIME data does not need to be
-separated by white space. To enforce correct strict mode, set package
-variable $Encode::MIME::Header::STRICT_DECODE to 1, e.g. by localizing:
+Since version 2.22 (part of Encode 2.83), the MIME encoder should be fully
+compliant to L<RFC 2047|https://tools.ietf.org/html/rfc2047> and
+L<RFC 2231|https://tools.ietf.org/html/rfc2231>.  Due to the aforementioned
+bugs in previous versions of the MIME encoder, there is a I<less strict>
+compatible mode for the MIME decoder which is used by default.  It should be
+able to decode MIME encoded-words encoded by pre 2.22 versions of this module.
+However, note that this is not correct according to
+L<RFC 2047|https://tools.ietf.org/html/rfc2047>.
 
-C<require Encode::MIME::Header; local $Encode::MIME::Header::STRICT_DECODE = 1;>
+In default I<not strict> mode the MIME decoder attempts to decode every substring
+which looks like a MIME encoded-word.  Therefore, the MIME encoded-words do not
+need to be separated by white space.  To enforce a correct I<strict> mode, set
+variable C<$Encode::MIME::Header::STRICT_DECODE> to 1 e.g. by localizing:
 
-It would be nice to support encoding to non-UTF8, such as =?ISO-2022-JP?
-and =?ISO-8859-1?= but that makes the implementation too complicated.
-These days major mail agents all support =?UTF-8? so I think it is
-just good enough.
-
-Due to popular demand, 'MIME-Header-ISO_2022_JP' was introduced by
-Makamaka.  Thre are still too many MUAs especially cellular phone
-handsets which does not grok UTF-8.
+  use Encode::MIME::Header;
+  local $Encode::MIME::Header::STRICT_DECODE = 1;
 
 =head1 AUTHORS
 
@@ -375,9 +415,9 @@ Pali E<lt>pali@cpan.orgE<gt>
 
 =head1 SEE ALSO
 
-L<Encode>
-
-RFC 2047, L<http://www.faqs.org/rfcs/rfc2047.html> and many other
-locations.
+L<Encode>,
+L<RFC 822|https://tools.ietf.org/html/rfc822>,
+L<RFC 2047|https://tools.ietf.org/html/rfc2047>,
+L<RFC 2231|https://tools.ietf.org/html/rfc2231>
 
 =cut
