@@ -1,22 +1,24 @@
 package Encode::MIME::Header;
 use strict;
 use warnings;
-no warnings 'redefine';
 
 our $VERSION = do { my @r = ( q$Revision: 2.23 $ =~ /\d+/g ); sprintf "%d." . "%02d" x $#r, @r };
-use Encode qw(find_encoding encode_utf8 decode_utf8);
-use MIME::Base64;
-use Carp;
+
+use Carp ();
+use Encode ();
+use MIME::Base64 ();
 
 my %seed = (
-    decode_b => '1',    # decodes 'B' encoding ?
-    decode_q => '1',    # decodes 'Q' encoding ?
+    decode_b => 1,      # decodes 'B' encoding ?
+    decode_q => 1,      # decodes 'Q' encoding ?
     encode   => 'B',    # encode with 'B' or 'Q' ?
     bpl      => 75,     # bytes per line
 );
 
-$Encode::Encoding{'MIME-Header'} =
-  bless { %seed, Name => 'MIME-Header', } => __PACKAGE__;
+$Encode::Encoding{'MIME-Header'} = bless {
+    %seed,
+    Name     => 'MIME-Header',
+} => __PACKAGE__;
 
 $Encode::Encoding{'MIME-B'} = bless {
     %seed,
@@ -48,7 +50,7 @@ our $STRICT_DECODE = 0;
 
 sub decode($$;$) {
     use utf8;
-    my ( $obj, $str, $chk ) = @_;
+    my ($obj, $str, $chk) = @_;
 
     # multi-line header to single line
     $str =~ s/(?:\r\n|[\r\n])([ \t])/$1/gos;
@@ -76,14 +78,14 @@ sub decode($$;$) {
             my $begin = $1;
             my $words = $2;
             $words =~ s{$re_capture_encoded_word$re_word_sep?}{
-                if (uc($3) eq 'B') {
-                    $obj->{decode_b} or croak qq(MIME "B" unsupported);
+                if ( uc($3) eq 'B' ) {
+                    $obj->{decode_b} or Carp::croak qq(MIME "B" unsupported);
                     decode_b($1, $4, $chk);
-                } elsif (uc($3) eq 'Q') {
-                    $obj->{decode_q} or croak qq(MIME "Q" unsupported);
+                } elsif ( uc($3) eq 'Q' ) {
+                    $obj->{decode_q} or Carp::croak qq(MIME "Q" unsupported);
                     decode_q($1, $4, $chk);
                 } else {
-                    croak qq(MIME "$3" encoding is nonexistent!);
+                    Carp::croak qq(MIME "$3" encoding is nonexistent!);
                 }
             }eg;
             $begin . $words;
@@ -99,45 +101,45 @@ sub decode($$;$) {
 }
 
 sub decode_b {
-    my ( $enc, $b, $chk ) = @_;
-    my $d = find_encoding($enc) or croak qq(Unknown encoding "$enc");
-    # MIME::Base64::decode_base64 ignores everything after a '=' padding character
+    my ($enc, $b, $chk) = @_;
+    my $d = Encode::find_encoding($enc) or Carp::croak qq(Unknown encoding "$enc");
+    # MIME::Base64::decode ignores everything after a '=' padding character
     # split string after each sequence of padding characters and decode each substring
-    my $db64 = join('', map { decode_base64($_) } split /(?<==)(?=[^=])/, $b);
+    my $db64 = join('', map { MIME::Base64::decode($_) } split /(?<==)(?=[^=])/, $b);
     return $d->name eq 'utf8'
       ? Encode::decode_utf8($db64)
-      : $d->decode( $db64, $chk || Encode::FB_PERLQQ );
+      : $d->decode($db64, $chk || Encode::FB_PERLQQ);
 }
 
 sub decode_q {
-    my ( $enc, $q, $chk ) = @_;
-    my $d = find_encoding($enc) or croak qq(Unknown encoding "$enc");
+    my ($enc, $q, $chk) = @_;
+    my $d = Encode::find_encoding($enc) or Carp::croak qq(Unknown encoding "$enc");
     $q =~ s/_/ /go;
-    $q =~ s/=([0-9A-Fa-f]{2})/pack("C", hex($1))/ego;
+    $q =~ s/=([0-9A-Fa-f]{2})/pack('C', hex($1))/ego;
     return $d->name eq 'utf8'
       ? Encode::decode_utf8($q)
-      : $d->decode( $q, $chk || Encode::FB_PERLQQ );
+      : $d->decode($q, $chk || Encode::FB_PERLQQ);
 }
 
 sub encode($$;$) {
-    my ( $obj, $str, $chk ) = @_;
+    my ($obj, $str, $chk) = @_;
     $_[1] = '' if $chk; # empty the input string in the stack so perlio is ok
     return $obj->_fold_line($obj->_encode_line($str));
 }
 
 sub _fold_line {
-    my ( $obj, $line ) = @_;
+    my ($obj, $line) = @_;
     my $bpl = $obj->{bpl};
     my $output = substr($line, 0, 0); # to propagate taintedness
 
-    while ( length $line ) {
+    while ( length($line) ) {
         if ( $line =~ s/^(.{0,$bpl})(\s|\z)// ) {
             $output .= $1;
-            $output .= "\r\n" . $2 if length $line;
+            $output .= "\r\n" . $2 if length($line);
         } elsif ( $line =~ s/(\s)(.*)$// ) {
             $output .= $line;
             $line = $2;
-            $output .= "\r\n" . $1 if length $line;
+            $output .= "\r\n" . $1 if length($line);
         } else {
             $output .= $line;
             last;
@@ -152,14 +154,14 @@ use constant TAIL   => '?=';
 use constant SINGLE => { B => \&_encode_b, Q => \&_encode_q, B_len => \&_encode_b_len, Q_len => \&_encode_q_len };
 
 sub _encode_line {
-    my ( $o, $str ) = @_;
-    my $enc  = $o->{encode};
+    my ($obj, $str) = @_;
+    my $enc = $obj->{encode};
     my $enc_len = $enc . '_len';
-    my $llen = ( $o->{bpl} - length(HEAD) - 2 - length(TAIL) );
+    my $llen = ( $obj->{bpl} - length(HEAD) - 2 - length(TAIL) );
 
     my @result = ();
-    my $chunk  = '';
-    while ( length( my $chr = substr( $str, 0, 1, '' ) ) ) {
+    my $chunk = '';
+    while ( length( my $chr = substr($str, 0, 1, '') ) ) {
         if ( SINGLE->{$enc_len}($chunk . $chr) > $llen ) {
             push @result, SINGLE->{$enc}($chunk);
             $chunk = '';
@@ -171,11 +173,12 @@ sub _encode_line {
 }
 
 sub _encode_b {
-    HEAD . 'B?' . encode_base64( encode_utf8(shift), '' ) . TAIL;
+    my ($chunk) = @_;
+    return HEAD . 'B?' . MIME::Base64::encode(Encode::encode_utf8($chunk), '') . TAIL;
 }
 
 sub _encode_b_len {
-    my ( $chunk ) = @_;
+    my ($chunk) = @_;
     use bytes ();
     return bytes::length($chunk) * 4 / 3;
 }
@@ -183,19 +186,19 @@ sub _encode_b_len {
 my $valid_q_chars = '0-9A-Za-z !*+\-/';
 
 sub _encode_q {
-    my ( $chunk ) = @_;
-    $chunk = encode_utf8($chunk);
+    my ($chunk) = @_;
+    $chunk = Encode::encode_utf8($chunk);
     $chunk =~ s{([^$valid_q_chars])}{
-        join("" => map {sprintf "=%02X", $_} unpack("C*", $1))
+        join('', map { sprintf('=%02X', $_) } unpack('C*', $1))
     }egox;
     $chunk =~ s/ /_/go;
     return HEAD . 'Q?' . $chunk . TAIL;
 }
 
 sub _encode_q_len {
-    my ( $chunk ) = @_;
+    my ($chunk) = @_;
     use bytes ();
-    my $valid_count =()= $chunk =~ /[$valid_q_chars]/sgo;
+    my $valid_count = () = $chunk =~ /[$valid_q_chars]/sgo;
     return ( bytes::length($chunk) - $valid_count ) * 3 + $valid_count;
 }
 
