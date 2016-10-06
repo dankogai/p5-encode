@@ -41,7 +41,7 @@ sub perlio_ok   { 0 }
 
 # RFC 2047 and RFC 2231 grammar
 my $re_charset = qr/[!"#\$%&'+\-0-9A-Z\\\^_`a-z\{\|\}~]+/;
-my $re_language = qr/[A-Za-z]{1,8}(?:-[A-Za-z]{1,8})*/;
+my $re_language = qr/[A-Za-z]{1,8}(?:-[0-9A-Za-z]{1,8})*/;
 my $re_encoding = qr/[QqBb]/;
 my $re_encoded_text = qr/[^\?]*/;
 my $re_encoded_word = qr/=\?$re_charset(?:\*$re_language)?\?$re_encoding\?$re_encoded_text\?=/;
