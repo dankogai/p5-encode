@@ -60,9 +60,9 @@ my $re_newline = qr/(?:\r\n|[\r\n])/;
 
 # in strict mode encoded words must be always separated by spaces or tabs (or folded newline)
 # except in comments when separator between words and comment round brackets can be omitted
-my $re_word_begin_strict = qr/(?:[ \t]|$re_newline|\A)\(?/;
+my $re_word_begin_strict = qr/(?:(?:[ \t]|\A)\(?|(?:[^\\]|\A)\)\()/;
 my $re_word_sep_strict = qr/(?:$re_newline?[ \t])+/;
-my $re_word_end_strict = qr/\)?(?:[ \t]|$re_newline|\z)/;
+my $re_word_end_strict = qr/(?:\)\(|\)?(?:$re_newline?[ \t]|\z))/;
 
 my $re_match = qr/()((?:$re_encoded_word\s*)*$re_encoded_word)()/;
 my $re_match_strict = qr/($re_word_begin_strict)((?:$re_encoded_word_strict$re_word_sep_strict)*$re_encoded_word_strict)(?=$re_word_end_strict)/;

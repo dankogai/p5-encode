@@ -24,7 +24,7 @@ use strict;
 use utf8;
 use charnames ":full";
 
-use Test::More tests => 240;
+use Test::More tests => 264;
 
 BEGIN {
     use_ok("Encode::MIME::Header");
@@ -98,6 +98,19 @@ my @decode_tests = (
     "prefix =?US-ASCII?Q?a_b_c?= =?unknown?Q?d_e_f?= =?US-ASCII?Q?g_h_i?= suffix" => "prefix a b c =?unknown?Q?d_e_f?= g h i suffix",
     # long strings
     @decode_long_tests,
+    # separators around encoded words
+    "\r\n =?US-ASCII?Q?a?=" => " a",
+    "\r\n (=?US-ASCII?Q?a?=)" => " (a)",
+    "\r\n (=?US-ASCII?Q?a?=)\r\n " => " (a) ",
+    "(=?US-ASCII?Q?a?=)\r\n " => "(a) ",
+    " (=?US-ASCII?Q?a?=) " => " (a) ",
+    "(=?US-ASCII?Q?a?=) " => "(a) ",
+    " (=?US-ASCII?Q?a?=)" => " (a)",
+    "(=?US-ASCII?Q?a?=)(=?US-ASCII?Q?b?=)" => "(a)(b)",
+    "(=?US-ASCII?Q?a?=) (=?US-ASCII?Q?b?=)" => "(a) (b)",
+    "(=?US-ASCII?Q?a?=)\r\n (=?US-ASCII?Q?b?=)" => "(a) (b)",
+    "\r\n (=?US-ASCII?Q?a?=)\r\n (=?US-ASCII?Q?b?=)\r\n " => " (a) (b) ",
+    "\r\n(=?US-ASCII?Q?a?=)\r\n(=?US-ASCII?Q?b?=)" => "\r\n(a)\r\n(b)",
 );
 
 my @decode_default_tests = (
