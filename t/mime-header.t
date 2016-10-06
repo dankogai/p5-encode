@@ -74,8 +74,6 @@ my @decode_tests = (
     "foo\r\n bar" => "foo bar",
     "=?us-ascii?q?foo?= =?us-ascii?q?bar?=" => "foobar",
     "=?us-ascii?q?foo?=\r\n =?us-ascii?q?bar?=" => "foobar",
-    "=?us-ascii?q?foo bar?=" => "=?us-ascii?q?foo bar?=",
-    "=?us-ascii?q?foo\r\n bar?=" => "=?us-ascii?q?foo bar?=",
     # RT40027
     "a: b\r\n c" => "a: b c",
     # RT104422
@@ -84,6 +82,8 @@ my @decode_tests = (
 
 my @decode_default_tests = (
     @decode_tests,
+    "=?us-ascii?q?foo bar?=" => "foo bar",
+    "=?us-ascii?q?foo\r\n bar?=" => "foo bar",
     '=?us-ascii?q?foo=20=3cbar=40baz=2efoo=3e=20bar?=' => 'foo <bar@baz.foo> bar',
     '"=?us-ascii?q?foo=20=3cbar=40baz=2efoo=3e=20bar?="' => '"foo <bar@baz.foo> bar"',
     "=?us-ascii?q?foo?==?us-ascii?q?bar?=" => "foobar",
@@ -103,6 +103,8 @@ my @decode_default_tests = (
 
 my @decode_strict_tests = (
     @decode_tests,
+    "=?us-ascii?q?foo bar?=" => "=?us-ascii?q?foo bar?=",
+    "=?us-ascii?q?foo\r\n bar?=" => "=?us-ascii?q?foo bar?=",
     '=?us-ascii?q?foo=20=3cbar=40baz=2efoo=3e=20bar?=' => 'foo <bar@baz.foo> bar',
     '"=?us-ascii?q?foo=20=3cbar=40baz=2efoo=3e=20bar?="' => '"=?us-ascii?q?foo=20=3cbar=40baz=2efoo=3e=20bar?="',
     # do not decode invalid q words

@@ -42,7 +42,7 @@ sub perlio_ok   { 0 }
 my $re_charset = qr/[-0-9A-Za-z_]+/;
 my $re_language = qr/[A-Za-z]{1,8}(?:-[A-Za-z]{1,8})*/;
 my $re_encoding = qr/[QqBb]/;
-my $re_encoded_text = qr/[^\?\s]*/;
+my $re_encoded_text = qr/[^\?]*/;
 my $re_encoded_word = qr/=\?$re_charset(?:\*$re_language)?\?$re_encoding\?$re_encoded_text\?=/;
 my $re_capture_encoded_word = qr/=\?($re_charset)((?:\*$re_language)?)\?($re_encoding\?$re_encoded_text)\?=/;
 my $re_capture_encoded_word_split = qr/=\?($re_charset)((?:\*$re_language)?)\?($re_encoding)\?($re_encoded_text)\?=/;
