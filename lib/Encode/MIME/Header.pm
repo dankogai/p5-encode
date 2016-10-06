@@ -56,11 +56,13 @@ my $re_encoded_text_strict_q = qr/(?:[^\?\s=]|=[0-9A-Fa-f]{2})*/;
 my $re_encoded_word_strict = qr/=\?$re_charset(?:\*$re_language)?\?(?:$re_encoding_strict_b\?$re_encoded_text_strict_b|$re_encoding_strict_q\?$re_encoded_text_strict_q)\?=/;
 my $re_capture_encoded_word_strict = qr/=\?($re_charset)((?:\*$re_language)?)\?($re_encoding_strict_b\?$re_encoded_text_strict_b|$re_encoding_strict_q\?$re_encoded_text_strict_q)\?=/;
 
-# in strict mode encoded words must be always separated by spaces or tabs
+my $re_newline = qr/(?:\r\n|[\r\n])/;
+
+# in strict mode encoded words must be always separated by spaces or tabs (or folded newline)
 # except in comments when separator between words and comment round brackets can be omitted
-my $re_word_begin_strict = qr/(?:[ \t\n]|\A)\(?/;
-my $re_word_sep_strict = qr/[ \t]+/;
-my $re_word_end_strict = qr/\)?(?:[ \t\n]|\z)/;
+my $re_word_begin_strict = qr/(?:[ \t]|$re_newline|\A)\(?/;
+my $re_word_sep_strict = qr/(?:$re_newline?[ \t])+/;
+my $re_word_end_strict = qr/\)?(?:[ \t]|$re_newline|\z)/;
 
 my $re_match = qr/()((?:$re_encoded_word\s*)*$re_encoded_word)()/;
 my $re_match_strict = qr/($re_word_begin_strict)((?:$re_encoded_word_strict$re_word_sep_strict)*$re_encoded_word_strict)(?=$re_word_end_strict)/;
@@ -76,71 +78,126 @@ sub decode($$;$) {
     my $re_match_decode = $STRICT_DECODE ? $re_match_strict : $re_match;
     my $re_capture_decode = $STRICT_DECODE ? $re_capture_strict : $re_capture;
 
-    # multi-line header to single line
-    $str =~ s/(?:\r\n|[\r\n])([ \t])/$1/gos;
-
-    # decode each line separately
-    my @input = split /(\r\n|\r|\n)/o, $str, -1;
+    my $stop = 0;
     my $output = substr($str, 0, 0); # to propagate taintedness
 
-    while ( @input ) {
+    # decode each line separately, match whole continuous folded line at one call
+    1 while not $stop and $str =~ s{^((?:[^\r\n]*(?:$re_newline[ \t])?)*)($re_newline)?}{
 
-        my $line = shift @input;
-        my $sep = shift @input;
+        my $line = $1;
+        my $sep = defined $2 ? $2 : '';
 
+        $stop = 1 unless length($line) or length($sep);
+
+        # NOTE: this code partially could break $chk support
         # in non strict mode concat consecutive encoded mime words with same charset, language and encoding
         # fixes breaking inside multi-byte characters
-        1 while not $STRICT_DECODE and $line =~ s/$re_capture_encoded_word_split\s*=\?\1\2\?\3\?($re_encoded_text)\?=/=\?$1$2\?$3\?$4$5\?=/o;
+        1 while not $STRICT_DECODE and $line =~ s/$re_capture_encoded_word_split\s*=\?\1\2\?\3\?($re_encoded_text)\?=/=\?$1$2\?$3\?$4$5\?=/so;
 
-        $line =~ s{$re_match_decode}{
-            my $begin = $1;
-            my $words = $2;
-            $words =~ s{$re_capture_decode}{
-                my $charset = $1;
-                my ($mime_enc, $text) = split /\?/, $3;
+        # process sequence of encoded MIME words at once
+        1 while not $stop and $line =~ s{^(.*?)$re_match_decode}{
+
+            my $begin = $1 . $2;
+            my $words = $3;
+
+            $begin =~ tr/\r\n//d;
+            $output .= $begin;
+
+            # decode one MIME word
+            1 while not $stop and $words =~ s{^(.*?)($re_capture_decode)}{
+
+                $output .= $1;
+                my $orig = $2;
+                my $charset = $3;
+                my ($mime_enc, $text) = split /\?/, $5;
+
+                $text =~ tr/\r\n//d;
+
                 my $enc = Encode::find_mime_encoding($charset);
+
                 # in non strict mode allow also perl encoding aliases
                 if ( not defined $enc and not $STRICT_DECODE ) {
                     # make sure that decoded string will be always strict UTF-8
                     $charset = 'UTF-8' if lc($charset) eq 'utf8';
                     $enc = Encode::find_encoding($charset);
                 }
-                Carp::croak qq(Unknown charset "$charset") unless defined $enc;
-                if ( uc($mime_enc) eq 'B' ) {
-                    $obj->{decode_b} or Carp::croak qq(MIME "B" unsupported);
-                    decode_b($enc, $text, $chk);
+
+                if ( not defined $enc ) {
+                    Carp::croak qq(Unknown charset "$charset") if not ref $chk and $chk & Encode::DIE_ON_ERR;
+                    Carp::carp qq(Unknown charset "$charset") if not ref $chk and $chk & Encode::WARN_ON_ERR;
+                    $stop = 1 if not ref $chk and $chk & Encode::RETURN_ON_ERR;
+                    $output .= ($output =~ /(?:\A|[ \t])$/ ? '' : ' ') . $orig unless $stop; # $orig mime word is separated by whitespace
+                    $stop ? $orig : '';
                 } else {
-                    $obj->{decode_q} or Carp::croak qq(MIME "Q" unsupported);
-                    decode_q($enc, $text, $chk);
+                    if ( uc($mime_enc) eq 'B' and $obj->{decode_b} ) {
+                        my $decoded = _decode_b($enc, $text, $chk);
+                        $stop = 1 if not defined $decoded and not ref $chk and $chk & Encode::RETURN_ON_ERR;
+                        $output .= (defined $decoded ? $decoded : $text) unless $stop;
+                        $stop ? $orig : '';
+                    } elsif ( uc($mime_enc) eq 'Q' and $obj->{decode_q} ) {
+                        my $decoded = _decode_q($enc, $text, $chk);
+                        $stop = 1 if not defined $decoded and not ref $chk and $chk & Encode::RETURN_ON_ERR;
+                        $output .= (defined $decoded ? $decoded : $text) unless $stop;
+                        $stop ? $orig : '';
+                    } else {
+                        Carp::croak qq(MIME "$mime_enc" unsupported) if not ref $chk and $chk & Encode::DIE_ON_ERR;
+                        Carp::carp qq(MIME "$mime_enc" unsupported) if not ref $chk and $chk & Encode::WARN_ON_ERR;
+                        $stop = 1 if not ref $chk and $chk & Encode::RETURN_ON_ERR;
+                        $output .= ($output =~ /(?:\A|[ \t])$/ ? '' : ' ') . $orig unless $stop; # $orig mime word is separated by whitespace
+                        $stop ? $orig : '';
+                    }
                 }
-            }eg;
-            $begin . $words;
-        }eg;
 
-        $output .= $line;
-        $output .= $sep if defined $sep;
+            }se;
 
-    }
+            if ( not $stop ) {
+                $output .= $words;
+                $words = '';
+            }
 
-    $_[1] = '' if $chk; # empty the input string in the stack so perlio is ok
+            $words;
+
+        }se;
+
+        if ( not $stop ) {
+            $line =~ tr/\r\n//d;
+            $output .= $line . $sep;
+            $line = '';
+            $sep = '';
+        }
+
+        $line . $sep;
+
+    }se;
+
+    $_[1] = $str if not ref $chk and $chk and !($chk & Encode::LEAVE_SRC);
     return $output;
 }
 
-sub decode_b {
+sub _decode_b {
     my ($enc, $b, $chk) = @_;
     # MIME::Base64::decode ignores everything after a '=' padding character
     # in non strict mode split string after each sequence of padding characters and decode each substring
     my $db64 = $STRICT_DECODE ?
         MIME::Base64::decode($b) :
         join('', map { MIME::Base64::decode($_) } split /(?<==)(?=[^=])/, $b);
-    return $enc->decode($db64, $chk);
+    return _decode_enc($enc, $db64, $chk);
 }
 
-sub decode_q {
+sub _decode_q {
     my ($enc, $q, $chk) = @_;
     $q =~ s/_/ /go;
     $q =~ s/=([0-9A-Fa-f]{2})/pack('C', hex($1))/ego;
-    return $enc->decode($q, $chk);
+    return _decode_enc($enc, $q, $chk);
+}
+
+sub _decode_enc {
+    my ($enc, $str, $chk) = @_;
+    $chk &= ~Encode::LEAVE_SRC if not ref $chk and $chk;
+    local $Carp::CarpLevel = $Carp::CarpLevel + 1; # propagate Carp messages back to caller
+    my $output = $enc->decode($str, $chk);
+    return undef if not ref $chk and $chk and $str ne '';
+    return $output;
 }
 
 sub encode($$;$) {

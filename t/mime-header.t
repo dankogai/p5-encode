@@ -24,7 +24,7 @@ use strict;
 use utf8;
 use charnames ":full";
 
-use Test::More tests => 205;
+use Test::More tests => 234;
 
 BEGIN {
     use_ok("Encode::MIME::Header");
@@ -81,6 +81,10 @@ my @decode_tests = (
     # RT114034 - replace invalid UTF-8 sequence with unicode replacement character
     "=?utf-8?Q?=f9=80=80=80=80?=" => "�",
     "=?utf-8?Q?=28=c3=29?=" => "(�)",
+    # decode only known MIME charsets, do not crash on invalid
+    "prefix =?unknown?Q?a=20b=20c?= middle =?US-ASCII?Q?d=20e=20f?= suffix" => "prefix =?unknown?Q?a=20b=20c?= middle d e f suffix",
+    "prefix =?US-ASCII?Q?a_b_c?= =?unknown?Q?d_e_f?= suffix" => "prefix a b c =?unknown?Q?d_e_f?= suffix",
+    "prefix =?US-ASCII?Q?a_b_c?= =?unknown?Q?d_e_f?= =?US-ASCII?Q?g_h_i?= suffix" => "prefix a b c =?unknown?Q?d_e_f?= g h i suffix",
 );
 
 my @decode_default_tests = (
@@ -121,6 +125,10 @@ my @decode_strict_tests = (
     "=?us-ascii?b?----?=" => "=?us-ascii?b?----?=",
     "=?us-ascii?b?Zm8=-?= =?us-ascii?b?Zm9v?= and =?us-ascii?b?Zg==?=" => "=?us-ascii?b?Zm8=-?= foo and f",
     "=?us-ascii?b?----?= =?us-ascii?b?Zm9v?= and =?us-ascii?b?Zg==?=" => "=?us-ascii?b?----?= foo and f",
+    # RT114034 - utf8, UTF8 and also utf-8-strict are invalid MIME charset, do not decode it
+    "=?utf8?Q?=C3=A1?=" => "=?utf8?Q?=C3=A1?=",
+    "=?UTF8?Q?=C3=A1?=" => "=?UTF8?Q?=C3=A1?=",
+    "=?utf-8-strict?Q?=C3=A1?=" => "=?utf-8-strict?Q?=C3=A1?=",
 );
 
 my @encode_tests = (
@@ -230,6 +238,70 @@ my $invalid_unicode = "\x{1000000}";
     my $output = Encode::encode("MIME-Header", $input, sub { sprintf("!0x%X!", $_[0]) });
     is $output => Encode::encode("MIME-Header", $valid_unicode . '!0x1000000!'), "encode with coderef check: output string contains output from coderef";
     is $input => $valid_unicode . $invalid_unicode, "encode with coderef check: input string is not modified";
+}
+
+my $valid_mime = "=?US-ASCII?Q?d=20e=20f?=";
+my $invalid_mime = "=?unknown?Q?a=20b=20c?=";
+my $invalid_mime_unicode = "=?utf-8?Q?=28=c3=29?=";
+{
+    my $input = $valid_mime;
+    my $output = Encode::decode("MIME-Header", $input, Encode::FB_QUIET);
+    is $output => Encode::decode("MIME-Header", $valid_mime), "decode valid with FB_QUIET flag: output string is valid";
+    is $input => "", "decode valid with FB_QUIET flag: input string is modified and empty";
+}
+{
+    my $input = $valid_mime . " " . $invalid_mime;
+    my $output = Encode::decode("MIME-Header", $input, Encode::FB_QUIET);
+    is $output => Encode::decode("MIME-Header", $valid_mime), "decode with FB_QUIET flag: output string stops before first mime word with unknown charset";
+    is $input => $invalid_mime, "decode with FB_QUIET flag: input string is modified and starts with first mime word with unknown charset";
+}
+{
+    my $input = $valid_mime . " " . $invalid_mime_unicode;
+    my $output = Encode::decode("MIME-Header", $input, Encode::FB_QUIET);
+    is $output => Encode::decode("MIME-Header", $valid_mime), "decode with FB_QUIET flag: output string stops before first mime word with invalid unicode character";
+    is $input => $invalid_mime_unicode, "decode with FB_QUIET flag: input string is modified and starts with first mime word with invalid unicode character";
+}
+{
+    my $input = $valid_mime . " " . $invalid_mime;
+    my $output = Encode::decode("MIME-Header", $input, Encode::FB_QUIET | Encode::LEAVE_SRC);
+    is $output => Encode::decode("MIME-Header", $valid_mime), "decode with FB_QUIET and LEAVE_SRC flags: output string stops before first mime word with unknown charset";
+    is $input => $valid_mime . " " . $invalid_mime, "decode with FB_QUIET flag: input string is not modified";
+}
+{
+    my $input = $valid_mime . " " . $invalid_mime_unicode;
+    my $output = Encode::decode("MIME-Header", $input, Encode::FB_QUIET | Encode::LEAVE_SRC);
+    is $output => Encode::decode("MIME-Header", $valid_mime), "decode with FB_QUIET and LEAVE_SRC flags: output string stops before first mime word with invalid unicode character";
+    is $input => $valid_mime . " " . $invalid_mime_unicode, "decode with FB_QUIET flag: input string is not modified";
+}
+{
+    my $input = $valid_mime . " " . $invalid_mime;
+    my $output = Encode::decode("MIME-Header", $input, Encode::FB_PERLQQ);
+    is $output => Encode::decode("MIME-Header", $valid_mime) . " " . $invalid_mime, "decode with FB_PERLQQ flag: output string contains unmodified mime word with unknown charset";
+    is $input => $valid_mime . " " . $invalid_mime, "decode with FB_QUIET flag: input string is not modified";
+}
+{
+    my $input = $valid_mime . " " . $invalid_mime_unicode;
+    my $output = Encode::decode("MIME-Header", $input, Encode::FB_PERLQQ);
+    is $output => Encode::decode("MIME-Header", $valid_mime) . '(\xC3)', "decode with FB_PERLQQ flag: output string contains perl qq representation of invalid unicode character";
+    is $input => $valid_mime . " " . $invalid_mime_unicode, "decode with FB_QUIET flag: input string is not modified";
+}
+{
+    my $input = $valid_mime;
+    my $output = Encode::decode("MIME-Header", $input, sub { sprintf("!0x%X!", $_[0]) });
+    is $output => Encode::decode("MIME-Header", $valid_mime), "decode valid with coderef check: output string is valid";
+    is $input => $valid_mime, "decode valid with coderef check: input string is not modified";
+}
+{
+    my $input = $valid_mime . " " . $invalid_mime;
+    my $output = Encode::decode("MIME-Header", $input, sub { sprintf("!0x%X!", $_[0]) });
+    is $output => Encode::decode("MIME-Header", $valid_mime) . " " . $invalid_mime, "decode with coderef check: output string contains unmodified mime word with unknown charset";
+    is $input => $valid_mime . " " . $invalid_mime, "decode with coderef check: input string is not modified";
+}
+{
+    my $input = $valid_mime . " " . $invalid_mime_unicode;
+    my $output = Encode::decode("MIME-Header", $input, sub { sprintf("!0x%X!", $_[0]) });
+    is $output => Encode::decode("MIME-Header", $valid_mime) . '(!0xC3!)', "decode with coderef check: output string contains output from coderef for invalid unicode character";
+    is $input => $valid_mime . " " . $invalid_mime_unicode, "decode with coderef check: input string is not modified";
 }
 
 __END__
