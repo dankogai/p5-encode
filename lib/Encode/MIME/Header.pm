@@ -80,7 +80,7 @@ sub decode($$;$) {
     $str =~ s/(?:\r\n|[\r\n])([ \t])/$1/gos;
 
     # decode each line separately
-    my @input = split /(\r\n|\r|\n)/o, $str;
+    my @input = split /(\r\n|\r|\n)/o, $str, -1;
     my $output = substr($str, 0, 0); # to propagate taintedness
 
     while ( @input ) {
