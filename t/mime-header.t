@@ -24,10 +24,21 @@ use strict;
 use utf8;
 use charnames ":full";
 
-use Test::More tests => 234;
+use Test::More tests => 240;
 
 BEGIN {
     use_ok("Encode::MIME::Header");
+}
+
+my @decode_long_tests;
+if ($] < 5.009004) { # perl versions without Regular expressions Engine de-recursivised which cause stack overflow
+    push(@decode_long_tests, "a" x 1000000 => "a" x 1000000);
+    push(@decode_long_tests, "=?utf-8?Q?a?= " x 1400 => "a" x 1400 . " ");
+    push(@decode_long_tests, "=?utf-8?Q?a?= =?US-ASCII?Q?b?= " x 700 => "ab" x 700 . " ");
+} else {
+    push(@decode_long_tests, "a" x 1000000 => "a" x 1000000);
+    push(@decode_long_tests, "=?utf-8?Q?a?= " x 10000 => "a" x 10000 . " ");
+    push(@decode_long_tests, "=?utf-8?Q?a?= =?US-ASCII?Q?b?= " x 10000 => "ab" x 10000 . " ");
 }
 
 my @decode_tests = (
@@ -85,6 +96,8 @@ my @decode_tests = (
     "prefix =?unknown?Q?a=20b=20c?= middle =?US-ASCII?Q?d=20e=20f?= suffix" => "prefix =?unknown?Q?a=20b=20c?= middle d e f suffix",
     "prefix =?US-ASCII?Q?a_b_c?= =?unknown?Q?d_e_f?= suffix" => "prefix a b c =?unknown?Q?d_e_f?= suffix",
     "prefix =?US-ASCII?Q?a_b_c?= =?unknown?Q?d_e_f?= =?US-ASCII?Q?g_h_i?= suffix" => "prefix a b c =?unknown?Q?d_e_f?= g h i suffix",
+    # long strings
+    @decode_long_tests,
 );
 
 my @decode_default_tests = (
