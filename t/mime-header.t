@@ -24,7 +24,7 @@ use strict;
 use utf8;
 use charnames ":full";
 
-use Test::More tests => 186;
+use Test::More tests => 193;
 
 BEGIN {
     use_ok("Encode::MIME::Header");
@@ -78,6 +78,9 @@ my @decode_tests = (
     "a: b\r\n c" => "a: b c",
     # RT104422
     "=?utf-8?Q?pre?= =?utf-8?B?IGZvbw==?=\r\n =?utf-8?Q?bar?=" => "pre foobar",
+    # RT114034 - replace invalid UTF-8 sequence with unicode replacement character
+    "=?utf-8?Q?=f9=80=80=80=80?=" => "�",
+    "=?utf-8?Q?=28=c3=29?=" => "(�)",
 );
 
 my @decode_default_tests = (
@@ -99,6 +102,10 @@ my @decode_default_tests = (
     "=?us-ascii?b?Zm!!9!v?=" => "foo",
     # concat consecutive words (with same parameters) and join them into one utf-8 symbol
     "=?UTF-8?Q?=C3?= =?UTF-8?Q?=A1?=" => "á",
+    # RT114034 - use strict UTF-8 decoder for invalid MIME charsets utf8, UTF8 and utf-8-strict
+    "=?utf8?Q?=C3=A1=f9=80=80=80=80?=" => "á�",
+    "=?UTF8?Q?=C3=A1=f9=80=80=80=80?=" => "á�",
+    "=?utf-8-strict?Q?=C3=A1=f9=80=80=80=80?=" => "á�",
 );
 
 my @decode_strict_tests = (

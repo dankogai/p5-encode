@@ -70,7 +70,6 @@ my $re_capture_strict = qr/$re_capture_encoded_word_strict$re_word_sep_strict?/;
 our $STRICT_DECODE = 0;
 
 sub decode($$;$) {
-    use utf8;
     my ($obj, $str, $chk) = @_;
 
     my $re_match_decode = $STRICT_DECODE ? $re_match_strict : $re_match;
@@ -97,13 +96,21 @@ sub decode($$;$) {
             my $words = $2;
             $words =~ s{$re_capture_decode}{
                 my $charset = $1;
-                my ($enc, $text) = split /\?/, $3;
-                if ( uc($enc) eq 'B' ) {
+                my ($mime_enc, $text) = split /\?/, $3;
+                my $enc = Encode::find_mime_encoding($charset);
+                # in non strict mode allow also perl encoding aliases
+                if ( not defined $enc and not $STRICT_DECODE ) {
+                    # make sure that decoded string will be always strict UTF-8
+                    $charset = 'UTF-8' if lc($charset) eq 'utf8';
+                    $enc = Encode::find_encoding($charset);
+                }
+                Carp::croak qq(Unknown charset "$charset") unless defined $enc;
+                if ( uc($mime_enc) eq 'B' ) {
                     $obj->{decode_b} or Carp::croak qq(MIME "B" unsupported);
-                    decode_b($charset, $text, $chk);
+                    decode_b($enc, $text, $chk);
                 } else {
                     $obj->{decode_q} or Carp::croak qq(MIME "Q" unsupported);
-                    decode_q($charset, $text, $chk);
+                    decode_q($enc, $text, $chk);
                 }
             }eg;
             $begin . $words;
@@ -120,31 +127,25 @@ sub decode($$;$) {
 
 sub decode_b {
     my ($enc, $b, $chk) = @_;
-    my $d = Encode::find_encoding($enc) or Carp::croak qq(Unknown encoding "$enc");
     # MIME::Base64::decode ignores everything after a '=' padding character
     # in non strict mode split string after each sequence of padding characters and decode each substring
     my $db64 = $STRICT_DECODE ?
         MIME::Base64::decode($b) :
         join('', map { MIME::Base64::decode($_) } split /(?<==)(?=[^=])/, $b);
-    return $d->name eq 'utf8'
-      ? Encode::decode_utf8($db64)
-      : $d->decode($db64, $chk || Encode::FB_PERLQQ);
+    return $enc->decode($db64, $chk);
 }
 
 sub decode_q {
     my ($enc, $q, $chk) = @_;
-    my $d = Encode::find_encoding($enc) or Carp::croak qq(Unknown encoding "$enc");
     $q =~ s/_/ /go;
     $q =~ s/=([0-9A-Fa-f]{2})/pack('C', hex($1))/ego;
-    return $d->name eq 'utf8'
-      ? Encode::decode_utf8($q)
-      : $d->decode($q, $chk || Encode::FB_PERLQQ);
+    return $enc->decode($q, $chk);
 }
 
 sub encode($$;$) {
     my ($obj, $str, $chk) = @_;
     $_[1] = '' if $chk; # empty the input string in the stack so perlio is ok
-    return $obj->_fold_line($obj->_encode_line($str));
+    return $obj->_fold_line($obj->_encode_line($str, $chk));
 }
 
 sub _fold_line {
@@ -174,15 +175,15 @@ use constant TAIL   => '?=';
 use constant SINGLE => { B => \&_encode_b, Q => \&_encode_q, B_len => \&_encode_b_len, Q_len => \&_encode_q_len };
 
 sub _encode_line {
-    my ($obj, $str) = @_;
+    my ($obj, $str, $chk) = @_;
     my $enc = $obj->{encode};
     my $enc_len = $enc . '_len';
     my $llen = $obj->{bpl};
-
+    my $enc_utf8 = Encode::find_mime_encoding('UTF-8');
     my @result = ();
     my $chunk = '';
     while ( length( my $chr = substr($str, 0, 1, '') ) ) {
-        my $chr = Encode::encode_utf8($chr);
+        my $chr = $enc_utf8->encode($chr, $chk);
         if ( SINGLE->{$enc_len}($chunk . $chr) > $llen ) {
             push @result, SINGLE->{$enc}($chunk);
             $chunk = '';
