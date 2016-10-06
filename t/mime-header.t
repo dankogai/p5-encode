@@ -24,7 +24,7 @@ use strict;
 use utf8;
 use charnames ":full";
 
-use Test::More tests => 193;
+use Test::More tests => 205;
 
 BEGIN {
     use_ok("Encode::MIME::Header");
@@ -191,6 +191,45 @@ local $Encode::MIME::Header::STRICT_DECODE = 1;
 @splice = @decode_strict_tests;
 while (my ($e, $d) = splice @splice, 0, 2) {
     is Encode::decode("MIME-Header", $e) => $d, info("decode strict", $e => $d);
+}
+
+my $valid_unicode = "á";
+my $invalid_unicode = "\x{1000000}";
+{
+    my $input = $valid_unicode;
+    my $output = Encode::encode("MIME-Header", $input, Encode::FB_QUIET);
+    is $output => Encode::encode("MIME-Header", $valid_unicode), "encode valid with FB_QUIET flag: output string is valid";
+    is $input => "", "encode valid with FB_QUIET flag: input string is modified and empty";
+}
+{
+    my $input = $valid_unicode . $invalid_unicode;
+    my $output = Encode::encode("MIME-Header", $input, Encode::FB_QUIET);
+    is $output => Encode::encode("MIME-Header", $valid_unicode), "encode with FB_QUIET flag: output string stops before first invalid character";
+    is $input => $invalid_unicode, "encode with FB_QUIET flag: input string is modified and starts with first invalid character";
+}
+{
+    my $input = $valid_unicode . $invalid_unicode;
+    my $output = Encode::encode("MIME-Header", $input, Encode::FB_QUIET | Encode::LEAVE_SRC);
+    is $output => Encode::encode("MIME-Header", $valid_unicode), "encode with FB_QUIET and LEAVE_SRC flags: output string stops before first invalid character";
+    is $input => $valid_unicode . $invalid_unicode, "encode with FB_QUIET and LEAVE_SRC flags: input string is not modified";
+}
+{
+    my $input = $valid_unicode . $invalid_unicode;
+    my $output = Encode::encode("MIME-Header", $input, Encode::FB_PERLQQ);
+    is $output => Encode::encode("MIME-Header", $valid_unicode . '\x{1000000}'), "encode with FB_PERLQQ flag: output string contains perl qq representation of invalid character";
+    is $input => $valid_unicode . $invalid_unicode, "encode with FB_PERLQQ flag: input string is not modified";
+}
+{
+    my $input = $valid_unicode;
+    my $output = Encode::encode("MIME-Header", $input, sub { sprintf("!0x%X!", $_[0]) });
+    is $output => Encode::encode("MIME-Header", $valid_unicode), "encode valid with coderef check: output string is valid";
+    is $input => $valid_unicode, "encode valid with coderef check: input string is not modified";
+}
+{
+    my $input = $valid_unicode . $invalid_unicode;
+    my $output = Encode::encode("MIME-Header", $input, sub { sprintf("!0x%X!", $_[0]) });
+    is $output => Encode::encode("MIME-Header", $valid_unicode . '!0x1000000!'), "encode with coderef check: output string contains output from coderef";
+    is $input => $valid_unicode . $invalid_unicode, "encode with coderef check: input string is not modified";
 }
 
 __END__

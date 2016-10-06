@@ -144,8 +144,9 @@ sub decode_q {
 
 sub encode($$;$) {
     my ($obj, $str, $chk) = @_;
-    $_[1] = '' if $chk; # empty the input string in the stack so perlio is ok
-    return $obj->_fold_line($obj->_encode_line($str, $chk));
+    my $output = $obj->_fold_line($obj->_encode_line($str, $chk));
+    $_[1] = $str if not ref $chk and $chk and !($chk & Encode::LEAVE_SRC);
+    return $output;
 }
 
 sub _fold_line {
@@ -180,17 +181,27 @@ sub _encode_line {
     my $enc_len = $enc . '_len';
     my $llen = $obj->{bpl};
     my $enc_utf8 = Encode::find_mime_encoding('UTF-8');
+    my $enc_chk = (not ref $chk and $chk) ? ($chk | Encode::LEAVE_SRC) : $chk;
     my @result = ();
     my $chunk = '';
     while ( length( my $chr = substr($str, 0, 1, '') ) ) {
-        my $chr = $enc_utf8->encode($chr, $chk);
-        if ( SINGLE->{$enc_len}($chunk . $chr) > $llen ) {
+        my $seq;
+        {
+            local $Carp::CarpLevel = $Carp::CarpLevel + 1; # propagate Carp messages back to caller
+            $seq = $enc_utf8->encode($chr, $chk);
+        }
+        if ( not length($seq) ) {
+            substr($str, 0, 0, $chr);
+            last;
+        }
+        if ( SINGLE->{$enc_len}($chunk . $seq) > $llen ) {
             push @result, SINGLE->{$enc}($chunk);
             $chunk = '';
         }
-        $chunk .= $chr;
+        $chunk .= $seq;
     }
     length($chunk) and push @result, SINGLE->{$enc}($chunk);
+    $_[1] = $str if not ref $chk and $chk and !($chk & Encode::LEAVE_SRC);
     return join(' ', @result);
 }
 
