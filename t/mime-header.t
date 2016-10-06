@@ -25,7 +25,10 @@ use utf8;
 use charnames ":full";
 
 use Test::More tests => 130;
-use_ok("Encode::MIME::Header");
+
+BEGIN {
+    use_ok("Encode::MIME::Header");
+}
 
 my @decode_tests = (
     # RFC2047 p.5
