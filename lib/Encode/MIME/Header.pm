@@ -9,10 +9,11 @@ use Encode ();
 use MIME::Base64 ();
 
 my %seed = (
-    decode_b => 1,      # decodes 'B' encoding ?
-    decode_q => 1,      # decodes 'Q' encoding ?
-    encode   => 'B',    # encode with 'B' or 'Q' ?
-    bpl      => 75,     # bytes per line
+    decode_b => 1,       # decodes 'B' encoding ?
+    decode_q => 1,       # decodes 'Q' encoding ?
+    encode   => 'B',     # encode with 'B' or 'Q' ?
+    charset  => 'UTF-8', # encode charset
+    bpl      => 75,      # bytes per line
 );
 
 $Encode::Encoding{'MIME-Header'} = bless {
@@ -146,13 +147,13 @@ sub encode($$;$) {
     my ($obj, $str, $chk) = @_;
     my $output = $obj->_fold_line($obj->_encode_line($str, $chk));
     $_[1] = $str if not ref $chk and $chk and !($chk & Encode::LEAVE_SRC);
-    return $output;
+    return $output . substr($str, 0, 0); # to propagate taintedness
 }
 
 sub _fold_line {
     my ($obj, $line) = @_;
     my $bpl = $obj->{bpl};
-    my $output = substr($line, 0, 0); # to propagate taintedness
+    my $output = '';
 
     while ( length($line) ) {
         if ( $line =~ s/^(.{0,$bpl})(\s|\z)// ) {
@@ -171,16 +172,10 @@ sub _fold_line {
     return $output;
 }
 
-use constant HEAD   => '=?UTF-8?';
-use constant TAIL   => '?=';
-use constant SINGLE => { B => \&_encode_b, Q => \&_encode_q, B_len => \&_encode_b_len, Q_len => \&_encode_q_len };
-
 sub _encode_line {
     my ($obj, $str, $chk) = @_;
-    my $enc = $obj->{encode};
-    my $enc_len = $enc . '_len';
     my $llen = $obj->{bpl};
-    my $enc_utf8 = Encode::find_mime_encoding('UTF-8');
+    my $enc = Encode::find_mime_encoding($obj->{charset});
     my $enc_chk = (not ref $chk and $chk) ? ($chk | Encode::LEAVE_SRC) : $chk;
     my @result = ();
     my $chunk = '';
@@ -188,31 +183,47 @@ sub _encode_line {
         my $seq;
         {
             local $Carp::CarpLevel = $Carp::CarpLevel + 1; # propagate Carp messages back to caller
-            $seq = $enc_utf8->encode($chr, $chk);
+            $seq = $enc->encode($chr, $enc_chk);
         }
         if ( not length($seq) ) {
             substr($str, 0, 0, $chr);
             last;
         }
-        if ( SINGLE->{$enc_len}($chunk . $seq) > $llen ) {
-            push @result, SINGLE->{$enc}($chunk);
+        if ( $obj->_encode_str_len($chunk . $seq) > $llen ) {
+            push @result, $obj->_encode_str($chunk);
             $chunk = '';
         }
         $chunk .= $seq;
     }
-    length($chunk) and push @result, SINGLE->{$enc}($chunk);
+    length($chunk) and push @result, $obj->_encode_str($chunk);
     $_[1] = $str if not ref $chk and $chk and !($chk & Encode::LEAVE_SRC);
     return join(' ', @result);
 }
 
+sub _encode_str {
+    my ($obj, $chunk) = @_;
+    my $charset = $obj->{charset};
+    my $encode = $obj->{encode};
+    my $text = $encode eq 'B' ? _encode_b($chunk) : _encode_q($chunk);
+    return "=?$charset?$encode?$text?=";
+}
+
+sub _encode_str_len {
+    my ($obj, $chunk) = @_;
+    my $charset = $obj->{charset};
+    my $encode = $obj->{encode};
+    my $text_len = $encode eq 'B' ? _encode_b_len($chunk) : _encode_q_len($chunk);
+    return length("=?$charset?$encode??=") + $text_len;
+}
+
 sub _encode_b {
     my ($chunk) = @_;
-    return HEAD . 'B?' . MIME::Base64::encode($chunk, '') . TAIL;
+    return MIME::Base64::encode($chunk, '');
 }
 
 sub _encode_b_len {
     my ($chunk) = @_;
-    return length(HEAD . 'B?' . TAIL) + ( length($chunk) + 2 ) / 3 * 4;
+    return ( length($chunk) + 2 ) / 3 * 4;
 }
 
 my $re_invalid_q_char = qr/[^0-9A-Za-z !*+\-\/]/;
@@ -223,13 +234,13 @@ sub _encode_q {
         join('', map { sprintf('=%02X', $_) } unpack('C*', $1))
     }egox;
     $chunk =~ s/ /_/go;
-    return HEAD . 'Q?' . $chunk . TAIL;
+    return $chunk;
 }
 
 sub _encode_q_len {
     my ($chunk) = @_;
     my $invalid_count = () = $chunk =~ /$re_invalid_q_char/sgo;
-    return length(HEAD . 'Q?' . TAIL) + ( $invalid_count * 3 ) + ( length($chunk) - $invalid_count );
+    return ( $invalid_count * 3 ) + ( length($chunk) - $invalid_count );
 }
 
 1;
