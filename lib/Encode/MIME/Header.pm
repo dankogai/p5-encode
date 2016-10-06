@@ -369,6 +369,10 @@ Due to popular demand, 'MIME-Header-ISO_2022_JP' was introduced by
 Makamaka.  Thre are still too many MUAs especially cellular phone
 handsets which does not grok UTF-8.
 
+=head1 AUTHORS
+
+Pali E<lt>pali@cpan.orgE<gt>
+
 =head1 SEE ALSO
 
 L<Encode>
