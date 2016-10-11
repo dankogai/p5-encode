@@ -231,7 +231,7 @@ sub _fold_line {
 
 sub _encode_string {
     my ($obj, $str, $chk) = @_;
-    my $wordlen = $obj->{bpl};
+    my $wordlen = $obj->{bpl} > 76 ? 76 : $obj->{bpl};
     my $enc = Encode::find_mime_encoding($obj->{charset});
     my $enc_chk = (not ref $chk and $chk) ? ($chk | Encode::LEAVE_SRC) : $chk;
     my @result = ();
