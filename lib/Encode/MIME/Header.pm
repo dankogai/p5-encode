@@ -175,34 +175,34 @@ sub decode($$;$) {
 }
 
 sub _decode_b {
-    my ($enc, $b, $chk) = @_;
+    my ($enc, $text, $chk) = @_;
     # MIME::Base64::decode ignores everything after a '=' padding character
     # in non strict mode split string after each sequence of padding characters and decode each substring
-    my $db64 = $STRICT_DECODE ?
-        MIME::Base64::decode($b) :
-        join('', map { MIME::Base64::decode($_) } split /(?<==)(?=[^=])/, $b);
-    return _decode_enc($enc, $db64, $chk);
+    my $octets = $STRICT_DECODE ?
+        MIME::Base64::decode($text) :
+        join('', map { MIME::Base64::decode($_) } split /(?<==)(?=[^=])/, $text);
+    return _decode_octets($enc, $octets, $chk);
 }
 
 sub _decode_q {
-    my ($enc, $q, $chk) = @_;
-    $q =~ s/_/ /go;
-    $q =~ s/=([0-9A-Fa-f]{2})/pack('C', hex($1))/ego;
-    return _decode_enc($enc, $q, $chk);
+    my ($enc, $text, $chk) = @_;
+    $text =~ s/_/ /go;
+    $text =~ s/=([0-9A-Fa-f]{2})/pack('C', hex($1))/ego;
+    return _decode_octets($enc, $text, $chk);
 }
 
-sub _decode_enc {
-    my ($enc, $str, $chk) = @_;
+sub _decode_octets {
+    my ($enc, $octets, $chk) = @_;
     $chk &= ~Encode::LEAVE_SRC if not ref $chk and $chk;
     local $Carp::CarpLevel = $Carp::CarpLevel + 1; # propagate Carp messages back to caller
-    my $output = $enc->decode($str, $chk);
-    return undef if not ref $chk and $chk and $str ne '';
+    my $output = $enc->decode($octets, $chk);
+    return undef if not ref $chk and $chk and $octets ne '';
     return $output;
 }
 
 sub encode($$;$) {
     my ($obj, $str, $chk) = @_;
-    my $output = $obj->_fold_line($obj->_encode_line($str, $chk));
+    my $output = $obj->_fold_line($obj->_encode_string($str, $chk));
     $_[1] = $str if not ref $chk and $chk and !($chk & Encode::LEAVE_SRC);
     return $output . substr($str, 0, 0); # to propagate taintedness
 }
@@ -229,13 +229,13 @@ sub _fold_line {
     return $output;
 }
 
-sub _encode_line {
+sub _encode_string {
     my ($obj, $str, $chk) = @_;
-    my $llen = $obj->{bpl};
+    my $wordlen = $obj->{bpl};
     my $enc = Encode::find_mime_encoding($obj->{charset});
     my $enc_chk = (not ref $chk and $chk) ? ($chk | Encode::LEAVE_SRC) : $chk;
     my @result = ();
-    my $chunk = '';
+    my $octets = '';
     while ( length( my $chr = substr($str, 0, 1, '') ) ) {
         my $seq;
         {
@@ -246,58 +246,58 @@ sub _encode_line {
             substr($str, 0, 0, $chr);
             last;
         }
-        if ( $obj->_encode_str_len($chunk . $seq) > $llen ) {
-            push @result, $obj->_encode_str($chunk);
-            $chunk = '';
+        if ( $obj->_encoded_word_len($octets . $seq) > $wordlen ) {
+            push @result, $obj->_encode_word($octets);
+            $octets = '';
         }
-        $chunk .= $seq;
+        $octets .= $seq;
     }
-    length($chunk) and push @result, $obj->_encode_str($chunk);
+    length($octets) and push @result, $obj->_encode_word($octets);
     $_[1] = $str if not ref $chk and $chk and !($chk & Encode::LEAVE_SRC);
     return join(' ', @result);
 }
 
-sub _encode_str {
-    my ($obj, $chunk) = @_;
+sub _encode_word {
+    my ($obj, $octets) = @_;
     my $charset = $obj->{charset};
     my $encode = $obj->{encode};
-    my $text = $encode eq 'B' ? _encode_b($chunk) : _encode_q($chunk);
+    my $text = $encode eq 'B' ? _encode_b($octets) : _encode_q($octets);
     return "=?$charset?$encode?$text?=";
 }
 
-sub _encode_str_len {
-    my ($obj, $chunk) = @_;
+sub _encoded_word_len {
+    my ($obj, $octets) = @_;
     my $charset = $obj->{charset};
     my $encode = $obj->{encode};
-    my $text_len = $encode eq 'B' ? _encode_b_len($chunk) : _encode_q_len($chunk);
+    my $text_len = $encode eq 'B' ? _encoded_b_len($octets) : _encoded_q_len($octets);
     return length("=?$charset?$encode??=") + $text_len;
 }
 
 sub _encode_b {
-    my ($chunk) = @_;
-    return MIME::Base64::encode($chunk, '');
+    my ($octets) = @_;
+    return MIME::Base64::encode($octets, '');
 }
 
-sub _encode_b_len {
-    my ($chunk) = @_;
-    return ( length($chunk) + 2 ) / 3 * 4;
+sub _encoded_b_len {
+    my ($octets) = @_;
+    return ( length($octets) + 2 ) / 3 * 4;
 }
 
 my $re_invalid_q_char = qr/[^0-9A-Za-z !*+\-\/]/;
 
 sub _encode_q {
-    my ($chunk) = @_;
-    $chunk =~ s{($re_invalid_q_char)}{
+    my ($octets) = @_;
+    $octets =~ s{($re_invalid_q_char)}{
         join('', map { sprintf('=%02X', $_) } unpack('C*', $1))
     }egox;
-    $chunk =~ s/ /_/go;
-    return $chunk;
+    $octets =~ s/ /_/go;
+    return $octets;
 }
 
-sub _encode_q_len {
-    my ($chunk) = @_;
-    my $invalid_count = () = $chunk =~ /$re_invalid_q_char/sgo;
-    return ( $invalid_count * 3 ) + ( length($chunk) - $invalid_count );
+sub _encoded_q_len {
+    my ($octets) = @_;
+    my $invalid_count = () = $octets =~ /$re_invalid_q_char/sgo;
+    return ( $invalid_count * 3 ) + ( length($octets) - $invalid_count );
 }
 
 1;
