@@ -18,7 +18,7 @@ BEGIN {
     exit 0;
     }
     if ("$]" >= 5.025) {
-    print "1..0 # encoding pragma not supported in Perl 5.26\n";
+    print "1..0 # Skip: encoding pragma not supported in Perl 5.26\n";
     exit(0);
     }
     $| = 1;

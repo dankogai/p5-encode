@@ -25,7 +25,10 @@ use Encode;
 #use Test::More qw(no_plan);
 use Test::More tests => 277;
 
-use_ok("Encode::MIME::Name");
+BEGIN {
+    use_ok("Encode::MIME::Name");
+}
+
 for my $canon ( sort keys %Encode::MIME::Name::MIME_NAME_OF ) {
     my $enc       = find_encoding($canon);
     my $mime_name = $Encode::MIME::Name::MIME_NAME_OF{$canon};
