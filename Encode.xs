@@ -31,6 +31,10 @@
 UNIMPLEMENTED(_encoded_utf8_to_bytes, I32)
 UNIMPLEMENTED(_encoded_bytes_to_utf8, I32)
 
+#ifndef SvIV_nomg
+#define SvIV_nomg SvIV
+#endif
+
 #ifdef UTF8_DISALLOW_ILLEGAL_INTERCHANGE
 #   define UTF8_ALLOW_STRICT UTF8_DISALLOW_ILLEGAL_INTERCHANGE
 #else
@@ -76,6 +80,37 @@ call_failure(SV * routine, U8 * done, U8 * dest, U8 * orig)
     PERL_UNUSED_VAR(orig);
 }
 
+static void
+utf8_safe_downgrade(pTHX_ SV ** src, U8 ** s, STRLEN * slen, bool modify)
+{
+    if (!modify) {
+        SV *tmp = sv_2mortal(newSVpvn(*s, *slen));
+        SvUTF8_on(tmp);
+        if (SvTAINTED(*src))
+            SvTAINTED_on(tmp);
+        *src = tmp;
+        *s = SvPVX(*src);
+    }
+    if (*slen) {
+        if (!utf8_to_bytes(*s, slen))
+            croak("Wide character");
+        SvCUR_set(*src, *slen);
+    }
+    SvUTF8_off(*src);
+}
+
+static void
+utf8_safe_upgrade(pTHX_ SV ** src, U8 ** s, STRLEN * slen, bool modify)
+{
+    if (!modify) {
+        SV *tmp = sv_2mortal(newSVpvn(*s, *slen));
+        if (SvTAINTED(*src))
+            SvTAINTED_on(tmp);
+        *src = tmp;
+    }
+    sv_utf8_upgrade_nomg(*src);
+    *s = SvPV_nomg(*src, *slen);
+}
 
 #define ERR_ENCODE_NOMAP "\"\\x{%04" UVxf "}\" does not map to %s"
 #define ERR_DECODE_NOMAP "%s \"\\x%02" UVXf "\" does not map to Unicode"
@@ -104,12 +139,10 @@ do_fallback_cb(pTHX_ UV ch, SV *fallback_cb)
 }
 
 static SV *
-encode_method(pTHX_ const encode_t * enc, const encpage_t * dir, SV * src,
+encode_method(pTHX_ const encode_t * enc, const encpage_t * dir, SV * src, U8 * s, STRLEN slen,
 	      int check, STRLEN * offset, SV * term, int * retcode, 
 	      SV *fallback_cb)
 {
-    STRLEN slen;
-    U8 *s = (U8 *) SvPV(src, slen);
     STRLEN tlen  = slen;
     STRLEN ddone = 0;
     STRLEN sdone = 0;
@@ -279,6 +312,7 @@ encode_method(pTHX_ const encode_t * enc, const encpage_t * dir, SV * src,
         sv_setpvn(src, (char*)s+slen, sdone);
     }
     SvCUR_set(src, sdone);
+    SvSETMAGIC(src);
     }
     /* warn("check = 0x%X, code = 0x%d\n", check, code); */
 
@@ -392,7 +426,7 @@ process_utf8(pTHX_ SV* dst, U8* s, U8* e, SV *check_sv,
     }
     else {
 	fallback_cb = &PL_sv_undef;
-	check = SvIV(check_sv);
+	check = SvIV_nomg(check_sv);
     }
 
     SvPOK_only(dst);
@@ -504,10 +538,6 @@ MODULE = Encode		PACKAGE = Encode::utf8	PREFIX = Method_
 
 PROTOTYPES: DISABLE
 
-#ifndef SvIsCOW
-# define SvIsCOW(sv) (SvREADONLY(sv) && SvFAKE(sv))
-#endif
-
 void
 Method_decode_xs(obj,src,check_sv = &PL_sv_no)
 SV *	obj
@@ -520,23 +550,26 @@ PREINIT:
     SV *dst;
     bool renewed = 0;
     int check;
+    bool modify;
+INIT:
+    SvGETMAGIC(src);
+    SvGETMAGIC(check_sv);
+    check = SvROK(check_sv) ? ENCODE_PERLQQ|ENCODE_LEAVE_SRC : SvIV_nomg(check_sv);
+    modify = (check && !(check & ENCODE_LEAVE_SRC));
 CODE:
 {
-    dSP; ENTER; SAVETMPS;
-    if (src == &PL_sv_undef || SvROK(src)) src = sv_2mortal(newSV(0));
-    check = SvROK(check_sv) ? ENCODE_PERLQQ|ENCODE_LEAVE_SRC : SvIV(check_sv);
-    if (!(check & ENCODE_LEAVE_SRC) && SvIsCOW(src)) {
-        /*
-         * disassociate from any other scalars before doing
-         * in-place modifications
-         */
-        sv_force_normal(src);
-    }
-    s = (U8 *) SvPV(src, slen);
-    e = (U8 *) SvEND(src);
+    if (!SvOK(src))
+        XSRETURN_UNDEF;
+    s = modify ? SvPV_force_nomg(src, slen) : SvPV_nomg(src, slen);
+    if (SvUTF8(src))
+        utf8_safe_downgrade(aTHX_ &src, &s, &slen, modify);
+    e = s+slen;
+
     /* 
      * PerlIO check -- we assume the object is of PerlIO if renewed
      */
+    dSP;
+    ENTER; SAVETMPS;
     PUSHMARK(sp);
     XPUSHs(obj);
     PUTBACK;
@@ -551,28 +584,17 @@ CODE:
     FREETMPS; LEAVE;
     /* end PerlIO check */
 
-    if (SvUTF8(src)) {
-    s = utf8_to_bytes(s,&slen);
-    if (s) {
-        SvCUR_set(src,slen);
-        SvUTF8_off(src);
-        e = s+slen;
-    }
-    else {
-        croak("Cannot decode string with wide characters");
-    }
-    }
-
     dst = sv_2mortal(newSV(slen>0?slen:1)); /* newSV() abhors 0 -- inaba */
     s = process_utf8(aTHX_ dst, s, e, check_sv, 0, strict_utf8(aTHX_ obj), renewed);
 
     /* Clear out translated part of source unless asked not to */
-    if (check && !(check & ENCODE_LEAVE_SRC)){
+    if (modify) {
     slen = e-s;
     if (slen) {
         sv_setpvn(src, (char*)s, slen);
     }
     SvCUR_set(src, slen);
+    SvSETMAGIC(src);
     }
     SvUTF8_on(dst);
     if (SvTAINTED(src)) SvTAINTED_on(dst); /* propagate taintedness */
@@ -591,12 +613,18 @@ PREINIT:
     U8 *e;
     SV *dst;
     int check;
+    bool modify;
+INIT:
+    SvGETMAGIC(src);
+    SvGETMAGIC(check_sv);
+    check = SvROK(check_sv) ? ENCODE_PERLQQ|ENCODE_LEAVE_SRC : SvIV_nomg(check_sv);
+    modify = (check && !(check & ENCODE_LEAVE_SRC));
 CODE:
 {
-    check = SvROK(check_sv) ? ENCODE_PERLQQ|ENCODE_LEAVE_SRC : SvIV(check_sv);
-    if (src == &PL_sv_undef || SvROK(src)) src = sv_2mortal(newSV(0));
-    s = (U8 *) SvPV(src, slen);
-    e = (U8 *) SvEND(src);
+    if (!SvOK(src))
+        XSRETURN_UNDEF;
+    s = modify ? SvPV_force_nomg(src, slen) : SvPV_nomg(src, slen);
+    e = s+slen;
     dst = sv_2mortal(newSV(slen>0?slen:1)); /* newSV() abhors 0 -- inaba */
     if (SvUTF8(src)) {
     /* Already encoded */
@@ -632,12 +660,13 @@ CODE:
     }
 
     /* Clear out translated part of source unless asked not to */
-    if (check && !(check & ENCODE_LEAVE_SRC)){
+    if (modify) {
     slen = e-s;
     if (slen) {
         sv_setpvn(src, (char*)s, slen);
     }
     SvCUR_set(src, slen);
+    SvSETMAGIC(src);
     }
     SvPOK_only(dst);
     SvUTF8_off(dst);
@@ -686,23 +715,26 @@ SV *	src
 SV *	off
 SV *	term
 SV *    check_sv
-CODE:
-{
-    int check;
-    SV *fallback_cb = &PL_sv_undef;
+INIT:
+    SvGETMAGIC(src);
+    SvGETMAGIC(check_sv);
+    int check = SvROK(check_sv) ? ENCODE_PERLQQ|ENCODE_LEAVE_SRC : SvIV_nomg(check_sv);
+    SV *fallback_cb = SvROK(check_sv) ? check_sv : &PL_sv_undef;
+    bool modify = (check && !(check & ENCODE_LEAVE_SRC));
     encode_t *enc = INT2PTR(encode_t *, SvIV(SvRV(obj)));
     STRLEN offset = (STRLEN)SvIV(off);
     int code = 0;
-    if (SvUTF8(src)) {
-    	sv_utf8_downgrade(src, FALSE);
-    }
-    if (SvROK(check_sv)){
-	fallback_cb = check_sv;
-	check = ENCODE_PERLQQ|ENCODE_LEAVE_SRC; /* same as FB_PERLQQ */
-    }else{
-	check = SvIV(check_sv);
-    }
-    sv_catsv(dst, encode_method(aTHX_ enc, enc->t_utf8, src, check,
+    U8 *s;
+    STRLEN slen;
+    SV *tmp;
+CODE:
+{
+    if (!SvOK(src))
+        XSRETURN_NO;
+    s = modify ? SvPV_force_nomg(src, slen) : SvPV_nomg(src, slen);
+    if (SvUTF8(src))
+        utf8_safe_downgrade(aTHX_ &src, &s, &slen, modify);
+    sv_catsv(dst, encode_method(aTHX_ enc, enc->t_utf8, src, s, slen, check,
                 &offset, term, &code, fallback_cb));
     SvIV_set(off, (IV)offset);
     if (code == ENCODE_FOUND_TERM) {
@@ -718,71 +750,50 @@ Method_decode(obj,src,check_sv = &PL_sv_no)
 SV *	obj
 SV *	src
 SV *	check_sv
+INIT:
+    SvGETMAGIC(src);
+    SvGETMAGIC(check_sv);
+    int check = SvROK(check_sv) ? ENCODE_PERLQQ|ENCODE_LEAVE_SRC : SvIV_nomg(check_sv);
+    SV *fallback_cb = SvROK(check_sv) ? check_sv : &PL_sv_undef;
+    bool modify = (check && !(check & ENCODE_LEAVE_SRC));
+    encode_t *enc = INT2PTR(encode_t *, SvIV(SvRV(obj)));
+    U8 *s;
+    STRLEN slen;
 CODE:
 {
-    int check;
-    SV *fallback_cb = &PL_sv_undef;
-    encode_t *enc = INT2PTR(encode_t *, SvIV(SvRV(obj)));
-    if (SvREADONLY(src) || SvSMAGICAL(src) || SvGMAGICAL(src) || !SvPOK(src)) {
-        SV *tmp;
-        tmp = sv_newmortal();
-        sv_copypv(tmp, src);
-        src = tmp;
-    }
-    if (SvUTF8(src)) {
-        sv_utf8_downgrade(src, FALSE);
-    }
-    if (SvROK(check_sv)){
-	fallback_cb = check_sv;
-	check = ENCODE_PERLQQ|ENCODE_LEAVE_SRC; /* same as FB_PERLQQ */
-    }else{
-	check = SvIV(check_sv);
-    }
-    ST(0) = encode_method(aTHX_ enc, enc->t_utf8, src, check,
+    if (!SvOK(src))
+        XSRETURN_UNDEF;
+    s = modify ? SvPV_force_nomg(src, slen) : SvPV_nomg(src, slen);
+    if (SvUTF8(src))
+        utf8_safe_downgrade(aTHX_ &src, &s, &slen, modify);
+    ST(0) = encode_method(aTHX_ enc, enc->t_utf8, src, s, slen, check,
               NULL, Nullsv, NULL, fallback_cb);
     SvUTF8_on(ST(0));
     XSRETURN(1);
 }
-
-
-#ifndef SvPV_force_nolen
-#   define SvPV_force_nolen(sv) SvPV_force_flags_nolen(sv, SV_GMAGIC)
-#endif
-
-#ifndef SvPV_force_flags_nolen
-#   define SvPV_force_flags_nolen(sv, flags) \
-        ((SvFLAGS(sv) & (SVf_POK|SVf_THINKFIRST)) == SVf_POK \
-        ? SvPVX(sv) : sv_pvn_force_flags(sv, &PL_na, flags))
-#endif
 
 void
 Method_encode(obj,src,check_sv = &PL_sv_no)
 SV *	obj
 SV *	src
 SV *	check_sv
+INIT:
+    SvGETMAGIC(src);
+    SvGETMAGIC(check_sv);
+    int check = SvROK(check_sv) ? ENCODE_PERLQQ|ENCODE_LEAVE_SRC : SvIV_nomg(check_sv);
+    SV *fallback_cb = SvROK(check_sv) ? check_sv : &PL_sv_undef;
+    bool modify = (check && !(check & ENCODE_LEAVE_SRC));
+    encode_t *enc = INT2PTR(encode_t *, SvIV(SvRV(obj)));
+    U8 *s;
+    STRLEN slen;
 CODE:
 {
-    int check;
-    SV *fallback_cb = &PL_sv_undef;
-    encode_t *enc = INT2PTR(encode_t *, SvIV(SvRV(obj)));
-    if (SvREADONLY(src) || SvSMAGICAL(src) || SvGMAGICAL(src) || !SvPOK(src)) {
-        /*
-        SV *tmp;
-        tmp = sv_newmortal();
-        sv_copypv(tmp, src);
-        src = tmp;
-        */
-        src = sv_mortalcopy(src);
-        SvPV_force_nolen(src);
-    }
-    sv_utf8_upgrade(src);
-    if (SvROK(check_sv)){
-	fallback_cb = check_sv;
-	check = ENCODE_PERLQQ|ENCODE_LEAVE_SRC; /* same as FB_PERLQQ */
-    }else{
-	check = SvIV(check_sv);
-    }
-    ST(0) = encode_method(aTHX_ enc, enc->f_utf8, src, check,
+    if (!SvOK(src))
+        XSRETURN_UNDEF;
+    s = modify ? SvPV_force_nomg(src, slen) : SvPV_nomg(src, slen);
+    if (!SvUTF8(src))
+        utf8_safe_upgrade(aTHX_ &src, &s, &slen, modify);
+    ST(0) = encode_method(aTHX_ enc, enc->f_utf8, src, s, slen, check,
               NULL, Nullsv, NULL, fallback_cb);
     XSRETURN(1);
 }
@@ -951,17 +962,16 @@ bool
 is_utf8(sv, check = 0)
 SV *	sv
 int	check
+PREINIT:
+    char *str;
+    STRLEN len;
 CODE:
 {
-    if (SvGMAGICAL(sv)) /* it could be $1, for example */
-    sv = newSVsv(sv); /* GMAGIG will be done */
+    SvGETMAGIC(sv); /* SvGETMAGIC() can modify SvOK flag */
+    str = SvOK(sv) ? SvPV_nomg(sv, len) : NULL; /* SvPV() can modify SvUTF8 flag */
     RETVAL = SvUTF8(sv) ? TRUE : FALSE;
-    if (RETVAL &&
-        check  &&
-        !is_utf8_string((U8*)SvPVX(sv), SvCUR(sv)))
+    if (RETVAL && check && (!str || !is_utf8_string((U8 *)str, len)))
         RETVAL = FALSE;
-    if (sv != ST(0))
-    SvREFCNT_dec(sv); /* it was a temp copy */
 }
 OUTPUT:
     RETVAL
@@ -971,13 +981,14 @@ _utf8_on(sv)
 SV *	sv
 CODE:
 {
-    if (SvPOK(sv)) {
-    SV *rsv = newSViv(SvUTF8(sv));
-    RETVAL = rsv;
-    if (SvIsCOW(sv)) sv_force_normal(sv);
-    SvUTF8_on(sv);
+    SvGETMAGIC(sv);
+    if (SvPOKp(sv)) {
+        if (SvTHINKFIRST(sv)) sv_force_normal(sv);
+        RETVAL = newSViv(SvUTF8(sv));
+        SvUTF8_on(sv);
+        SvSETMAGIC(sv);
     } else {
-    RETVAL = &PL_sv_undef;
+        RETVAL = &PL_sv_undef;
     }
 }
 OUTPUT:
@@ -988,13 +999,14 @@ _utf8_off(sv)
 SV *	sv
 CODE:
 {
-    if (SvPOK(sv)) {
-    SV *rsv = newSViv(SvUTF8(sv));
-    RETVAL = rsv;
-    if (SvIsCOW(sv)) sv_force_normal(sv);
-    SvUTF8_off(sv);
+    SvGETMAGIC(sv);
+    if (SvPOKp(sv)) {
+        if (SvTHINKFIRST(sv)) sv_force_normal(sv);
+        RETVAL = newSViv(SvUTF8(sv));
+        SvUTF8_off(sv);
+        SvSETMAGIC(sv);
     } else {
-    RETVAL = &PL_sv_undef;
+        RETVAL = &PL_sv_undef;
     }
 }
 OUTPUT:
