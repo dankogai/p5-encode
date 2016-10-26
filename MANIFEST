@@ -94,12 +94,14 @@ t/jisx0212.utf	test data
 t/jperl.t	test script
 t/ksc5601.enc	test data
 t/ksc5601.utf	test data
+t/magic.t	test script
 t/mime-header.t	test script
 t/mime-name.t	test script
 t/mime_header_iso2022jp.t  test script
 t/perlio.t	test script
 t/piconv.t	test script
 t/rt.pl		even more test script
+t/rt85489.t	test script
 t/taint.t       test script
 t/unibench.pl	benchmark script
 t/utf8ref.t	test script
