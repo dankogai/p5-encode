@@ -148,7 +148,7 @@ encode_method(pTHX_ const encode_t * enc, const encpage_t * dir, SV * src, U8 * 
     STRLEN sdone = 0;
     /* We allocate slen+1.
        PerlIO dumps core if this value is smaller than this. */
-    SV *dst = sv_2mortal(newSV(slen+1));
+    SV *dst = newSV(slen+1);
     U8 *d = (U8 *)SvPVX(dst);
     STRLEN dlen = SvLEN(dst)-1;
     int code = 0;
@@ -734,8 +734,10 @@ CODE:
     s = modify ? SvPV_force_nomg(src, slen) : SvPV_nomg(src, slen);
     if (SvUTF8(src))
         utf8_safe_downgrade(aTHX_ &src, &s, &slen, modify);
-    sv_catsv(dst, encode_method(aTHX_ enc, enc->t_utf8, src, s, slen, check,
-                &offset, term, &code, fallback_cb));
+    tmp = encode_method(aTHX_ enc, enc->t_utf8, src, s, slen, check,
+                &offset, term, &code, fallback_cb);
+    sv_catsv(dst, tmp);
+    SvREFCNT_dec(tmp);
     SvIV_set(off, (IV)offset);
     if (code == ENCODE_FOUND_TERM) {
     ST(0) = &PL_sv_yes;
@@ -745,7 +747,7 @@ CODE:
     XSRETURN(1);
 }
 
-void
+SV *
 Method_decode(obj,src,check_sv = &PL_sv_no)
 SV *	obj
 SV *	src
@@ -766,13 +768,14 @@ CODE:
     s = modify ? SvPV_force_nomg(src, slen) : SvPV_nomg(src, slen);
     if (SvUTF8(src))
         utf8_safe_downgrade(aTHX_ &src, &s, &slen, modify);
-    ST(0) = encode_method(aTHX_ enc, enc->t_utf8, src, s, slen, check,
+    RETVAL = encode_method(aTHX_ enc, enc->t_utf8, src, s, slen, check,
               NULL, Nullsv, NULL, fallback_cb);
-    SvUTF8_on(ST(0));
-    XSRETURN(1);
+    SvUTF8_on(RETVAL);
 }
+OUTPUT:
+    RETVAL
 
-void
+SV *
 Method_encode(obj,src,check_sv = &PL_sv_no)
 SV *	obj
 SV *	src
@@ -793,10 +796,11 @@ CODE:
     s = modify ? SvPV_force_nomg(src, slen) : SvPV_nomg(src, slen);
     if (!SvUTF8(src))
         utf8_safe_upgrade(aTHX_ &src, &s, &slen, modify);
-    ST(0) = encode_method(aTHX_ enc, enc->f_utf8, src, s, slen, check,
+    RETVAL = encode_method(aTHX_ enc, enc->f_utf8, src, s, slen, check,
               NULL, Nullsv, NULL, fallback_cb);
-    XSRETURN(1);
 }
+OUTPUT:
+    RETVAL
 
 void
 Method_needs_lines(obj)
