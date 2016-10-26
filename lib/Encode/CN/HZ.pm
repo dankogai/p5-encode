@@ -49,7 +49,8 @@ sub decode ($$;$) {
         else {        # GB mode; the byte ranges are as in RFC 1843.
             no warnings 'uninitialized';
             if ( $str =~ s/^((?:[\x21-\x77][\x21-\x7E])+)// ) {
-                $ret .= $GB->decode( $1, $chk );
+                my $prefix = $1;
+                $ret .= $GB->decode( $prefix, $chk );
             }
             elsif ( $str =~ s/^\x7E\x7D// ) {    # '~}'
                 $in_ascii = 1;
