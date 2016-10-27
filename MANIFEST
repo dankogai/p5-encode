@@ -102,6 +102,7 @@ t/perlio.t	test script
 t/piconv.t	test script
 t/rt.pl		even more test script
 t/rt85489.t	test script
+t/rt113164.t	test script
 t/taint.t       test script
 t/unibench.pl	benchmark script
 t/utf8ref.t	test script
