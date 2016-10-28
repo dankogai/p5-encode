@@ -101,7 +101,10 @@ t/mime_header_iso2022jp.t  test script
 t/perlio.t	test script
 t/piconv.t	test script
 t/rt.pl		even more test script
+t/rt65541.t	test script
+t/rt76824.t	test script
 t/rt85489.t	test script
+t/rt86327.t	test script
 t/rt113164.t	test script
 t/taint.t       test script
 t/unibench.pl	benchmark script
