@@ -1,8 +1,48 @@
 # Revision history for Perl extension Encode.
 #
-# $Id: Changes,v 2.86 2016/08/10 18:08:45 dankogai Exp dankogai $
+# $Id: Changes,v 2.87 2016/10/28 05:03:52 dankogai Exp dankogai $
 #
-$Revision: 2.86 $ $Date: 2016/08/10 18:08:45 $
+$Revision: 2.87 $ $Date: 2016/10/28 05:03:52 $
+! Encode.xs t/taint.t
+  Pulled: Disable _utf8_on and _utf8_off for tainted values
+  https://github.com/dankogai/p5-encode/pull/74
+! Encode.xs MANIFEST t/rt65541.t t/rt76824.t t/rt86327.t
+  Pulled: Fix crash 'panic: sv_setpvn called with negative strlen'
+  https://github.com/dankogai/p5-encode/pull/73
+! Encode.xs MANIFEST t/rt113164.t
+  Pulled: Fix crash caused by undefined behaviour between
+  two sequence points
+  https://github.com/dankogai/p5-encode/pull/72
+! Encode.xs  MANIFEST lib/Encode/CN/HZ.pm lib/Encode/Encoder.pm
+  t/decode.t t/magic.t t/rt85489.t t/utf8ref.t
+  Pulled: Fix handling of undef, ref, typeglob, UTF8, COW and magic
+  scalar argument in all XS functions
+  https://github.com/dankogai/p5-encode/pull/70
+! Encode/_T.e2x t/at-cn.t t/at-tw.t t/enc_data.t t/enc_module.t
+  t/encoding-locale.t t/encoding.t t/jperl.t t/mime-name.t t/undef.t
+  Pulled: Fix unit tests
+  https://github.com/dankogai/p5-encode/pull/69
+! Encode.pm lib/Encode/MIME/Header.pm lib/Encode/MIME/Name.pm
+  t/mime-header.t t/mime-name.t t/taint.t
+  Pulled: Encode::MIME::Header clean up
+  https://github.com/dankogai/p5-encode/pull/68
+! Encode.xs
+  Pulled: Generate CHECK value functions with newCONSTSUB()
+    instead with direct XS
+  https://github.com/dankogai/p5-encode/pull/67
+! Encode.xs
+  Pulled: Encode::utf8: Fix count of replacement characters
+  for overflowed and overlong UTF-8 sequences
+  https://github.com/dankogai/p5-encode/pull/65
+! Encode.xs t/fallback.t t/utf8strict.t
+  Pulled: Encode::utf8: Fix processing invalid UTF-8 subsequences
+  https://github.com/dankogai/p5-encode/pull/63
+! Encode.pm t/utf8ref.t
+  Pulled: Fix return value of Encode::encode_utf8(undef)
+  https://rt.cpan.org/Ticket/Display.html?id=116904
+  https://github.com/dankogai/p5-encode/pull/62
+
+2.86 2016/08/10 18:08:45
 ! encoding.pm t/enc_data.t t/enc_eucjp.t t/enc_module.t t/enc_utf8.t
   t/encoding.t t/jperl.t
   Fixed: #116196: [PATCH] Synchronize encoding.pm with blead

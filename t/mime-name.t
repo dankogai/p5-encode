@@ -1,5 +1,5 @@
 #
-# $Id: mime-name.t,v 1.1 2007/05/12 06:42:19 dankogai Exp $
+# $Id: mime-name.t,v 1.2 2016/10/28 05:03:52 dankogai Exp dankogai $
 # This script is written in utf8
 #
 BEGIN {

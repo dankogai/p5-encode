@@ -1,5 +1,5 @@
 #
-# $Id: jperl.t,v 2.3 2016/08/10 18:08:45 dankogai Exp dankogai $
+# $Id: jperl.t,v 2.4 2016/10/28 05:03:52 dankogai Exp dankogai $
 #
 # This script is written in euc-jp
 
