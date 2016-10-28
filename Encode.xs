@@ -986,7 +986,7 @@ SV *	sv
 CODE:
 {
     SvGETMAGIC(sv);
-    if (SvPOKp(sv)) {
+    if (!SvTAINTED(sv) && SvPOKp(sv)) {
         if (SvTHINKFIRST(sv)) sv_force_normal(sv);
         RETVAL = newSViv(SvUTF8(sv));
         SvUTF8_on(sv);
@@ -1004,7 +1004,7 @@ SV *	sv
 CODE:
 {
     SvGETMAGIC(sv);
-    if (SvPOKp(sv)) {
+    if (!SvTAINTED(sv) && SvPOKp(sv)) {
         if (SvTHINKFIRST(sv)) sv_force_normal(sv);
         RETVAL = newSViv(SvUTF8(sv));
         SvUTF8_off(sv);
