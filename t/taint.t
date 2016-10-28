@@ -10,7 +10,7 @@ my $notaint = "";
 my $notaint_str = "dan\x{5f3e}" . $notaint;
 my $notaint_bin = encode('UTF-8', $notaint_str);
 my @names = Encode->encodings(':all');
-plan tests => 4 * @names;
+plan tests => 4 * @names + 2;
 for my $name (@names) {
     my ($d, $e, $s);
     eval {
@@ -47,3 +47,7 @@ for my $name (@names) {
       ok ! tainted($d), "decode $name";
     }
 }
+Encode::_utf8_on($bin);
+ok(!Encode::is_utf8($bin), "Encode::_utf8_on does not work on tainted values");
+Encode::_utf8_off($str);
+ok(Encode::is_utf8($str), "Encode::_utf8_off does not work on tainted values");
