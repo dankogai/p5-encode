@@ -558,6 +558,7 @@ INIT:
     modify = (check && !(check & ENCODE_LEAVE_SRC));
 CODE:
 {
+    dSP;
     if (!SvOK(src))
         XSRETURN_UNDEF;
     s = modify ? SvPV_force_nomg(src, slen) : SvPV_nomg(src, slen);
@@ -568,7 +569,6 @@ CODE:
     /* 
      * PerlIO check -- we assume the object is of PerlIO if renewed
      */
-    dSP;
     ENTER; SAVETMPS;
     PUSHMARK(sp);
     XPUSHs(obj);
@@ -715,18 +715,24 @@ SV *	src
 SV *	off
 SV *	term
 SV *    check_sv
-INIT:
-    SvGETMAGIC(src);
-    SvGETMAGIC(check_sv);
-    int check = SvROK(check_sv) ? ENCODE_PERLQQ|ENCODE_LEAVE_SRC : SvIV_nomg(check_sv);
-    SV *fallback_cb = SvROK(check_sv) ? check_sv : &PL_sv_undef;
-    bool modify = (check && !(check & ENCODE_LEAVE_SRC));
-    encode_t *enc = INT2PTR(encode_t *, SvIV(SvRV(obj)));
-    STRLEN offset = (STRLEN)SvIV(off);
+PREINIT:
+    int check;
+    SV *fallback_cb;
+    bool modify;
+    encode_t *enc;
+    STRLEN offset;
     int code = 0;
     U8 *s;
     STRLEN slen;
     SV *tmp;
+INIT:
+    SvGETMAGIC(src);
+    SvGETMAGIC(check_sv);
+    check = SvROK(check_sv) ? ENCODE_PERLQQ|ENCODE_LEAVE_SRC : SvIV_nomg(check_sv);
+    fallback_cb = SvROK(check_sv) ? check_sv : &PL_sv_undef;
+    modify = (check && !(check & ENCODE_LEAVE_SRC));
+    enc = INT2PTR(encode_t *, SvIV(SvRV(obj)));
+    offset = (STRLEN)SvIV(off);
 CODE:
 {
     if (!SvOK(src))
@@ -752,15 +758,20 @@ Method_decode(obj,src,check_sv = &PL_sv_no)
 SV *	obj
 SV *	src
 SV *	check_sv
+PREINIT:
+    int check;
+    SV *fallback_cb;
+    bool modify;
+    encode_t *enc;
+    U8 *s;
+    STRLEN slen;
 INIT:
     SvGETMAGIC(src);
     SvGETMAGIC(check_sv);
-    int check = SvROK(check_sv) ? ENCODE_PERLQQ|ENCODE_LEAVE_SRC : SvIV_nomg(check_sv);
-    SV *fallback_cb = SvROK(check_sv) ? check_sv : &PL_sv_undef;
-    bool modify = (check && !(check & ENCODE_LEAVE_SRC));
-    encode_t *enc = INT2PTR(encode_t *, SvIV(SvRV(obj)));
-    U8 *s;
-    STRLEN slen;
+    check = SvROK(check_sv) ? ENCODE_PERLQQ|ENCODE_LEAVE_SRC : SvIV_nomg(check_sv);
+    fallback_cb = SvROK(check_sv) ? check_sv : &PL_sv_undef;
+    modify = (check && !(check & ENCODE_LEAVE_SRC));
+    enc = INT2PTR(encode_t *, SvIV(SvRV(obj)));
 CODE:
 {
     if (!SvOK(src))
@@ -780,15 +791,20 @@ Method_encode(obj,src,check_sv = &PL_sv_no)
 SV *	obj
 SV *	src
 SV *	check_sv
+PREINIT:
+    int check;
+    SV *fallback_cb;
+    bool modify;
+    encode_t *enc;
+    U8 *s;
+    STRLEN slen;
 INIT:
     SvGETMAGIC(src);
     SvGETMAGIC(check_sv);
-    int check = SvROK(check_sv) ? ENCODE_PERLQQ|ENCODE_LEAVE_SRC : SvIV_nomg(check_sv);
-    SV *fallback_cb = SvROK(check_sv) ? check_sv : &PL_sv_undef;
-    bool modify = (check && !(check & ENCODE_LEAVE_SRC));
-    encode_t *enc = INT2PTR(encode_t *, SvIV(SvRV(obj)));
-    U8 *s;
-    STRLEN slen;
+    check = SvROK(check_sv) ? ENCODE_PERLQQ|ENCODE_LEAVE_SRC : SvIV_nomg(check_sv);
+    fallback_cb = SvROK(check_sv) ? check_sv : &PL_sv_undef;
+    modify = (check && !(check & ENCODE_LEAVE_SRC));
+    enc = INT2PTR(encode_t *, SvIV(SvRV(obj)));
 CODE:
 {
     if (!SvOK(src))

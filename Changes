@@ -3,6 +3,13 @@
 # $Id: Changes,v 2.87 2016/10/28 05:03:52 dankogai Exp dankogai $
 #
 $Revision: 2.87 $ $Date: 2016/10/28 05:03:52 $
+! Encode.xs encoding.pm
+  Fix 2 of 3 problems Steve Hay found.
+  1. C89 compiler failures (patch attached).
+  2. encoding.pm has changed slightly but has no $VERSION++
+  Message-Id: <CADED=K6ve_DAzRXPX=EsjtUDnZppAaw+BP1Ziw_fU5f32k+Wyg@mail.gmail.com>
+
+2.87 2016/10/28 05:03:52
 ! Encode.xs t/taint.t
   Pulled: Disable _utf8_on and _utf8_off for tainted values
   https://github.com/dankogai/p5-encode/pull/74
