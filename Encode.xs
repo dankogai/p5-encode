@@ -84,12 +84,12 @@ static void
 utf8_safe_downgrade(pTHX_ SV ** src, U8 ** s, STRLEN * slen, bool modify)
 {
     if (!modify) {
-        SV *tmp = sv_2mortal(newSVpvn(*s, *slen));
+        SV *tmp = sv_2mortal(newSVpvn((char *)*s, *slen));
         SvUTF8_on(tmp);
         if (SvTAINTED(*src))
             SvTAINTED_on(tmp);
         *src = tmp;
-        *s = SvPVX(*src);
+        *s = (U8 *)SvPVX(*src);
     }
     if (*slen) {
         if (!utf8_to_bytes(*s, slen))
@@ -103,13 +103,13 @@ static void
 utf8_safe_upgrade(pTHX_ SV ** src, U8 ** s, STRLEN * slen, bool modify)
 {
     if (!modify) {
-        SV *tmp = sv_2mortal(newSVpvn(*s, *slen));
+        SV *tmp = sv_2mortal(newSVpvn((char *)*s, *slen));
         if (SvTAINTED(*src))
             SvTAINTED_on(tmp);
         *src = tmp;
     }
     sv_utf8_upgrade_nomg(*src);
-    *s = SvPV_nomg(*src, *slen);
+    *s = (U8 *)SvPV_nomg(*src, *slen);
 }
 
 #define ERR_ENCODE_NOMAP "\"\\x{%04" UVxf "}\" does not map to %s"
@@ -561,7 +561,7 @@ CODE:
     dSP;
     if (!SvOK(src))
         XSRETURN_UNDEF;
-    s = modify ? SvPV_force_nomg(src, slen) : SvPV_nomg(src, slen);
+    s = modify ? (U8 *)SvPV_force_nomg(src, slen) : (U8 *)SvPV_nomg(src, slen);
     if (SvUTF8(src))
         utf8_safe_downgrade(aTHX_ &src, &s, &slen, modify);
     e = s+slen;
@@ -623,7 +623,7 @@ CODE:
 {
     if (!SvOK(src))
         XSRETURN_UNDEF;
-    s = modify ? SvPV_force_nomg(src, slen) : SvPV_nomg(src, slen);
+    s = modify ? (U8 *)SvPV_force_nomg(src, slen) : (U8 *)SvPV_nomg(src, slen);
     e = s+slen;
     dst = sv_2mortal(newSV(slen>0?slen:1)); /* newSV() abhors 0 -- inaba */
     if (SvUTF8(src)) {
@@ -737,7 +737,7 @@ CODE:
 {
     if (!SvOK(src))
         XSRETURN_NO;
-    s = modify ? SvPV_force_nomg(src, slen) : SvPV_nomg(src, slen);
+    s = modify ? (U8 *)SvPV_force_nomg(src, slen) : (U8 *)SvPV_nomg(src, slen);
     if (SvUTF8(src))
         utf8_safe_downgrade(aTHX_ &src, &s, &slen, modify);
     tmp = encode_method(aTHX_ enc, enc->t_utf8, src, s, slen, check,
@@ -776,7 +776,7 @@ CODE:
 {
     if (!SvOK(src))
         XSRETURN_UNDEF;
-    s = modify ? SvPV_force_nomg(src, slen) : SvPV_nomg(src, slen);
+    s = modify ? (U8 *)SvPV_force_nomg(src, slen) : (U8 *)SvPV_nomg(src, slen);
     if (SvUTF8(src))
         utf8_safe_downgrade(aTHX_ &src, &s, &slen, modify);
     RETVAL = encode_method(aTHX_ enc, enc->t_utf8, src, s, slen, check,
@@ -809,7 +809,7 @@ CODE:
 {
     if (!SvOK(src))
         XSRETURN_UNDEF;
-    s = modify ? SvPV_force_nomg(src, slen) : SvPV_nomg(src, slen);
+    s = modify ? (U8 *)SvPV_force_nomg(src, slen) : (U8 *)SvPV_nomg(src, slen);
     if (!SvUTF8(src))
         utf8_safe_upgrade(aTHX_ &src, &s, &slen, modify);
     RETVAL = encode_method(aTHX_ enc, enc->f_utf8, src, s, slen, check,

@@ -184,7 +184,7 @@ CODE:
 #if 1
 	/* Update endian for next sequence */
 	if (attr_true("renewed", 7)) {
-	    hv_store((HV *)SvRV(obj),"endian",6,newSVpv((char *)&endian,1),0);
+	    (void)hv_store((HV *)SvRV(obj),"endian",6,newSVpv((char *)&endian,1),0);
 	}
 #endif
     }
@@ -349,7 +349,7 @@ CODE:
 #if 1
 	/* Update endian for next sequence */
 	if (attr_true("renewed", 7)) {
-	    hv_store((HV *)SvRV(obj),"endian",6,newSVpv((char *)&endian,1),0);
+	    (void)hv_store((HV *)SvRV(obj),"endian",6,newSVpv((char *)&endian,1),0);
 	}
 #endif
     }
