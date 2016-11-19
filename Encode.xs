@@ -244,7 +244,7 @@ encode_method(pTHX_ const encode_t * enc, const encpage_t * dir, SV * src, U8 * 
             SV* subchar = 
             (fallback_cb != &PL_sv_undef)
 		? do_fallback_cb(aTHX_ ch, fallback_cb)
-		: newSVpvf(check & ENCODE_PERLQQ ? "\\x{%04"UVxf"}" :
+		: newSVpvf(check & ENCODE_PERLQQ ? "\\x{%04" UVxf "}" :
                  check & ENCODE_HTMLCREF ? "&#%" UVuf ";" :
                  "&#x%" UVxf ";", (UV)ch);
 	    SvUTF8_off(subchar); /* make sure no decoded string gets in */

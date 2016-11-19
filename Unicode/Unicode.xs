@@ -206,7 +206,7 @@ CODE:
 	    }
 	    if (ucs2 || size == 4) {
 		if (check) {
-		    croak("%"SVf":no surrogates allowed %"UVxf,
+		    croak("%" SVf ":no surrogates allowed %" UVxf,
 			  *hv_fetch((HV *)SvRV(obj),"Name",4,0),
 			  ord);
 		}
@@ -216,7 +216,7 @@ CODE:
 		UV lo;
 		if (!isHiSurrogate(ord)) {
 		    if (check) {
-			croak("%"SVf":Malformed HI surrogate %"UVxf,
+			croak("%" SVf ":Malformed HI surrogate %" UVxf,
 			      *hv_fetch((HV *)SvRV(obj),"Name",4,0),
 			      ord);
 		    }
@@ -231,7 +231,7 @@ CODE:
 		             break;
 		        }
 		        else {
-		             croak("%"SVf":Malformed HI surrogate %"UVxf,
+		             croak("%" SVf ":Malformed HI surrogate %" UVxf,
 				   *hv_fetch((HV *)SvRV(obj),"Name",4,0),
 				   ord);
 		        }
@@ -244,7 +244,7 @@ CODE:
 		    lo = enc_unpack(aTHX_ &s,e,size,endian);
 		    if (!isLoSurrogate(lo)) {
 			if (check) {
-			    croak("%"SVf":Malformed LO surrogate %"UVxf,
+			    croak("%" SVf ":Malformed LO surrogate %" UVxf,
 				  *hv_fetch((HV *)SvRV(obj),"Name",4,0),
 				  ord);
 			}
@@ -262,7 +262,7 @@ CODE:
 
 	if ((ord & 0xFFFE) == 0xFFFE || (ord >= 0xFDD0 && ord <= 0xFDEF)) {
 	    if (check) {
-		croak("%"SVf":Unicode character %"UVxf" is illegal",
+		croak("%" SVf ":Unicode character %" UVxf " is illegal",
 		      *hv_fetch((HV *)SvRV(obj),"Name",4,0),
 		      ord);
 	    } else {
@@ -295,7 +295,7 @@ CODE:
     if (s < e) {
 	/* unlikely to happen because it's fixed-length -- dankogai */
 	if (check & ENCODE_WARN_ON_ERR) {
-	    Perl_warner(aTHX_ packWARN(WARN_UTF8),"%"SVf":Partial character",
+	    Perl_warner(aTHX_ packWARN(WARN_UTF8),"%" SVf ":Partial character",
 			*hv_fetch((HV *)SvRV(obj),"Name",4,0));
 	}
     }
@@ -368,7 +368,7 @@ CODE:
 		}
 		if (ucs2 || ord > 0x10FFFF) {
 		    if (check) {
-			croak("%"SVf":code point \"\\x{%"UVxf"}\" too high",
+			croak("%" SVf ":code point \"\\x{%" UVxf "}\" too high",
 				  *hv_fetch((HV *)SvRV(obj),"Name",4,0),ord);
 		    }
 		    enc_pack(aTHX_ result,size,endian,FBCHAR);
@@ -394,7 +394,7 @@ CODE:
 	   But this is critical when you choose to LEAVE_SRC
 	   in which case we die */
 	if (check & (ENCODE_DIE_ON_ERR|ENCODE_LEAVE_SRC)) {
-	    Perl_croak(aTHX_ "%"SVf":partial character is not allowed "
+	    Perl_croak(aTHX_ "%" SVf ":partial character is not allowed "
 		       "when CHECK = 0x%" UVuf,
 		       *hv_fetch((HV *)SvRV(obj),"Name",4,0), check);
 	}
