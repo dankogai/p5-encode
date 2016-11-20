@@ -755,9 +755,17 @@ sub addstrings
  if ($a->{'Forward'})
   {
    my ($cpp, $static, $sized) = compiler_info(1);
-   my $var   = $static ? 'static const' : 'extern';
    my $count = $sized ? scalar(@{$a->{'Entries'}}) : '';
-   print $fh "$var encpage_t $name\[$count];\n";
+   if ($static) {
+     # we cannot ask Config for d_plusplus since we can override CC=g++-6 on the cmdline
+     print $fh "#ifdef __cplusplus\n"; # -fpermissive since g++-6
+     print $fh "extern encpage_t $name\[$count];\n";
+     print $fh "#else\n";
+     print $fh "static const encpage_t $name\[$count];\n";
+     print $fh "#endif\n";
+   } else {
+     print $fh "extern encpage_t $name\[$count];\n";
+   }
   }
  $a->{'DoneStrings'} = 1;
  foreach my $b (@{$a->{'Entries'}})
@@ -848,9 +856,16 @@ sub outtable
    outtable($fh,$t,$bigname) unless $t->{'Done'};
   }
  my ($cpp, $static) = compiler_info(0);
- my $var = $static ? 'static const ' : '';
- print $fh "\n${var}encpage_t $name\[",
-   scalar(@{$a->{'Entries'}}), "] = {\n";
+ my $count = scalar(@{$a->{'Entries'}});
+ if ($static) {
+     print $fh "#ifdef __cplusplus\n"; # -fpermissive since g++-6
+     print $fh "encpage_t $name\[$count] = {\n";
+     print $fh "#else\n";
+     print $fh "static const encpage_t $name\[$count] = {\n";
+     print $fh "#endif\n";
+ } else {
+   print $fh "\nencpage_t $name\[$count] = {\n";
+ }
  foreach my $b (@{$a->{'Entries'}})
   {
    my ($sc,$ec,$out,$t,$end,$l,$fb) = @$b;
