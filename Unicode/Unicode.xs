@@ -143,13 +143,38 @@ CODE:
     STRLEN ulen;
     STRLEN resultbuflen;
     U8 *resultbuf;
-    U8 *s = (U8 *)SvPVbyte(str,ulen);
-    U8 *e = (U8 *)SvEND(str);
+    U8 *s;
+    U8 *e;
+    bool modify = (check && !(check & ENCODE_LEAVE_SRC));
+    bool temp_result;
+
+    SvGETMAGIC(str);
+    if (!SvOK(str))
+        XSRETURN_UNDEF;
+    s = modify ? (U8 *)SvPV_force_nomg(str, ulen) : (U8 *)SvPV_nomg(str, ulen);
+    if (SvUTF8(str)) {
+        if (!modify) {
+            SV *tmp = sv_2mortal(newSVpvn((char *)s, ulen));
+            SvUTF8_on(tmp);
+            if (SvTAINTED(str))
+                SvTAINTED_on(tmp);
+            str = tmp;
+            s = (U8 *)SvPVX(str);
+        }
+        if (ulen) {
+            if (!utf8_to_bytes(s, &ulen))
+                croak("Wide character");
+            SvCUR_set(str, ulen);
+        }
+        SvUTF8_off(str);
+    }
+    e = s+ulen;
+
     /* Optimise for the common case of being called from PerlIOEncode_fill()
        with a standard length buffer. In this case the result SV's buffer is
        only used temporarily, so we can afford to allocate the maximum needed
        and not care about unused space. */
-    const bool temp_result = (ulen == PERLIO_BUFSIZ);
+    temp_result = (ulen == PERLIO_BUFSIZ);
 
     ST(0) = sv_2mortal(result);
     SvUTF8_on(result);
@@ -308,6 +333,7 @@ CODE:
 	    SvCUR_set(str,0);
 	}
 	*SvEND(str) = '\0';
+	SvSETMAGIC(str);
     }
 
     if (!temp_result) shrink_buffer(result);
@@ -328,13 +354,32 @@ CODE:
     const STRLEN usize = (size > 0 ? size : 1);
     SV *result = newSVpvn("", 0);
     STRLEN ulen;
-    U8 *s = (U8 *) SvPVutf8(utf8, ulen);
-    const U8 *e = (U8 *) SvEND(utf8);
+    U8 *s;
+    U8 *e;
+    bool modify = (check && !(check & ENCODE_LEAVE_SRC));
+    bool temp_result;
+
+    SvGETMAGIC(utf8);
+    if (!SvOK(utf8))
+        XSRETURN_UNDEF;
+    s = modify ? (U8 *)SvPV_force_nomg(utf8, ulen) : (U8 *)SvPV_nomg(utf8, ulen);
+    if (!SvUTF8(utf8)) {
+        if (!modify) {
+            SV *tmp = sv_2mortal(newSVpvn((char *)s, ulen));
+            if (SvTAINTED(utf8))
+                SvTAINTED_on(tmp);
+            utf8 = tmp;
+        }
+        sv_utf8_upgrade_nomg(utf8);
+        s = (U8 *)SvPV_nomg(utf8, ulen);
+    }
+    e = s+ulen;
+
     /* Optimise for the common case of being called from PerlIOEncode_flush()
        with a standard length buffer. In this case the result SV's buffer is
        only used temporarily, so we can afford to allocate the maximum needed
        and not care about unused space. */
-    const bool temp_result = (ulen == PERLIO_BUFSIZ);
+    temp_result = (ulen == PERLIO_BUFSIZ);
 
     ST(0) = sv_2mortal(result);
 
@@ -408,12 +453,11 @@ CODE:
 	    SvCUR_set(utf8,0);
 	}
 	*SvEND(utf8) = '\0';
+	SvSETMAGIC(utf8);
     }
 
     if (!temp_result) shrink_buffer(result);
     if (SvTAINTED(utf8)) SvTAINTED_on(result); /* propagate taintedness */
-
-    SvSETMAGIC(utf8);
 
     XSRETURN(1);
 }
