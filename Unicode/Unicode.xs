@@ -125,8 +125,6 @@ PROTOTYPES: DISABLE
 
 #define attr(k, l)  (hv_exists((HV *)SvRV(obj),k,l) ? \
     *hv_fetch((HV *)SvRV(obj),k,l,0) : &PL_sv_undef)
-#define attr_true(k, l)  (hv_exists((HV *)SvRV(obj),k,l) ? \
-    SvTRUE(*hv_fetch((HV *)SvRV(obj),k,l,0)) : FALSE)
 
 void
 decode_xs(obj, str, check = 0)
@@ -135,8 +133,10 @@ SV *	str
 IV	check
 CODE:
 {
-    U8 endian    = *((U8 *)SvPV_nolen(attr("endian", 6)));
-    int size     = SvIV(attr("size", 4));
+    SV *sve      = attr("endian", 6);
+    U8 endian    = *((U8 *)SvPV_nolen(sve));
+    SV *svs      = attr("size", 4);
+    int size     = SvIV(svs);
     int ucs2     = -1; /* only needed in the event of surrogate pairs */
     SV *result   = newSVpvn("",0);
     STRLEN usize = (size > 0 ? size : 1); /* protect against rogue size<=0 */
@@ -180,6 +180,7 @@ CODE:
     SvUTF8_on(result);
 
     if (!endian && s+size <= e) {
+	SV *sv;
 	UV bom;
 	endian = (size == 4) ? 'N' : 'n';
 	bom = enc_unpack(aTHX_ &s,e,size,endian);
@@ -208,7 +209,8 @@ CODE:
 	}
 #if 1
 	/* Update endian for next sequence */
-	if (attr_true("renewed", 7)) {
+	sv = attr("renewed", 7);
+	if (SvTRUE(sv)) {
 	    (void)hv_store((HV *)SvRV(obj),"endian",6,newSVpv((char *)&endian,1),0);
 	}
 #endif
@@ -227,7 +229,8 @@ CODE:
 	U8 *d;
 	if (issurrogate(ord)) {
 	    if (ucs2 == -1) {
-		ucs2 = attr_true("ucs2", 4);
+		SV *sv = attr("ucs2", 4);
+		ucs2 = SvTRUE(sv);
 	    }
 	    if (ucs2 || size == 4) {
 		if (check) {
@@ -348,8 +351,10 @@ SV *	utf8
 IV	check
 CODE:
 {
-    U8 endian = *((U8 *)SvPV_nolen(attr("endian", 6)));
-    const int size = SvIV(attr("size", 4));
+    SV *sve = attr("endian", 6);
+    U8 endian = *((U8 *)SvPV_nolen(sve));
+    SV *svs = attr("size", 4);
+    const int size = SvIV(svs);
     int ucs2 = -1; /* only needed if there is invalid_ucs2 input */
     const STRLEN usize = (size > 0 ? size : 1);
     SV *result = newSVpvn("", 0);
@@ -389,11 +394,13 @@ CODE:
     SvGROW(result, ((ulen+1) * usize));
 
     if (!endian) {
+	SV *sv;
 	endian = (size == 4) ? 'N' : 'n';
 	enc_pack(aTHX_ result,size,endian,BOM_BE);
 #if 1
 	/* Update endian for next sequence */
-	if (attr_true("renewed", 7)) {
+	sv = attr("renewed", 7);
+	if (SvTRUE(sv)) {
 	    (void)hv_store((HV *)SvRV(obj),"endian",6,newSVpv((char *)&endian,1),0);
 	}
 #endif
@@ -409,7 +416,8 @@ CODE:
 	if (size != 4 && invalid_ucs2(ord)) {
 	    if (!issurrogate(ord)) {
 		if (ucs2 == -1) {
-		    ucs2 = attr_true("ucs2", 4);
+		    SV *sv = attr("ucs2", 4);
+		    ucs2 = SvTRUE(sv);
 		}
 		if (ucs2 || ord > 0x10FFFF) {
 		    if (check) {
