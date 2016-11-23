@@ -33,8 +33,8 @@ BEGIN {
 my @decode_long_tests;
 if ($] < 5.009004) { # perl versions without Regular expressions Engine de-recursivised which cause stack overflow
     push(@decode_long_tests, "a" x 1000000 => "a" x 1000000);
-    push(@decode_long_tests, "=?utf-8?Q?a?= " x 1400 => "a" x 1400 . " ");
-    push(@decode_long_tests, "=?utf-8?Q?a?= =?US-ASCII?Q?b?= " x 700 => "ab" x 700 . " ");
+    push(@decode_long_tests, "=?utf-8?Q?a?= " x 400 => "a" x 400 . " ");
+    push(@decode_long_tests, "=?utf-8?Q?a?= =?US-ASCII?Q?b?= " x 200 => "ab" x 200 . " ");
 } else {
     push(@decode_long_tests, "a" x 1000000 => "a" x 1000000);
     push(@decode_long_tests, "=?utf-8?Q?a?= " x 10000 => "a" x 10000 . " ");
