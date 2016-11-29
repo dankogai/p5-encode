@@ -1,8 +1,33 @@
 # Revision history for Perl extension Encode.
 #
-# $Id: Changes,v 2.87 2016/10/28 05:03:52 dankogai Exp dankogai $
+# $Id: Changes,v 2.88 2016/11/29 23:29:23 dankogai Exp dankogai $
 #
-$Revision: 2.87 $ $Date: 2016/10/28 05:03:52 $
+$Revision: 2.88 $ $Date: 2016/11/29 23:29:23 $
+! t/taint.t
+  Pulled: Fix test t/taint.t to pass when Encode::ConfigLocal is present
+  https://github.com/dankogai/p5-encode/pull/83
+! Makefile.PL Unicode/Makefile.PL bin/enc2xs lib/Encode/Alias.pm
+  t/Aliases.t t/enc_data.t t/enc_module.t t/encoding.t t/jperl.t   
+  Pulled: various fixes
+  https://github.com/dankogai/p5-encode/pull/82
+! t/mime-header.t
+  Pulled: Fix test t/mime-header.t to pass on HP-UX 11.23/64 U
+    with perl v5.8.3
+  https://github.com/dankogai/p5-encode/pull/81
+! t/Encode.t
+  Pulled: Extend COW tests for UTF-8 and Latin1
+  https://github.com/dankogai/p5-encode/pull/80
+! Encode.xs Unicode/Unicode.xs
+  Pulled: Rmv impediment to compiling under C++11
+  https://github.com/dankogai/p5-encode/pull/78
+! Encode.xs Unicode/Unicode.xs
+  Pulled: Do not use expressions in macros SvTRUE, SvPV, SvIV,
+    attr and attr_true
+  https://github.com/dankogai/p5-encode/pull/77
+! Unicode/Unicode.xs t/magic.t
+  Pulled: Fix handling of undef, COW and magic scalar argument
+    in Unicode.xs
+  https://github.com/dankogai/p5-encode/pull/76
 ! Encode.xs encoding.pm
   Fix 2 of 3 problems Steve Hay found.
   1. C89 compiler failures (patch attached).
