@@ -445,18 +445,15 @@ process_utf8(pTHX_ SV* dst, U8* s, U8* e, SV *check_sv,
         if (UTF8_IS_START(*s)) {
             U8 skip = UTF8SKIP(s);
             if ((s + skip) > e) {
-                if (stop_at_partial || (check & ENCODE_STOP_AT_PARTIAL)) {
-                    const U8 *p = s + 1;
-                    for (; p < e; p++) {
-                        if (!UTF8_IS_CONTINUATION(*p)) {
-                            ulen = p-s;
-                            goto malformed_byte;
-                        }
-                    }
-                    break;
-                }
+                /* just calculate ulen, in pathological cases can be smaller then e-s */
+                if (e-s >= 2)
+                    convert_utf8_multi_seq(s, e-s, &ulen);
+                else
+                    ulen = 1;
 
-                ulen = e-s;
+                if ((stop_at_partial || (check & ENCODE_STOP_AT_PARTIAL)) && ulen == e-s)
+                    break;
+
                 goto malformed_byte;
             }
 
