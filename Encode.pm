@@ -524,6 +524,8 @@ contains a completely valid utf8 string. See L</"The UTF8 flag"> below.
 
 If the $string is C<undef>, then C<undef> is returned.
 
+C<str2bytes> may be used as an alias for C<encode>.
+
 =head3 decode
 
   $string = decode(ENCODING, OCTETS[, CHECK])
@@ -550,6 +552,8 @@ UTF8 flag for $string is on.  See L</"The UTF8 flag">
 below.
 
 If the $string is C<undef>, then C<undef> is returned.
+
+C<bytes2str> may be used as an alias for C<decode>.
 
 =head3 find_encoding
 
