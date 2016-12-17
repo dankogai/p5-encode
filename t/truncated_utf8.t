@@ -22,12 +22,15 @@ use Encode;
 use PerlIO::encoding;
 $PerlIO::encoding::fallback &= ~(Encode::WARN_ON_ERR|Encode::PERLQQ);
 
-use Test::More tests => 6;
+use Test::More tests => 9;
 
 is(decode("UTF-8", "\xfd\xfe"), "\x{fffd}" x 2);
 is(decode("UTF-8", "\xfd\xfe\xff"), "\x{fffd}" x 3);
 is(decode("UTF-8", "\xfd\xfe\xff\xe0"), "\x{fffd}" x 4);
 is(decode("UTF-8", "\xfd\xfe\xff\xe0\xe1"), "\x{fffd}" x 5);
+is(decode("UTF-8", "\xc1\x9f"), "\x{fffd}");
+is(decode("UTF-8", "\xFF\x80\x90\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80"), "\x{fffd}");
+is(decode("UTF-8", "\xF0\x80\x80\x80"), "\x{fffd}");
 
 my $str = ("x" x 1023) . "\xfd\xfe\xffx";
 open my $fh, '<:encoding(UTF-8)', \$str;
