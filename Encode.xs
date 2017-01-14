@@ -401,7 +401,6 @@ convert_utf8_multi_seq(U8* s, STRLEN len, STRLEN *rlen)
     *rlen = s-ptr;
 
     if (overflowed || *rlen > (STRLEN)UNISKIP(uv)) {
-        *rlen = 1;
         return 0;
     }
 
@@ -442,7 +441,11 @@ process_utf8(pTHX_ SV* dst, U8* s, U8* e, SV *check_sv,
         }
 
         ulen = 1;
-        if (UTF8_IS_START(*s)) {
+        if (! UTF8_IS_CONTINUATION(*s)) {
+            /* Not an invariant nor a continuation; must be a start byte.  (We
+             * can't test for UTF8_IS_START as that excludes things like \xC0
+             * which are start bytes, but always lead to overlongs */
+
             U8 skip = UTF8SKIP(s);
             if ((s + skip) > e) {
                 /* just calculate ulen, in pathological cases can be smaller then e-s */
