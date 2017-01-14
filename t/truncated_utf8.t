@@ -24,6 +24,9 @@ $PerlIO::encoding::fallback &= ~(Encode::WARN_ON_ERR|Encode::PERLQQ);
 
 use Test::More tests => 9;
 
+binmode Test::More->builder->failure_output, ":utf8";
+binmode Test::More->builder->todo_output, ":utf8";
+
 is(decode("UTF-8", "\xfd\xfe"), "\x{fffd}" x 2);
 is(decode("UTF-8", "\xfd\xfe\xff"), "\x{fffd}" x 3);
 is(decode("UTF-8", "\xfd\xfe\xff\xe0"), "\x{fffd}" x 4);
