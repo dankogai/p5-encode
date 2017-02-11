@@ -563,11 +563,11 @@ Returns the I<encoding object> corresponding to I<ENCODING>.  Returns
 C<undef> if no matching I<ENCODING> is find.  The returned object is
 what does the actual encoding or decoding.
 
-  $utf8 = decode($name, $bytes);
+  $string = decode($name, $bytes);
 
 is in fact
 
-    $utf8 = do {
+    $string = do {
         $obj = find_encoding($name);
         croak qq(encoding "$name" not found) unless ref $obj;
         $obj->decode($bytes);
@@ -579,8 +579,8 @@ You can therefore save time by reusing this object as follows;
 
     my $enc = find_encoding("iso-8859-1");
     while(<>) {
-        my $utf8 = $enc->decode($_);
-        ... # now do something with $utf8;
+        my $string = $enc->decode($_);
+        ... # now do something with $string;
     }
 
 Besides L</decode> and L</encode>, other methods are
@@ -984,9 +984,9 @@ When you I<encode>, the resulting UTF8 flag is always B<off>.
 
 When you I<decode>, the resulting UTF8 flag is B<on>--I<unless> you can
 unambiguously represent data.  Here is what we mean by "unambiguously".
-After C<$utf8 = decode("foo", $octet)>,
+After C<$str = decode("foo", $octet)>,
 
-  When $octet is...   The UTF8 flag in $utf8 is
+  When $octet is...    The UTF8 flag in $str is
   ---------------------------------------------
   In ASCII only (or EBCDIC only)            OFF
   In ISO-8859-1                              ON
