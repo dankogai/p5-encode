@@ -659,7 +659,11 @@ followed by C<encode> as follows:
 Equivalent to C<$octets = encode("utf8", $string)>.  The characters in
 $string are encoded in Perl's internal format, and the result is returned
 as a sequence of octets.  Because all possible characters in Perl have a
-(loose, not strict) UTF-8 representation, this function cannot fail.
+(loose, not strict) utf8 representation, this function cannot fail.
+
+B<WARNING>: do not use this function for data exchange as it can produce
+not strict utf8 $octets! For strictly valid UTF-8 output use
+C<$octets = encode("UTF-8", $string)>.
 
 =head3 decode_utf8
 
@@ -667,10 +671,14 @@ as a sequence of octets.  Because all possible characters in Perl have a
 
 Equivalent to C<$string = decode("utf8", $octets [, CHECK])>.
 The sequence of octets represented by $octets is decoded
-from UTF-8 into a sequence of logical characters.
-Because not all sequences of octets are valid UTF-8,
+from (loose, not strict) utf8 into a sequence of logical characters.
+Because not all sequences of octets are valid not strict utf8,
 it is quite possible for this function to fail.
 For CHECK, see L</"Handling Malformed Data">.
+
+B<WARNING>: do not use this function for data exchange as it can produce
+$string with not strict utf8 representation! For strictly valid UTF-8
+$string representation use C<$string = decode("UTF-8", $octets [, CHECK])>.
 
 B<CAVEAT>: the input I<$octets> might be modified in-place depending on
 what is set in CHECK. See L</LEAVE_SRC> if you want your inputs to be
