@@ -516,11 +516,11 @@ ISO-8859-1, also known as Latin1:
 
   $octets = encode("iso-8859-1", $string);
 
-B<CAVEAT>: When you run C<$octets = encode("utf8", $string)>, then
+B<CAVEAT>: When you run C<$octets = encode("UTF-8", $string)>, then
 $octets I<might not be equal to> $string.  Though both contain the
 same data, the UTF8 flag for $octets is I<always> off.  When you
 encode anything, the UTF8 flag on the result is always off, even when it
-contains a completely valid utf8 string. See L</"The UTF8 flag"> below.
+contains a completely valid UTF-8 string. See L</"The UTF8 flag"> below.
 
 If the $string is C<undef>, then C<undef> is returned.
 
@@ -546,7 +546,7 @@ internal format:
 
   $string = decode("iso-8859-1", $octets);
 
-B<CAVEAT>: When you run C<$string = decode("utf8", $octets)>, then $string
+B<CAVEAT>: When you run C<$string = decode("UTF-8", $octets)>, then $string
 I<might not be equal to> $octets.  Though both contain the same data, the
 UTF8 flag for $string is on.  See L</"The UTF8 flag">
 below.
@@ -628,13 +628,13 @@ and C<undef> on error.
 
 B<CAVEAT>: The following operations may look the same, but are not:
 
-  from_to($data, "iso-8859-1", "utf8"); #1
+  from_to($data, "iso-8859-1", "UTF-8"); #1
   $data = decode("iso-8859-1", $data);  #2
 
 Both #1 and #2 make $data consist of a completely valid UTF-8 string,
 but only #2 turns the UTF8 flag on.  #1 is equivalent to:
 
-  $data = encode("utf8", decode("iso-8859-1", $data));
+  $data = encode("UTF-8", decode("iso-8859-1", $data));
 
 See L</"The UTF8 flag"> below.
 
