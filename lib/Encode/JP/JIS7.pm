@@ -29,6 +29,7 @@ use Encode::CJKConstants qw(:all);
 
 sub decode($$;$) {
     my ( $obj, $str, $chk ) = @_;
+    return undef unless defined $str;
     my $residue = '';
     if ($chk) {
         $str =~ s/([^\x00-\x7f].*)$//so and $residue = $1;
@@ -45,6 +46,7 @@ sub decode($$;$) {
 sub encode($$;$) {
     require Encode::JP::H2Z;
     my ( $obj, $utf8, $chk ) = @_;
+    return undef unless defined $utf8;
 
     # empty the input string in the stack so perlio is ok
     $_[1] = '' if $chk;

@@ -22,6 +22,7 @@ our $VERSION = do { my @r = ( q$Revision: 1.7 $ =~ /\d+/g ); sprintf "%d." . "%0
 sub encode {
     my $self = shift;
     my $str  = shift;
+    return undef unless defined $str;
 
     utf8::encode($str) if ( Encode::is_utf8($str) );
     Encode::from_to( $str, 'utf8', 'euc-jp' );

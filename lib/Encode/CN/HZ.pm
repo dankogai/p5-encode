@@ -21,6 +21,7 @@ sub needs_lines { 1 }
 
 sub decode ($$;$) {
     my ( $obj, $str, $chk ) = @_;
+    return undef unless defined $str;
 
     my $GB  = Encode::find_encoding('gb2312-raw');
     my $ret = substr($str, 0, 0); # to propagate taintedness
@@ -135,6 +136,7 @@ sub cat_decode {
 
 sub encode($$;$) {
      my ( $obj, $str, $chk ) = @_;
+    return undef unless defined $str;
 
     my $GB  = Encode::find_encoding('gb2312-raw');
     my $ret = substr($str, 0, 0); # to propagate taintedness;
