@@ -30,6 +30,7 @@ sub needs_lines { 1 }
 
 sub encode($$;$) {
     my ( $obj, $str, $chk ) = @_;
+    return undef unless defined $str;
     my $len = length($str);
     pos($str) = 0;
     my $bytes = substr($str, 0, 0); # to propagate taintedness
@@ -61,6 +62,7 @@ sub encode($$;$) {
 sub decode($$;$) {
     use re 'taint';
     my ( $obj, $bytes, $chk ) = @_;
+    return undef unless defined $bytes;
     my $len = length($bytes);
     my $str = substr($bytes, 0, 0); # to propagate taintedness;
     pos($bytes) = 0;
