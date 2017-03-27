@@ -124,7 +124,7 @@ do_fallback_cb(pTHX_ UV ch, SV *fallback_cb)
     ENTER;
     SAVETMPS;
     PUSHMARK(sp);
-    XPUSHs(sv_2mortal(newSVnv((UV)ch)));
+    XPUSHs(sv_2mortal(newSVuv(ch)));
     PUTBACK;
     argc = call_sv(fallback_cb, G_SCALAR);
     SPAGAIN;
