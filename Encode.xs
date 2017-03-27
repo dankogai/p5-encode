@@ -120,7 +120,7 @@ do_fallback_cb(pTHX_ UV ch, SV *fallback_cb)
 {
     dSP;
     int argc;
-    SV *retval = newSVpv("",0);
+    SV *retval = newSVpvn("",0);
     ENTER;
     SAVETMPS;
     PUSHMARK(sp);
