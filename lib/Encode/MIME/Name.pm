@@ -76,6 +76,7 @@ our %MIME_NAME_OF = (
     'UTF-7'                 => 'UTF-7',
     'utf-8-strict'          => 'UTF-8',
     'viscii'                => 'VISCII',
+    'x-viet-vps'            => 'X-VIET-VPS',
 );
 
 # NOTE: %MIME_NAME_OF is still 1:1 mapping

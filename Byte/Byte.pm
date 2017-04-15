@@ -53,6 +53,7 @@ supported are as follows.
 
   # Vietnamese
   viscii
+  x-viet-vps
 
   # all cp* are also available as ibm-*, ms-*, and windows-*
   # also see L<http://msdn.microsoft.com/en-us/library/aa752010%28VS.85%29.aspx>
