@@ -915,15 +915,13 @@ octets that represent the fallback character.  For instance:
 
 Acts like C<FB_PERLQQ> but U+I<XXXX> is used instead of C<\x{I<XXXX>}>.
 
-Even the fallback for C<decode> must return octets, which are
-then decoded with the character encoding that C<decode> accepts. So for
+Fallback for C<decode> must return decoded string (sequence of characters). So for
 example if you wish to decode octets as UTF-8, and use ISO-8859-15 as
 a fallback for bytes that are not valid UTF-8, you could write
 
     $str = decode 'UTF-8', $octets, sub {
         my $tmp = chr shift;
-        from_to $tmp, 'ISO-8859-15', 'UTF-8';
-        return $tmp;
+        return decode 'ISO-8859-15', $tmp;
     };
 
 =head1 Defining Encodings
