@@ -397,7 +397,7 @@ convert_utf8_multi_seq(U8* s, STRLEN len, STRLEN *rlen)
     U8 *ptr = s;
     bool overflowed = 0;
 
-    uv = NATIVE_TO_UTF(*s) & UTF_START_MASK(len);
+    uv = NATIVE_TO_UTF(*s) & UTF_START_MASK(UTF8SKIP(s));
 
     len--;
     s++;
