@@ -35,17 +35,6 @@ UNIMPLEMENTED(_encoded_bytes_to_utf8, I32)
 #define SvIV_nomg SvIV
 #endif
 
-#ifdef UTF8_DISALLOW_ILLEGAL_INTERCHANGE
-#   define UTF8_ALLOW_STRICT UTF8_DISALLOW_ILLEGAL_INTERCHANGE
-#else
-#   define UTF8_ALLOW_STRICT 0
-#endif
-
-#define UTF8_ALLOW_NONSTRICT (UTF8_ALLOW_ANY &                    \
-                              ~(UTF8_ALLOW_CONTINUATION |         \
-                                UTF8_ALLOW_NON_CONTINUATION |     \
-                                UTF8_ALLOW_LONG))
-
 static void
 Encode_XSEncoding(pTHX_ encode_t * enc)
 {
