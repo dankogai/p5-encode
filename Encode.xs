@@ -515,17 +515,17 @@ process_utf8(pTHX_ SV* dst, U8* s, U8* e, SV *check_sv,
             for (i=0; i<ulen; ++i) sprintf(esc+4*i, "\\x%02X", s[i]);
         if (check & ENCODE_DIE_ON_ERR){
             if (encode)
-                Perl_croak(aTHX_ ERR_ENCODE_NOMAP, uv, "utf8");
+                Perl_croak(aTHX_ ERR_ENCODE_NOMAP, uv, (strict ? "UTF-8" : "utf8"));
             else
-                Perl_croak(aTHX_ ERR_DECODE_STR_NOMAP, "utf8", esc);
+                Perl_croak(aTHX_ ERR_DECODE_STR_NOMAP, (strict ? "UTF-8" : "utf8"), esc);
         }
         if (check & ENCODE_WARN_ON_ERR){
             if (encode)
                 Perl_warner(aTHX_ packWARN(WARN_UTF8),
-                            ERR_ENCODE_NOMAP, uv, "utf8");
+                            ERR_ENCODE_NOMAP, uv, (strict ? "UTF-8" : "utf8"));
             else
                 Perl_warner(aTHX_ packWARN(WARN_UTF8),
-                            ERR_DECODE_STR_NOMAP, "utf8", esc);
+                            ERR_DECODE_STR_NOMAP, (strict ? "UTF-8" : "utf8"), esc);
         }
         if (check & ENCODE_RETURN_ON_ERR) {
                 break;

@@ -30,7 +30,7 @@ use encoding 'euc-jp';
 
 my @c = (127, 128, 255, 256);
 
-print "1.." . (scalar @c + 1) . "\n";
+print "1.." . (scalar @c + 2) . "\n";
 
 my @f;
 
@@ -65,7 +65,19 @@ binmode(F, ":raw"); # Output raw bytes.
 print F chr(128); # Output illegal UTF-8.
 close F;
 open(F, $f) or die "$0: failed to open '$f' for reading: $!";
-binmode(F, ":encoding(utf-8)");
+binmode(F, ":encoding(UTF-8)");
+{
+    local $^W = 1;
+    local $SIG{__WARN__} = sub { $a = shift };
+    eval { <F> }; # This should get caught.
+}
+close F;
+print $a =~ qr{^UTF-8 "\\x80" does not map to Unicode} ?
+  "ok $t - illegal UTF-8 input\n" : "not ok $t - illegal UTF-8 input: a = " . unpack("H*", $a) . "\n";
+$t++;
+
+open(F, $f) or die "$0: failed to open '$f' for reading: $!";
+binmode(F, ":encoding(utf8)");
 {
     local $^W = 1;
     local $SIG{__WARN__} = sub { $a = shift };
@@ -74,6 +86,7 @@ binmode(F, ":encoding(utf-8)");
 close F;
 print $a =~ qr{^utf8 "\\x80" does not map to Unicode} ?
   "ok $t - illegal utf8 input\n" : "not ok $t - illegal utf8 input: a = " . unpack("H*", $a) . "\n";
+$t++;
 
 # On VMS temporary file names like "f0." may be more readable than "f0" since
 # "f0" could be a logical name pointing elsewhere.
