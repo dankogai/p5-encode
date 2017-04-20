@@ -114,6 +114,7 @@ utf8_safe_upgrade(pTHX_ SV ** src, U8 ** s, STRLEN * slen, bool modify)
 
 #define ERR_ENCODE_NOMAP "\"\\x{%04" UVxf "}\" does not map to %s"
 #define ERR_DECODE_NOMAP "%s \"\\x%02" UVXf "\" does not map to Unicode"
+#define ERR_DECODE_STR_NOMAP "%s \"%s\" does not map to Unicode"
 
 static SV *
 do_fallback_cb(pTHX_ UV ch, SV *fallback_cb)
@@ -130,6 +131,31 @@ do_fallback_cb(pTHX_ UV ch, SV *fallback_cb)
     SPAGAIN;
     if (argc != 1){
 	croak("fallback sub must return scalar!");
+    }
+    sv_catsv(retval, POPs);
+    PUTBACK;
+    FREETMPS;
+    LEAVE;
+    return retval;
+}
+
+static SV *
+do_bytes_fallback_cb(pTHX_ U8 *s, STRLEN slen, SV *fallback_cb)
+{
+    dSP;
+    int argc;
+    STRLEN i;
+    SV *retval = newSVpvn("",0);
+    ENTER;
+    SAVETMPS;
+    PUSHMARK(sp);
+    for (i=0; i<slen; ++i)
+        XPUSHs(sv_2mortal(newSVuv(s[i])));
+    PUTBACK;
+    argc = call_sv(fallback_cb, G_SCALAR);
+    SPAGAIN;
+    if (argc != 1){
+        croak("fallback sub must return scalar!");
     }
     sv_catsv(retval, POPs);
     PUTBACK;
@@ -417,6 +443,8 @@ process_utf8(pTHX_ SV* dst, U8* s, U8* e, SV *check_sv,
     int check;
     U8 *d;
     STRLEN dlen;
+    char esc[80]; /* need to store UTF8SKIP * 6 + 1 */
+    int i;
 
     if (SvROK(check_sv)) {
 	/* croak("UTF-8 decoder doesn't support callback CHECK"); */
@@ -475,17 +503,21 @@ process_utf8(pTHX_ SV* dst, U8* s, U8* e, SV *check_sv,
         }
 
         /* If we get here there is something wrong with alleged UTF-8 */
+        /* uv is used only when encoding */
     malformed_byte:
-        uv = (UV)*s;
-        if (ulen == 0)
+        if (uv == 0)
+            uv = (UV)*s;
+        if (encode || ulen == 0)
             ulen = 1;
 
     malformed:
+        if (!encode && (check & (ENCODE_DIE_ON_ERR|ENCODE_WARN_ON_ERR|ENCODE_PERLQQ)))
+            for (i=0; i<ulen; ++i) sprintf(esc+4*i, "\\x%02X", s[i]);
         if (check & ENCODE_DIE_ON_ERR){
             if (encode)
                 Perl_croak(aTHX_ ERR_ENCODE_NOMAP, uv, "utf8");
             else
-                Perl_croak(aTHX_ ERR_DECODE_NOMAP, "utf8", uv);
+                Perl_croak(aTHX_ ERR_DECODE_STR_NOMAP, "utf8", esc);
         }
         if (check & ENCODE_WARN_ON_ERR){
             if (encode)
@@ -493,22 +525,34 @@ process_utf8(pTHX_ SV* dst, U8* s, U8* e, SV *check_sv,
                             ERR_ENCODE_NOMAP, uv, "utf8");
             else
                 Perl_warner(aTHX_ packWARN(WARN_UTF8),
-                            ERR_DECODE_NOMAP, "utf8", uv);
+                            ERR_DECODE_STR_NOMAP, "utf8", esc);
         }
         if (check & ENCODE_RETURN_ON_ERR) {
                 break;
         }
         if (check & (ENCODE_PERLQQ|ENCODE_HTMLCREF|ENCODE_XMLCREF)){
-	    SV* subchar =
-		(fallback_cb != &PL_sv_undef)
-		? do_fallback_cb(aTHX_ uv, fallback_cb)
-		: newSVpvf(check & ENCODE_PERLQQ 
-			   ? (ulen == 1 ? "\\x%02" UVXf : "\\x{%04" UVXf "}")
-			   :  check & ENCODE_HTMLCREF ? "&#%" UVuf ";" 
-			   : "&#x%" UVxf ";", uv);
-	    if (encode){
-		SvUTF8_off(subchar); /* make sure no decoded string gets in */
-	    }
+            SV* subchar;
+            if (encode) {
+                subchar =
+                    (fallback_cb != &PL_sv_undef)
+                    ? do_fallback_cb(aTHX_ uv, fallback_cb)
+                    : newSVpvf(check & ENCODE_PERLQQ
+                        ? (ulen == 1 ? "\\x%02" UVXf : "\\x{%04" UVXf "}")
+                        :  check & ENCODE_HTMLCREF ? "&#%" UVuf ";"
+                        : "&#x%" UVxf ";", uv);
+                SvUTF8_off(subchar); /* make sure no decoded string gets in */
+            } else {
+                if (fallback_cb != &PL_sv_undef) {
+                    /* in decode mode we have sequence of wrong bytes */
+                    subchar = do_bytes_fallback_cb(aTHX_ s, ulen, fallback_cb);
+                } else {
+                    char *ptr = esc;
+                    /* ENCODE_PERLQQ is already stored in esc */
+                    if (check & (ENCODE_HTMLCREF|ENCODE_XMLCREF))
+                        for (i=0; i<ulen; ++i) ptr += sprintf(ptr, ((check & ENCODE_HTMLCREF) ? "&#%u;" : "&#x%02X;"), s[i]);
+                    subchar = newSVpvn(esc, strlen(esc));
+                }
+            }
             dlen += SvCUR(subchar) - ulen;
             SvCUR_set(dst, d-(U8 *)SvPVX(dst));
             *SvEND(dst) = '\0';
