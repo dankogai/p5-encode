@@ -1,8 +1,45 @@
 # Revision history for Perl extension Encode.
 #
-# $Id: Changes,v 2.88 2016/11/29 23:29:23 dankogai Exp dankogai $
+# $Id: Changes,v 2.89 2017/04/21 05:20:14 dankogai Exp dankogai $
 #
-$Revision: 2.88 $ $Date: 2016/11/29 23:29:23 $
+$Revision: 2.89 $ $Date: 2017/04/21 05:20:14 $
+! Encode.pm Encode.xs MANIFEST t/enc_eucjp.t t/enc_utf8.t
++ t/utf8messages.t
+  Pulled: Fixes for Encode::utf8
+  https://github.com/dankogai/p5-encode/pull/97
+! Encode.pm
+  Pulled: Fix documentation about CHECK coderef
+  https://github.com/dankogai/p5-encode/pull/96
+! Encode.xs
+  Pulled: For efficiency use newSVpvn() instead of newSVpv()
+    in do_fallback_cb()
+  https://github.com/dankogai/p5-encode/pull/95
+! Encode.xs
+  Pulled Call Encode callback function with integer argument correctly
+  https://github.com/dankogai/p5-encode/pull/94
+! lib/Encode/CN/HZ.pm lib/Encode/GSM0338.pm lib/Encode/JP/JIS7.pm
+  lib/Encode/KR/2022_KR.pm lib/Encode/MIME/Header.pm
+  lib/Encode/MIME/Header/ISO_2022_JP.pm lib/Encode/Unicode/UTF7.pm
+  t/undef.t
+  Pulled: Fix all Encode modules so their encode(undef) and decode(undef)
+    calls returns undef
+  https://github.com/dankogai/p5-encode/pull/93
++ t/whatwg-aliases.json t/whatwg-aliases.t
+  Pulled: New (failing) tests for aliases defined in WHATWG Encoding spec #92
+  https://github.com/dankogai/p5-encode/pull/92
+! Encode.pm
+  Pulled: Update documentation for UTF-8
+  https://github.com/dankogai/p5-encode/pull/91
+! Encode.xs t/truncated_utf8.t
+  Pulled: Consume correct number of bytes on malformed
+! Encode.pm Unicode/Unicode.pm
+  Pulled: document str2bytes and bytes2str
+  https://github.com/dankogai/p5-encode/pull/86
+! Encode.xs t/fallback.t t/truncated_utf8.t
+  Pulled: Fix appending correct number of Unicode replacement characters
+  https://github.com/dankogai/p5-encode/pull/84
+
+2.88 2016/11/29 23:29:23
 ! t/taint.t
   Pulled: Fix test t/taint.t to pass when Encode::ConfigLocal is present
   https://github.com/dankogai/p5-encode/pull/83
