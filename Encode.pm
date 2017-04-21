@@ -915,12 +915,13 @@ octets that represent the fallback character.  For instance:
 
 Acts like C<FB_PERLQQ> but U+I<XXXX> is used instead of C<\x{I<XXXX>}>.
 
-Fallback for C<decode> must return decoded string (sequence of characters). So for
+Fallback for C<decode> must return decoded string (sequence of characters)
+and takes a list of ordinal values as its arguments. So for
 example if you wish to decode octets as UTF-8, and use ISO-8859-15 as
 a fallback for bytes that are not valid UTF-8, you could write
 
     $str = decode 'UTF-8', $octets, sub {
-        my $tmp = chr shift;
+        my $tmp = join '', map chr, @_;
         return decode 'ISO-8859-15', $tmp;
     };
 
