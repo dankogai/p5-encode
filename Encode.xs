@@ -432,7 +432,7 @@ process_utf8(pTHX_ SV* dst, U8* s, U8* e, SV *check_sv,
     int check;
     U8 *d;
     STRLEN dlen;
-    char esc[80]; /* need to store UTF8SKIP * 6 + 1 */
+    char esc[UTF8_MAXLEN * 6 + 1];
     int i;
 
     if (SvROK(check_sv)) {
