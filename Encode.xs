@@ -457,6 +457,7 @@ process_utf8(pTHX_ SV* dst, U8* s, U8* e, SV *check_sv,
             continue;
         }
 
+        uv = 0;
         ulen = 1;
         if (! UTF8_IS_CONTINUATION(*s)) {
             /* Not an invariant nor a continuation; must be a start byte.  (We
