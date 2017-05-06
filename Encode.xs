@@ -110,7 +110,7 @@ do_fallback_cb(pTHX_ UV ch, SV *fallback_cb)
 {
     dSP;
     int argc;
-    SV *retval = newSVpvn("",0);
+    SV *retval;
     ENTER;
     SAVETMPS;
     PUSHMARK(sp);
@@ -121,7 +121,8 @@ do_fallback_cb(pTHX_ UV ch, SV *fallback_cb)
     if (argc != 1){
 	croak("fallback sub must return scalar!");
     }
-    sv_catsv(retval, POPs);
+    retval = POPs;
+    SvREFCNT_inc(retval);
     PUTBACK;
     FREETMPS;
     LEAVE;
@@ -134,7 +135,7 @@ do_bytes_fallback_cb(pTHX_ U8 *s, STRLEN slen, SV *fallback_cb)
     dSP;
     int argc;
     STRLEN i;
-    SV *retval = newSVpvn("",0);
+    SV *retval;
     ENTER;
     SAVETMPS;
     PUSHMARK(sp);
@@ -146,7 +147,8 @@ do_bytes_fallback_cb(pTHX_ U8 *s, STRLEN slen, SV *fallback_cb)
     if (argc != 1){
         croak("fallback sub must return scalar!");
     }
-    sv_catsv(retval, POPs);
+    retval = POPs;
+    SvREFCNT_inc(retval);
     PUTBACK;
     FREETMPS;
     LEAVE;
@@ -256,16 +258,22 @@ encode_method(pTHX_ const encode_t * enc, const encpage_t * dir, SV * src, U8 * 
             goto ENCODE_SET_SRC;
         }
         if (check & (ENCODE_PERLQQ|ENCODE_HTMLCREF|ENCODE_XMLCREF)){
+            STRLEN sublen;
+            char *substr;
             SV* subchar = 
             (fallback_cb != &PL_sv_undef)
 		? do_fallback_cb(aTHX_ ch, fallback_cb)
 		: newSVpvf(check & ENCODE_PERLQQ ? "\\x{%04" UVxf "}" :
                  check & ENCODE_HTMLCREF ? "&#%" UVuf ";" :
                  "&#x%" UVxf ";", (UV)ch);
-	    SvUTF8_off(subchar); /* make sure no decoded string gets in */
+            substr = SvPV(subchar, sublen);
+            if (SvUTF8(subchar) && sublen && !utf8_to_bytes((U8 *)substr, &sublen)) { /* make sure no decoded string gets in */
+                SvREFCNT_dec(subchar);
+                croak("Wide character");
+            }
             sdone += slen + clen;
-            ddone += dlen + SvCUR(subchar);
-            sv_catsv(dst, subchar);
+            ddone += dlen + sublen;
+            sv_catpvn(dst, substr, sublen);
             SvREFCNT_dec(subchar);
         } else {
             /* fallback char */
@@ -292,18 +300,21 @@ encode_method(pTHX_ const encode_t * enc, const encpage_t * dir, SV * src, U8 * 
         }
         if (check &
             (ENCODE_PERLQQ|ENCODE_HTMLCREF|ENCODE_XMLCREF)){
+            STRLEN sublen;
+            char *substr;
             SV* subchar = 
             (fallback_cb != &PL_sv_undef)
 		? do_fallback_cb(aTHX_ (UV)s[slen], fallback_cb) 
 		: newSVpvf("\\x%02" UVXf, (UV)s[slen]);
+            substr = SvPVutf8(subchar, sublen);
             sdone += slen + 1;
-            ddone += dlen + SvCUR(subchar);
-            sv_catsv(dst, subchar);
+            ddone += dlen + sublen;
+            sv_catpvn(dst, substr, sublen);
             SvREFCNT_dec(subchar);
         } else {
             sdone += slen + 1;
             ddone += dlen + strlen(FBCHAR_UTF8);
-            sv_catpv(dst, FBCHAR_UTF8);
+            sv_catpvn(dst, FBCHAR_UTF8, strlen(FBCHAR_UTF8));
         }
         }
         /* settle variables when fallback */
@@ -521,6 +532,8 @@ process_utf8(pTHX_ SV* dst, U8* s, U8* e, SV *check_sv,
                 break;
         }
         if (check & (ENCODE_PERLQQ|ENCODE_HTMLCREF|ENCODE_XMLCREF)){
+            STRLEN sublen;
+            char *substr;
             SV* subchar;
             if (encode) {
                 subchar =
@@ -530,7 +543,11 @@ process_utf8(pTHX_ SV* dst, U8* s, U8* e, SV *check_sv,
                         ? (ulen == 1 ? "\\x%02" UVXf : "\\x{%04" UVXf "}")
                         :  check & ENCODE_HTMLCREF ? "&#%" UVuf ";"
                         : "&#x%" UVxf ";", uv);
-                SvUTF8_off(subchar); /* make sure no decoded string gets in */
+                substr = SvPV(subchar, sublen);
+                if (SvUTF8(subchar) && sublen && !utf8_to_bytes((U8 *)substr, &sublen)) { /* make sure no decoded string gets in */
+                    SvREFCNT_dec(subchar);
+                    croak("Wide character");
+                }
             } else {
                 if (fallback_cb != &PL_sv_undef) {
                     /* in decode mode we have sequence of wrong bytes */
@@ -542,11 +559,12 @@ process_utf8(pTHX_ SV* dst, U8* s, U8* e, SV *check_sv,
                         for (i=0; i<ulen; ++i) ptr += sprintf(ptr, ((check & ENCODE_HTMLCREF) ? "&#%u;" : "&#x%02X;"), s[i]);
                     subchar = newSVpvn(esc, strlen(esc));
                 }
+                substr = SvPVutf8(subchar, sublen);
             }
-            dlen += SvCUR(subchar) - ulen;
+            dlen += sublen - ulen;
             SvCUR_set(dst, d-(U8 *)SvPVX(dst));
             *SvEND(dst) = '\0';
-            sv_catsv(dst, subchar);
+            sv_catpvn(dst, substr, sublen);
             SvREFCNT_dec(subchar);
             d = (U8 *) SvGROW(dst, dlen) + SvCUR(dst);
         } else {
