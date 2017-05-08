@@ -107,11 +107,15 @@ t/rt85489.t	test script
 t/rt86327.t	test script
 t/rt113164.t	test script
 t/taint.t       test script
+t/truncated_utf8.t test script
+t/undef.t       test script
 t/unibench.pl	benchmark script
 t/utf8messages.t test script
 t/utf8ref.t	test script
 t/utf8strict.t	test script
 t/utf8warnings.t test script
+t/whatwg-aliases.t test script
+t/whatwg-aliases.json test data
 ucm/8859-1.ucm	Unicode Character Map
 ucm/8859-10.ucm	Unicode Character Map
 ucm/8859-11.ucm	Unicode Character Map
