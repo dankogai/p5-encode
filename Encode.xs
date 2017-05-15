@@ -444,7 +444,7 @@ process_utf8(pTHX_ SV* dst, U8* s, U8* e, SV *check_sv,
     U8 *d;
     STRLEN dlen;
     char esc[UTF8_MAXLEN * 6 + 1];
-    int i;
+    STRLEN i;
 
     if (SvROK(check_sv)) {
 	/* croak("UTF-8 decoder doesn't support callback CHECK"); */
@@ -483,7 +483,7 @@ process_utf8(pTHX_ SV* dst, U8* s, U8* e, SV *check_sv,
                 else
                     ulen = 1;
 
-                if ((stop_at_partial || (check & ENCODE_STOP_AT_PARTIAL)) && ulen == e-s)
+                if ((stop_at_partial || (check & ENCODE_STOP_AT_PARTIAL)) && ulen == (STRLEN)(e-s))
                     break;
 
                 goto malformed_byte;
