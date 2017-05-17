@@ -35,17 +35,21 @@ is(decode("UTF-8", "\xc1\x9f"), "\x{fffd}");
 is(decode("UTF-8", "\xFF\x80\x90\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80"), "\x{fffd}");
 is(decode("UTF-8", "\xF0\x80\x80\x80"), "\x{fffd}");
 
-my $str = ("x" x 1023) . "\xfd\xfe\xffx";
-open my $fh, '<:encoding(UTF-8)', \$str;
-my $str2 = <$fh>;
-close $fh;
-is($str2, ("x" x 1023) . ("\x{fffd}" x 3) . "x");
-
-TODO: {
-    local $TODO = "bug in perlio";
-    my $str = ("x" x 1023) . "\xfd\xfe\xff";
+SKIP: {
+    # infinite loop due to bug: https://rt.perl.org/Public/Bug/Display.html?id=41442
+    skip "Perl Version ($]) is older than v5.8.9", 2 if $] < 5.008009;
+    my $str = ("x" x 1023) . "\xfd\xfe\xffx";
     open my $fh, '<:encoding(UTF-8)', \$str;
     my $str2 = <$fh>;
     close $fh;
-    is($str2, ("x" x 1023) . ("\x{fffd}" x 3));
+    is($str2, ("x" x 1023) . ("\x{fffd}" x 3) . "x");
+
+    TODO: {
+        local $TODO = "bug in perlio";
+        my $str = ("x" x 1023) . "\xfd\xfe\xff";
+        open my $fh, '<:encoding(UTF-8)', \$str;
+        my $str2 = <$fh>;
+        close $fh;
+        is($str2, ("x" x 1023) . ("\x{fffd}" x 3));
+    }
 }
