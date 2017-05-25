@@ -16,23 +16,27 @@ my %seed = (
     bpl      => 75,      # bytes per line
 );
 
-$Encode::Encoding{'MIME-Header'} = bless {
+my @objs;
+
+push @objs, bless {
     %seed,
     Name     => 'MIME-Header',
 } => __PACKAGE__;
 
-$Encode::Encoding{'MIME-B'} = bless {
+push @objs, bless {
     %seed,
     decode_q => 0,
     Name     => 'MIME-B',
 } => __PACKAGE__;
 
-$Encode::Encoding{'MIME-Q'} = bless {
+push @objs, bless {
     %seed,
     decode_b => 0,
     encode   => 'Q',
     Name     => 'MIME-Q',
 } => __PACKAGE__;
+
+Encode::define_encoding($_, $_->{Name}) foreach @objs;
 
 use parent qw(Encode::Encoding);
 

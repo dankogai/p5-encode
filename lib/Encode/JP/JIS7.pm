@@ -9,11 +9,12 @@ for my $name ( '7bit-jis', 'iso-2022-jp', 'iso-2022-jp-1' ) {
     my $h2z     = ( $name eq '7bit-jis' )    ? 0 : 1;
     my $jis0212 = ( $name eq 'iso-2022-jp' ) ? 0 : 1;
 
-    $Encode::Encoding{$name} = bless {
+    my $obj = bless {
         Name    => $name,
         h2z     => $h2z,
         jis0212 => $jis0212,
     } => __PACKAGE__;
+    Encode::define_encoding($obj, $name);
 }
 
 use parent qw(Encode::Encoding);

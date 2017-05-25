@@ -333,8 +333,8 @@ sub predefine_encodings {
             $_[1] = '' if $chk;
             return $res;
         };
-        $Encode::Encoding{Unicode} =
-          bless { Name => "UTF_EBCDIC" } => "Encode::UTF_EBCDIC";
+        my $obj = bless { Name => "UTF_EBCDIC" } => "Encode::UTF_EBCDIC";
+        Encode::define_encoding($obj, 'Unicode');
     }
     else {
 
@@ -347,8 +347,8 @@ sub predefine_encodings {
             return $str;
         };
         *encode = \&decode;
-        $Encode::Encoding{Unicode} =
-          bless { Name => "Internal" } => "Encode::Internal";
+        my $obj = bless { Name => "Internal" } => "Encode::Internal";
+        Encode::define_encoding($obj, 'Unicode');
     }
     {
         # https://rt.cpan.org/Public/Bug/Display.html?id=103253
@@ -400,11 +400,9 @@ sub predefine_encodings {
             $$rpos = length($$rsrc);
             return '';
         };
-        $Encode::Encoding{utf8} =
-          bless { Name => "utf8" } => "Encode::utf8";
-        $Encode::Encoding{"utf-8-strict"} =
-          bless { Name => "utf-8-strict", strict_utf8 => 1 } 
-            => "Encode::utf8";
+        __PACKAGE__->Define('utf8');
+        my $strict_obj = bless { Name => "utf-8-strict", strict_utf8 => 1 } => "Encode::utf8";
+        Encode::define_encoding($strict_obj, 'utf-8-strict');
     }
 }
 
