@@ -199,7 +199,6 @@ sub _decode_q {
 sub _decode_octets {
     my ($enc, $octets, $chk) = @_;
     $chk &= ~Encode::LEAVE_SRC if not ref $chk and $chk;
-    local $Carp::CarpLevel = $Carp::CarpLevel + 1; # propagate Carp messages back to caller
     my $output = $enc->decode($octets, $chk);
     return undef if not ref $chk and $chk and $octets ne '';
     return $output;
@@ -243,11 +242,7 @@ sub _encode_string {
     my @result = ();
     my $octets = '';
     while ( length( my $chr = substr($str, 0, 1, '') ) ) {
-        my $seq;
-        {
-            local $Carp::CarpLevel = $Carp::CarpLevel + 1; # propagate Carp messages back to caller
-            $seq = $enc->encode($chr, $enc_chk);
-        }
+        my $seq = $enc->encode($chr, $enc_chk);
         if ( not length($seq) ) {
             substr($str, 0, 0, $chr);
             last;

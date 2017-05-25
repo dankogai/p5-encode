@@ -11,6 +11,8 @@ XSLoader::load( __PACKAGE__, $VERSION );
 
 use Exporter 5.57 'import';
 
+our @CARP_NOT = qw(Encode::Encoder);
+
 # Public, encouraged API is exported by default
 
 our @EXPORT = qw(
@@ -96,6 +98,9 @@ sub define_encoding {
         my $alias = shift;
         define_alias( $alias, $obj );
     }
+    my $class = ref($obj);
+    push @Encode::CARP_NOT, $class unless grep { $_ eq $class } @Encode::CARP_NOT;
+    push @Encode::Encoding::CARP_NOT, $class unless grep { $_ eq $class } @Encode::Encoding::CARP_NOT;
     return $obj;
 }
 
