@@ -34,12 +34,13 @@ for my $name (
     $endian = ( $3 eq 'BE' ) ? 'n' : ( $3 eq 'LE' ) ? 'v' : '';
     $size == 4 and $endian = uc($endian);
 
-    $Encode::Encoding{$name} = bless {
+    my $obj = bless {
         Name   => $name,
         size   => $size,
         endian => $endian,
         ucs2   => $ucs2,
     } => __PACKAGE__;
+    Encode::define_encoding($obj, $name);
 }
 
 use parent qw(Encode::Encoding);

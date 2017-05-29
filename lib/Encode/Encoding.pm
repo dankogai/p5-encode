@@ -5,6 +5,8 @@ use strict;
 use warnings;
 our $VERSION = do { my @r = ( q$Revision: 2.7 $ =~ /\d+/g ); sprintf "%d." . "%02d" x $#r, @r };
 
+our @CARP_NOT = qw(Encode Encode::Encoder);
+
 require Encode;
 
 sub DEBUG { 0 }

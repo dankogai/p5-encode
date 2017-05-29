@@ -16,23 +16,27 @@ my %seed = (
     bpl      => 75,      # bytes per line
 );
 
-$Encode::Encoding{'MIME-Header'} = bless {
+my @objs;
+
+push @objs, bless {
     %seed,
     Name     => 'MIME-Header',
 } => __PACKAGE__;
 
-$Encode::Encoding{'MIME-B'} = bless {
+push @objs, bless {
     %seed,
     decode_q => 0,
     Name     => 'MIME-B',
 } => __PACKAGE__;
 
-$Encode::Encoding{'MIME-Q'} = bless {
+push @objs, bless {
     %seed,
     decode_b => 0,
     encode   => 'Q',
     Name     => 'MIME-Q',
 } => __PACKAGE__;
+
+Encode::define_encoding($_, $_->{Name}) foreach @objs;
 
 use parent qw(Encode::Encoding);
 
@@ -195,7 +199,6 @@ sub _decode_q {
 sub _decode_octets {
     my ($enc, $octets, $chk) = @_;
     $chk &= ~Encode::LEAVE_SRC if not ref $chk and $chk;
-    local $Carp::CarpLevel = $Carp::CarpLevel + 1; # propagate Carp messages back to caller
     my $output = $enc->decode($octets, $chk);
     return undef if not ref $chk and $chk and $octets ne '';
     return $output;
@@ -239,11 +242,7 @@ sub _encode_string {
     my @result = ();
     my $octets = '';
     while ( length( my $chr = substr($str, 0, 1, '') ) ) {
-        my $seq;
-        {
-            local $Carp::CarpLevel = $Carp::CarpLevel + 1; # propagate Carp messages back to caller
-            $seq = $enc->encode($chr, $enc_chk);
-        }
+        my $seq = $enc->encode($chr, $enc_chk);
         if ( not length($seq) ) {
             substr($str, 0, 0, $chr);
             last;

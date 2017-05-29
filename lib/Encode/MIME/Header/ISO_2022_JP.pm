@@ -5,9 +5,10 @@ use warnings;
 
 use parent qw(Encode::MIME::Header);
 
-$Encode::Encoding{'MIME-Header-ISO_2022_JP'} =
+my $obj =
   bless { decode_b => '1', decode_q => '1', encode => 'B', bpl => 76, Name => 'MIME-Header-ISO_2022_JP' } =>
   __PACKAGE__;
+Encode::define_encoding($obj, 'MIME-Header-ISO_2022_JP');
 
 use constant HEAD => '=?ISO-2022-JP?B?';
 use constant TAIL => '?=';
