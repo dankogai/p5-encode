@@ -190,7 +190,7 @@ sub encode($$;$) {
     else {
         $octets = $enc->encode( $string, $check );
     }
-    $_[1] = $string if $check and !ref $check and !( $check & LEAVE_SRC() );
+    $_[1] = $string if $check and !ref $check and !( $check & LEAVE_SRC );
     return $octets;
 }
 *str2bytes = \&encode;
@@ -219,7 +219,7 @@ sub decode($$;$) {
     else {
         $string = $enc->decode( $octets, $check );
     }
-    $_[1] = $octets if $check and !ref $check and !( $check & LEAVE_SRC() );
+    $_[1] = $octets if $check and !ref $check and !( $check & LEAVE_SRC );
     return $string;
 }
 *bytes2str = \&decode;
@@ -286,7 +286,7 @@ sub decode_utf8($;$) {
     $check   ||= 0;
     $utf8enc ||= find_encoding('utf8');
     my $string = $utf8enc->decode( $octets, $check );
-    $_[0] = $octets if $check and !ref $check and !( $check & LEAVE_SRC() );
+    $_[0] = $octets if $check and !ref $check and !( $check & LEAVE_SRC );
     return $string;
 }
 
