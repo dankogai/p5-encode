@@ -4,10 +4,13 @@
 package Encode;
 use strict;
 use warnings;
-our $VERSION = sprintf "%d.%02d", q$Revision: 2.89 $ =~ /(\d+)/g;
 use constant DEBUG => !!$ENV{PERL_ENCODE_DEBUG};
-use XSLoader ();
-XSLoader::load( __PACKAGE__, $VERSION );
+our $VERSION;
+BEGIN {
+    $VERSION = sprintf "%d.%02d", q$Revision: 2.89 $ =~ /(\d+)/g;
+    require XSLoader;
+    XSLoader::load( __PACKAGE__, $VERSION );
+}
 
 use Exporter 5.57 'import';
 
@@ -299,6 +302,7 @@ sub decode_utf8($;$) {
 #     }
 # }
 
+onBOOT;
 predefine_encodings(1);
 
 #
