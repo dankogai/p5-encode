@@ -290,20 +290,8 @@ sub decode_utf8($;$) {
     return $string;
 }
 
-# sub decode_utf8($;$) {
-#     my ( $str, $check ) = @_;
-#     return $str if is_utf8($str);
-#     if ($check) {
-#         return decode( "utf8", $str, $check );
-#     }
-#     else {
-#         return decode( "utf8", $str );
-#         return $str;
-#     }
-# }
-
 onBOOT;
-predefine_encodings(1);
+predefine_encodings;
 
 #
 # This is to restore %Encoding if really needed;
@@ -312,7 +300,6 @@ predefine_encodings(1);
 sub predefine_encodings {
     require Encode::Encoding;
     no warnings 'redefine';
-    my $use_xs = shift;
     if ($ON_EBCDIC) {
 
         # was in Encode::UTF_EBCDIC
@@ -365,37 +352,12 @@ sub predefine_encodings {
         push @Encode::XS::ISA, 'Encode::Encoding';
     }
     {
-
         # was in Encode::utf8
         package Encode::utf8;
         push @Encode::utf8::ISA, 'Encode::Encoding';
-
-        #
-        if ($use_xs) {
-            Encode::DEBUG and warn __PACKAGE__, " XS on";
-            *decode = \&decode_xs;
-            *encode = \&encode_xs;
-        }
-        else {
-            Encode::DEBUG and warn __PACKAGE__, " XS off";
-            *decode = sub {
-                my ( undef, $octets, $chk ) = @_;
-                my $str = Encode::decode_utf8($octets);
-                if ( defined $str ) {
-                    $_[1] = '' if $chk;
-                    return $str;
-                }
-                return undef;
-            };
-            *encode = sub {
-                my ( undef, $string, $chk ) = @_;
-                my $octets = Encode::encode_utf8($string);
-                $_[1] = '' if $chk;
-                return $octets;
-            };
-        }
-        *cat_decode = sub {    # ($obj, $dst, $src, $pos, $trm, $chk)
-                               # currently ignores $chk
+        sub cat_decode {
+            # ($obj, $dst, $src, $pos, $trm, $chk)
+            # currently ignores $chk
             my ( undef, undef, undef, $pos, $trm ) = @_;
             my ( $rdst, $rsrc, $rpos ) = \@_[ 1, 2, 3 ];
             use bytes;
@@ -408,7 +370,7 @@ sub predefine_encodings {
             $$rdst .= substr( $$rsrc, $pos );
             $$rpos = length($$rsrc);
             return '';
-        };
+        }
         __PACKAGE__->Define('utf8');
         my $strict_obj = bless { Name => "utf-8-strict", strict_utf8 => 1 } => "Encode::utf8";
         Encode::define_encoding($strict_obj, 'utf-8-strict');
