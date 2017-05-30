@@ -1090,6 +1090,13 @@ CODE:
 OUTPUT:
     RETVAL
 
+void
+onBOOT()
+CODE:
+{
+#include "def_t.exh"
+}
+
 BOOT:
 {
     HV *stash = gv_stashpvn("Encode", strlen("Encode"), GV_ADD);
@@ -1108,7 +1115,4 @@ BOOT:
     newCONSTSUB(stash, "FB_PERLQQ", newSViv(ENCODE_FB_PERLQQ));
     newCONSTSUB(stash, "FB_HTMLCREF", newSViv(ENCODE_FB_HTMLCREF));
     newCONSTSUB(stash, "FB_XMLCREF", newSViv(ENCODE_FB_XMLCREF));
-}
-{
-#include "def_t.exh"
 }
