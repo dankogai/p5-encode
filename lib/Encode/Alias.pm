@@ -1,9 +1,10 @@
 package Encode::Alias;
 use strict;
 use warnings;
-no warnings 'redefine';
 our $VERSION = do { my @r = ( q$Revision: 2.21 $ =~ /\d+/g ); sprintf "%d." . "%02d" x $#r, @r };
 use constant DEBUG => !!$ENV{PERL_ENCODE_DEBUG};
+
+use Encode ();
 
 use Exporter 'import';
 
@@ -19,7 +20,6 @@ our @Alias;    # ordered matching list
 our %Alias;    # cached known aliases
 
 sub find_alias {
-    require Encode;
     my $class = shift;
     my $find  = shift;
     unless ( exists $Alias{$find} ) {
@@ -134,7 +134,6 @@ sub undef_aliases {
 }
 
 sub init_aliases {
-    require Encode;
     undef_aliases();
 
     # Try all-lower-case version should all else fails
