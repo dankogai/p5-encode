@@ -591,7 +591,7 @@ MODULE = Encode		PACKAGE = Encode::utf8	PREFIX = Method_
 PROTOTYPES: DISABLE
 
 void
-Method_decode_xs(obj,src,check_sv = &PL_sv_no)
+Method_decode(obj,src,check_sv = &PL_sv_no)
 SV *	obj
 SV *	src
 SV *	check_sv
@@ -655,7 +655,7 @@ CODE:
 }
 
 void
-Method_encode_xs(obj,src,check_sv = &PL_sv_no)
+Method_encode(obj,src,check_sv = &PL_sv_no)
 SV *	obj
 SV *	src
 SV *	check_sv

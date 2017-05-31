@@ -127,7 +127,7 @@ PROTOTYPES: DISABLE
     *hv_fetch((HV *)SvRV(obj),k,l,0) : &PL_sv_undef)
 
 void
-decode_xs(obj, str, check = 0)
+decode(obj, str, check = 0)
 SV *	obj
 SV *	str
 IV	check
@@ -345,7 +345,7 @@ CODE:
 }
 
 void
-encode_xs(obj, utf8, check = 0)
+encode(obj, utf8, check = 0)
 SV *	obj
 SV *	utf8
 IV	check
