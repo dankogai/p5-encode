@@ -2,7 +2,6 @@ package Encode::Unicode;
 
 use strict;
 use warnings;
-no warnings 'redefine';
 
 our $VERSION = do { my @r = ( q$Revision: 2.15 $ =~ /\d+/g ); sprintf "%d." . "%02d" x $#r, @r };
 
@@ -13,7 +12,7 @@ XSLoader::load( __PACKAGE__, $VERSION );
 # Object Generator 8 transcoders all at once!
 #
 
-require Encode;
+use Encode ();
 
 our %BOM_Unknown = map { $_ => 1 } qw(UTF-16 UTF-32);
 

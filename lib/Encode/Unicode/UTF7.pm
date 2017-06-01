@@ -4,12 +4,11 @@
 package Encode::Unicode::UTF7;
 use strict;
 use warnings;
-no warnings 'redefine';
 use parent qw(Encode::Encoding);
 __PACKAGE__->Define('UTF-7');
 our $VERSION = do { my @r = ( q$Revision: 2.9 $ =~ /\d+/g ); sprintf "%d." . "%02d" x $#r, @r };
 use MIME::Base64;
-use Encode;
+use Encode qw(find_encoding);
 
 #
 # Algorithms taken from Unicode::String by Gisle Aas

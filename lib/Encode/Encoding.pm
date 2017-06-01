@@ -7,7 +7,9 @@ our $VERSION = do { my @r = ( q$Revision: 2.7 $ =~ /\d+/g ); sprintf "%d." . "%0
 
 our @CARP_NOT = qw(Encode Encode::Encoder);
 
-require Encode;
+use Carp ();
+use Encode ();
+use Encode::MIME::Name;
 
 sub DEBUG { 0 }
 
@@ -22,12 +24,9 @@ sub Define {
 
 sub name { return shift->{'Name'} }
 
-sub mime_name{
-    require Encode::MIME::Name;
+sub mime_name {
     return Encode::MIME::Name::get_mime_name(shift->name);
 }
-
-# sub renew { return $_[0] }
 
 sub renew {
     my $self = shift;
@@ -58,14 +57,12 @@ sub fromUnicode { shift->encode(@_) }
 #
 
 sub encode {
-    require Carp;
     my $obj = shift;
     my $class = ref($obj) ? ref($obj) : $obj;
     Carp::croak( $class . "->encode() not defined!" );
 }
 
 sub decode {
-    require Carp;
     my $obj = shift;
     my $class = ref($obj) ? ref($obj) : $obj;
     Carp::croak( $class . "->encode() not defined!" );
@@ -190,7 +187,6 @@ MUST return the string representing the canonical name of the encoding.
 Predefined As:
 
   sub mime_name{
-    require Encode::MIME::Name;
     return Encode::MIME::Name::get_mime_name(shift->name);
   }
 
