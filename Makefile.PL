@@ -61,6 +61,7 @@ WriteMakefile(
     PREREQ_PM   => {
         Exporter   => '5.57',   # use Exporter 'import';
 	parent     => '0.221',  # version bundled with 5.10.1
+        Storable   => '0',      # bundled with Perl 5.7.3
     },
     TEST_REQUIRES => {
         'Test::More' => '0.81_01',

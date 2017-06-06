@@ -52,6 +52,8 @@ our $ON_EBCDIC = ( ord("A") == 193 );
 use Encode::Alias;
 use Encode::MIME::Name;
 
+use Storable;
+
 # Make a %Encoding package variable to allow a certain amount of cheating
 our %Encoding;
 our %ExtModule;
@@ -156,8 +158,6 @@ sub resolve_alias($) {
 sub clone_encoding($) {
     my $obj = find_encoding(shift);
     ref $obj or return;
-    eval { require Storable };
-    $@ and return;
     return Storable::dclone($obj);
 }
 
