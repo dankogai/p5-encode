@@ -371,7 +371,7 @@ Note that C<STDERR> WILL NOT be changed, regardless.
 Also note that non-STD file handles remain unaffected.  Use C<use
 open> or C<binmode> to change the layers of those.
 
-=item C<use encoding I<ENCNAME> Filter=E<gt>1;>
+=item C<use encoding I<ENCNAME>, Filter=E<gt>1;>
 
 This operates as above, but the C<Filter> argument with a non-zero
 value causes the entire script, and not just literals, to be translated from
