@@ -50,6 +50,9 @@ our %EXPORT_TAGS = (
 our $ON_EBCDIC = ( ord("A") == 193 );
 
 use Encode::Alias;
+use Encode::MIME::Name;
+
+use Storable;
 
 # Make a %Encoding package variable to allow a certain amount of cheating
 our %Encoding;
@@ -142,8 +145,6 @@ sub find_encoding($;$) {
 
 sub find_mime_encoding($;$) {
     my ( $mime_name, $skip_external ) = @_;
-    eval { require Encode::MIME::Name; };
-    $@ and return;
     my $name = Encode::MIME::Name::get_encode_name( $mime_name );
     return find_encoding( $name, $skip_external );
 }
@@ -157,8 +158,6 @@ sub resolve_alias($) {
 sub clone_encoding($) {
     my $obj = find_encoding(shift);
     ref $obj or return;
-    eval { require Storable };
-    $@ and return;
     return Storable::dclone($obj);
 }
 
