@@ -904,28 +904,27 @@ CODE:
     XSRETURN(1);
 }
 
-void
+SV *
 Method_mime_name(obj)
 SV *	obj
+PREINIT:
+    encode_t *enc;
+INIT:
+    enc = INT2PTR(encode_t *, SvIV(SvRV(obj)));
 CODE:
-{
-    encode_t *enc = INT2PTR(encode_t *, SvIV(SvRV(obj)));
-    SV *retval;
-	ENTER;
-	SAVETMPS;
-	PUSHMARK(sp);
-	XPUSHs(sv_2mortal(newSVpvn(enc->name[0], strlen(enc->name[0]))));
-	PUTBACK;
-	call_pv("Encode::MIME::Name::get_mime_name", G_SCALAR);
-	SPAGAIN;
-	retval = newSVsv(POPs);
-	PUTBACK;
-	FREETMPS;
-	LEAVE;
-	/* enc->name[0] */
-	ST(0) = retval;
-    XSRETURN(1);
-}
+    ENTER;
+    SAVETMPS;
+    PUSHMARK(sp);
+    XPUSHs(sv_2mortal(newSVpvn(enc->name[0], strlen(enc->name[0]))));
+    PUTBACK;
+    call_pv("Encode::MIME::Name::get_mime_name", G_SCALAR);
+    SPAGAIN;
+    RETVAL = newSVsv(POPs);
+    PUTBACK;
+    FREETMPS;
+    LEAVE;
+OUTPUT:
+    RETVAL
 
 MODULE = Encode         PACKAGE = Encode
 
