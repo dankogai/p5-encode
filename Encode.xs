@@ -729,7 +729,7 @@ CODE:
 
 MODULE = Encode		PACKAGE = Encode::XS	PREFIX = Method_
 
-PROTOTYPES: ENABLE
+PROTOTYPES: DISABLE
 
 SV *
 Method_renew(obj)
