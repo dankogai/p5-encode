@@ -11,7 +11,7 @@ use Carp ();
 use Encode ();
 use Encode::MIME::Name;
 
-sub DEBUG { 0 }
+use constant DEBUG => !!$ENV{PERL_ENCODE_DEBUG};
 
 sub Define {
     my $obj       = shift;
