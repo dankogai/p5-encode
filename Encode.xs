@@ -603,14 +603,13 @@ PREINIT:
     bool renewed = 0;
     int check;
     bool modify;
+    dSP;
 INIT:
     SvGETMAGIC(src);
     SvGETMAGIC(check_sv);
     check = SvROK(check_sv) ? ENCODE_PERLQQ|ENCODE_LEAVE_SRC : SvIV_nomg(check_sv);
     modify = (check && !(check & ENCODE_LEAVE_SRC));
-CODE:
-{
-    dSP;
+PPCODE:
     if (!SvOK(src))
         XSRETURN_UNDEF;
     s = modify ? (U8 *)SvPV_force_nomg(src, slen) : (U8 *)SvPV_nomg(src, slen);
@@ -652,7 +651,6 @@ CODE:
     if (SvTAINTED(src)) SvTAINTED_on(dst); /* propagate taintedness */
     ST(0) = dst;
     XSRETURN(1);
-}
 
 void
 Method_encode(obj,src,check_sv = &PL_sv_no)
@@ -671,8 +669,7 @@ INIT:
     SvGETMAGIC(check_sv);
     check = SvROK(check_sv) ? ENCODE_PERLQQ|ENCODE_LEAVE_SRC : SvIV_nomg(check_sv);
     modify = (check && !(check & ENCODE_LEAVE_SRC));
-CODE:
-{
+PPCODE:
     if (!SvOK(src))
         XSRETURN_UNDEF;
     s = modify ? (U8 *)SvPV_force_nomg(src, slen) : (U8 *)SvPV_nomg(src, slen);
@@ -725,7 +722,6 @@ CODE:
     if (SvTAINTED(src)) SvTAINTED_on(dst); /* propagate taintedness */
     ST(0) = dst;
     XSRETURN(1);
-}
 
 MODULE = Encode		PACKAGE = Encode::XS	PREFIX = Method_
 
@@ -749,17 +745,19 @@ CODE:
 OUTPUT:
     RETVAL
 
-void
+SV *
 Method_name(obj)
 SV *	obj
+PREINIT:
+    encode_t *enc;
+INIT:
+    enc = INT2PTR(encode_t *, SvIV(SvRV(obj)));
 CODE:
-{
-    encode_t *enc = INT2PTR(encode_t *, SvIV(SvRV(obj)));
-    ST(0) = sv_2mortal(newSVpvn(enc->name[0],strlen(enc->name[0])));
-    XSRETURN(1);
-}
+    RETVAL = newSVpvn(enc->name[0], strlen(enc->name[0]));
+OUTPUT:
+    RETVAL
 
-void
+bool
 Method_cat_decode(obj, dst, src, off, term, check_sv = &PL_sv_no)
 SV *	obj
 SV *	dst
@@ -786,7 +784,6 @@ INIT:
     enc = INT2PTR(encode_t *, SvIV(SvRV(obj)));
     offset = (STRLEN)SvIV(off);
 CODE:
-{
     if (!SvOK(src))
         XSRETURN_NO;
     s = modify ? (U8 *)SvPV_force_nomg(src, slen) : (U8 *)SvPV_nomg(src, slen);
@@ -797,13 +794,9 @@ CODE:
     sv_catsv(dst, tmp);
     SvREFCNT_dec(tmp);
     SvIV_set(off, (IV)offset);
-    if (code == ENCODE_FOUND_TERM) {
-    ST(0) = &PL_sv_yes;
-    }else{
-    ST(0) = &PL_sv_no;
-    }
-    XSRETURN(1);
-}
+    RETVAL = (code == ENCODE_FOUND_TERM);
+OUTPUT:
+    RETVAL
 
 SV *
 Method_decode(obj,src,check_sv = &PL_sv_no)
@@ -825,7 +818,6 @@ INIT:
     modify = (check && !(check & ENCODE_LEAVE_SRC));
     enc = INT2PTR(encode_t *, SvIV(SvRV(obj)));
 CODE:
-{
     if (!SvOK(src))
         XSRETURN_UNDEF;
     s = modify ? (U8 *)SvPV_force_nomg(src, slen) : (U8 *)SvPV_nomg(src, slen);
@@ -834,7 +826,6 @@ CODE:
     RETVAL = encode_method(aTHX_ enc, enc->t_utf8, src, s, slen, check,
               NULL, Nullsv, NULL, fallback_cb);
     SvUTF8_on(RETVAL);
-}
 OUTPUT:
     RETVAL
 
@@ -858,7 +849,6 @@ INIT:
     modify = (check && !(check & ENCODE_LEAVE_SRC));
     enc = INT2PTR(encode_t *, SvIV(SvRV(obj)));
 CODE:
-{
     if (!SvOK(src))
         XSRETURN_UNDEF;
     s = modify ? (U8 *)SvPV_force_nomg(src, slen) : (U8 *)SvPV_nomg(src, slen);
@@ -866,20 +856,17 @@ CODE:
         utf8_safe_upgrade(aTHX_ &src, &s, &slen, modify);
     RETVAL = encode_method(aTHX_ enc, enc->f_utf8, src, s, slen, check,
               NULL, Nullsv, NULL, fallback_cb);
-}
 OUTPUT:
     RETVAL
 
-void
+bool
 Method_needs_lines(obj)
 SV *	obj
 CODE:
-{
-    /* encode_t *enc = INT2PTR(encode_t *, SvIV(SvRV(obj))); */
     PERL_UNUSED_VAR(obj);
-    ST(0) = &PL_sv_no;
-    XSRETURN(1);
-}
+    RETVAL = FALSE;
+OUTPUT:
+    RETVAL
 
 bool
 Method_perlio_ok(obj)
@@ -922,10 +909,11 @@ PROTOTYPES: ENABLE
 I32
 _bytes_to_utf8(sv, ...)
 SV *    sv
+PREINIT:
+    SV * encoding;
+INIT:
+    encoding = items == 2 ? ST(1) : Nullsv;
 CODE:
-{
-    SV * encoding = items == 2 ? ST(1) : Nullsv;
-
     if (encoding)
     RETVAL = _encoded_bytes_to_utf8(sv, SvPV_nolen(encoding));
     else {
@@ -939,18 +927,19 @@ CODE:
     Safefree(converted);                /* ... so free it */
     RETVAL = len;
     }
-}
 OUTPUT:
     RETVAL
 
 I32
 _utf8_to_bytes(sv, ...)
 SV *    sv
+PREINIT:
+    SV * to;
+    SV * check;
+INIT:
+    to    = items > 1 ? ST(1) : Nullsv;
+    check = items > 2 ? ST(2) : Nullsv;
 CODE:
-{
-    SV * to    = items > 1 ? ST(1) : Nullsv;
-    SV * check = items > 2 ? ST(2) : Nullsv;
-
     if (to) {
     RETVAL = _encoded_utf8_to_bytes(sv, SvPV_nolen(to));
     } else {
@@ -1010,7 +999,6 @@ CODE:
         RETVAL = (utf8_to_bytes(s, &len) ? len : 0);
     }
     }
-}
 OUTPUT:
     RETVAL
 
@@ -1022,13 +1010,11 @@ PREINIT:
     char *str;
     STRLEN len;
 CODE:
-{
     SvGETMAGIC(sv); /* SvGETMAGIC() can modify SvOK flag */
     str = SvOK(sv) ? SvPV_nomg(sv, len) : NULL; /* SvPV() can modify SvUTF8 flag */
     RETVAL = SvUTF8(sv) ? TRUE : FALSE;
     if (RETVAL && check && (!str || !is_utf8_string((U8 *)str, len)))
         RETVAL = FALSE;
-}
 OUTPUT:
     RETVAL
 
@@ -1036,7 +1022,6 @@ SV *
 _utf8_on(sv)
 SV *	sv
 CODE:
-{
     SvGETMAGIC(sv);
     if (!SvTAINTED(sv) && SvPOKp(sv)) {
         if (SvTHINKFIRST(sv)) sv_force_normal(sv);
@@ -1046,7 +1031,6 @@ CODE:
     } else {
         RETVAL = &PL_sv_undef;
     }
-}
 OUTPUT:
     RETVAL
 
@@ -1054,7 +1038,6 @@ SV *
 _utf8_off(sv)
 SV *	sv
 CODE:
-{
     SvGETMAGIC(sv);
     if (!SvTAINTED(sv) && SvPOKp(sv)) {
         if (SvTHINKFIRST(sv)) sv_force_normal(sv);
@@ -1064,7 +1047,6 @@ CODE:
     } else {
         RETVAL = &PL_sv_undef;
     }
-}
 OUTPUT:
     RETVAL
 
