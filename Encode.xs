@@ -907,19 +907,10 @@ CODE:
 void
 Method_mime_name(obj)
 SV *	obj
-PREINIT:
-    SV *sv;
 CODE:
 {
     encode_t *enc = INT2PTR(encode_t *, SvIV(SvRV(obj)));
     SV *retval;
-    eval_pv("require Encode::MIME::Name", 0);
-    SPAGAIN;
-
-    sv = get_sv("@", 0);
-    if (SvTRUE(sv)) {
-	ST(0) = &PL_sv_undef;
-    }else{
 	ENTER;
 	SAVETMPS;
 	PUSHMARK(sp);
@@ -933,7 +924,6 @@ CODE:
 	LEAVE;
 	/* enc->name[0] */
 	ST(0) = retval;
-    }
     XSRETURN(1);
 }
 
