@@ -731,14 +731,14 @@ MODULE = Encode		PACKAGE = Encode::XS	PREFIX = Method_
 
 PROTOTYPES: ENABLE
 
-void
+SV *
 Method_renew(obj)
 SV *	obj
 CODE:
-{
     PERL_UNUSED_VAR(obj);
-    XSRETURN(1);
-}
+    RETVAL = newSVsv(obj);
+OUTPUT:
+    RETVAL
 
 int
 Method_renewed(obj)
