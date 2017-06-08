@@ -881,28 +881,17 @@ CODE:
     XSRETURN(1);
 }
 
-void
+bool
 Method_perlio_ok(obj)
 SV *	obj
 PREINIT:
     SV *sv;
 CODE:
-{
-    /* encode_t *enc = INT2PTR(encode_t *, SvIV(SvRV(obj))); */
-    /* require_pv(PERLIO_FILENAME); */
-
     PERL_UNUSED_VAR(obj);
-    eval_pv("require PerlIO::encoding", 0);
-    SPAGAIN;
-
-    sv = get_sv("@", 0);
-    if (SvTRUE(sv)) {
-    ST(0) = &PL_sv_no;
-    }else{
-    ST(0) = &PL_sv_yes;
-    }
-    XSRETURN(1);
-}
+    sv = eval_pv("require PerlIO::encoding", 0);
+    RETVAL = SvTRUE(sv);
+OUTPUT:
+    RETVAL
 
 SV *
 Method_mime_name(obj)
