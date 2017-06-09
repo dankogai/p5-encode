@@ -43,8 +43,7 @@ sub renewed { return $_[0]->{renewed} || 0 }
 sub needs_lines { 0 }
 
 sub perlio_ok {
-    eval { require PerlIO::encoding };
-    return $@ ? 0 : 1;
+    return eval { require PerlIO::encoding } ? 1 : 0;
 }
 
 # (Temporary|legacy) methods
@@ -224,8 +223,7 @@ unless the value is numeric so return 0 for false.
 Predefined As:
 
   sub perlio_ok { 
-      eval{ require PerlIO::encoding };
-      return $@ ? 0 : 1;
+    return eval { require PerlIO::encoding } ? 1 : 0;
   }
 
 If your encoding does not support PerlIO for some reasons, just;
