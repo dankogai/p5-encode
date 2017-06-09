@@ -272,10 +272,9 @@ expression with C<eval {}> block as follows;
 
   eval {
     $utf8    = decode("gsm0338", $gsm0338,  $chk);
-  };
-  if ($@){
+  } or do {
     # handle exception here
-  }
+  };
 
 =head1 BUGS
 
