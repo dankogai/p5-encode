@@ -189,8 +189,8 @@ sub import {
                     $status;
                 }
             );
-        };
-        $@ eq '' and DEBUG and warn "Filter installed";
+            1;
+        } and DEBUG and warn "Filter installed";
     }
     defined ${^UNICODE} and ${^UNICODE} != 0 and return 1;
     for my $h (qw(STDIN STDOUT)) {
