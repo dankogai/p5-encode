@@ -1,8 +1,54 @@
 # Revision history for Perl extension Encode.
 #
-# $Id: Changes,v 2.89 2017/04/21 05:20:14 dankogai Exp dankogai $
+# $Id: Changes,v 2.90 2017/06/10 17:23:50 dankogai Exp dankogai $
 #
-$Revision: 2.89 $ $Date: 2017/04/21 05:20:14 $
+$Revision: 2.90 $ $Date: 2017/06/10 17:23:50 $
+! Makefile.PL
+  Pulled: Include all contributors into META
+  https://github.com/dankogai/p5-encode/pull/111
+! bin/enc2xs bin/ucmlint encoding.pm
+  lib/Encode/Encoding.pm lib/Encode/GSM0338.pm t/CJKT.t
+  Pulled: Where possible do not depend on value of $@,
+    instead use return value of eval
+  https://github.com/dankogai/p5-encode/pull/110
+! Encode.xs
+  Pulled: Fix more XS problems in Encode.xs file
+  https://github.com/dankogai/p5-encode/pull/109
+! encoding.pm lib/Encode/Encoding.pm t/guess.t
+  Pulled: Small fixes
+  https://github.com/dankogai/p5-encode/pull/108
+! Encode.pm Makefile.PL
+  Pulled: Load modules Encode::MIME::Name and Storable normally
+  https://github.com/dankogai/p5-encode/pull/107
+! Unicode/Unicode.pm lib/Encode/Alias.pm lib/Encode/Encoding.pm
+  lib/Encode/Unicode/UTF7.pm
+  Pulled: Remove no warnings 'redefine'; and correctly loaddependences
+  https://github.com/dankogai/p5-encode/pull/106
+! Encode.pm Encode.xs Unicode/Unicode.pm Unicode/Unicode.xs
+  Pulled: Remove PP stubs and reformat predefine_encodings()
+  https://github.com/dankogai/p5-encode/pull/104
+! Encode.pm Encode.xs
+  Pulled: Run Encode XS BOOT code at compile time
+  https://github.com/dankogai/p5-encode/pull/103
+! Encode.pm Unicode/Unicode.pm lib/Encode/Encoding.pm
+  lib/Encode/Guess.pm lib/Encode/JP/JIS7.pm lib/Encode/MIME/Header.pm
+  lib/Encode/MIME/Header/ISO_2022_JP.pm
+  Pulled: Use Encode::define_encoding and propagate carp/croak message
+  https://github.com/dankogai/p5-encode/pull/102
+! t/truncated_utf8.t t/utf8messages.t
+  Pulled: Fixes for older perl versions
+  https://github.com/dankogai/p5-encode/pull/101
+! Encode.xs encoding.pm t/enc_eucjp.t t/enc_utf8.t
+  Pulled: cperl fixes: encoding undeprecated, no strict hashpairs
+  https://github.com/dankogai/p5-encode/pull/100
+! MANIFEST
+  Pulled: Add missing tests into MANIFEST file
+  https://github.com/dankogai/p5-encode/pull/99
+! Encode.xs t/fallback.t
+  Pulled: Cleanup code for handling fallback/replacement characters
+  https://github.com/dankogai/p5-encode/pull/98
+
+2.89 2017/04/21 05:20:14
 ! Encode.pm Encode.xs MANIFEST t/enc_eucjp.t t/enc_utf8.t
 + t/utf8messages.t
   Pulled: Fixes for Encode::utf8
