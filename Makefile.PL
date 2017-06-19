@@ -16,9 +16,11 @@ $ENV{PERL_CORE} ||= $ARGV{PERL_CORE} if $ARGV{PERL_CORE};
 # similar strictness as in core
 my $ccflags = $Config{ccflags};
 if (!$ENV{PERL_CORE}) {
-  if ($Config{gccversion}) {
-    $ccflags .= ' -Werror=declaration-after-statement';
-    $ccflags .= ' -Wpointer-sign' unless $Config{d_cplusplus};
+  if (my $gccver = $Config{gccversion}) {
+    $gccver =~ s/\.//g;
+    $gccver .= "0" while length $gccver < 3;
+    $ccflags .= ' -Werror=declaration-after-statement' if $gccver > 400;
+    $ccflags .= ' -Wpointer-sign' if !$Config{d_cplusplus} and $gccver > 400;
     $ccflags .= ' -fpermissive' if $Config{d_cplusplus};
   }
 }
