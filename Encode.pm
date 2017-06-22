@@ -342,13 +342,15 @@ if ($ON_EBCDIC) {
 
 {
     package Encode::utf8;
-    BEGIN {
-        $Encode::Encoding{utf8} = bless { Name => 'utf8' } => __PACKAGE__;
-    }
     use parent 'Encode::Encoding';
-    my $strict_obj =
-      bless { Name => 'utf-8-strict', strict_utf8 => 1 } => __PACKAGE__;
-    Encode::define_encoding($strict_obj, 'utf-8-strict');
+    my %obj = (
+        'utf8'         => { Name => 'utf8' },
+        'utf-8-strict' => { Name => 'utf-8-strict', strict_utf8 => 1 }
+    );
+    for ( keys %obj ) {
+        bless $obj{$_} => __PACKAGE__;
+        Encode::define_encoding( $obj{$_} => $_ );
+    }
     sub cat_decode {
         # ($obj, $dst, $src, $pos, $trm, $chk)
         # currently ignores $chk

@@ -4,6 +4,11 @@
 #
 $Revision: 2.91 $ $Date: 2017/06/22 08:11:05 $
 ! Encode.pm
+  Stop directory tweaking $Encode::Encoding{utf8}.
+  https://github.com/dankogai/p5-encode/commit/208d094b8cf82da488495400ea9a518841fd007a#commitcomment-22698036
+
+2.91 2017/06/22 08:11:05
+! Encode.pm
   Addressed: RT#122167: use parent q{Encode::Encoding}; fails:
     Can't locate object 
   https://rt.cpan.org/Ticket/Display.html?id=122167
