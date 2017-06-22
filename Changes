@@ -1,8 +1,8 @@
 # Revision history for Perl extension Encode.
 #
-# $Id: Changes,v 2.90 2017/06/10 17:23:50 dankogai Exp dankogai $
+# $Id: Changes,v 2.91 2017/06/22 08:11:05 dankogai Exp dankogai $
 #
-$Revision: 2.90 $ $Date: 2017/06/10 17:23:50$
+$Revision: 2.91 $ $Date: 2017/06/22 08:11:05 $
 ! Encode.pm
   Addressed: RT#122167: use parent q{Encode::Encoding}; fails:
     Can't locate object 
