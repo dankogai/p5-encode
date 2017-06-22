@@ -342,9 +342,12 @@ if ($ON_EBCDIC) {
 
 {
     package Encode::utf8;
+    BEGIN {
+        $Encode::Encoding{utf8} = bless { Name => 'utf8' } => __PACKAGE__;
+    }
     use parent 'Encode::Encoding';
-    __PACKAGE__->Define('utf8');
-    my $strict_obj = bless { Name => "utf-8-strict", strict_utf8 => 1 } => "Encode::utf8";
+    my $strict_obj =
+      bless { Name => 'utf-8-strict', strict_utf8 => 1 } => __PACKAGE__;
     Encode::define_encoding($strict_obj, 'utf-8-strict');
     sub cat_decode {
         # ($obj, $dst, $src, $pos, $trm, $chk)

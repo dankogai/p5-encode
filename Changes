@@ -2,7 +2,16 @@
 #
 # $Id: Changes,v 2.90 2017/06/10 17:23:50 dankogai Exp dankogai $
 #
-$Revision: 2.90 $ $Date: 2017/06/10 17:23:50 $
+$Revision: 2.90 $ $Date: 2017/06/10 17:23:50$
+! Encode.pm
+  Addressed: RT#122167: use parent q{Encode::Encoding}; fails:
+    Can't locate object 
+  https://rt.cpan.org/Ticket/Display.html?id=122167
+! Makefile.PL
+  Pulled: fix gcc warnings for older gcc < 4.0
+  https://github.com/dankogai/p5-encode/pull/114
+
+2.90 2017/06/10 17:23:50
 ! Makefile.PL
   Pulled: Include all contributors into META
   https://github.com/dankogai/p5-encode/pull/111
