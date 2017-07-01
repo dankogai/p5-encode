@@ -237,7 +237,7 @@ encode_method(pTHX_ const encode_t * enc, const encpage_t * dir, SV * src, U8 * 
                    (UV)ch, enc->name[0]);
             return &PL_sv_undef; /* never reaches but be safe */
         }
-        if (check & ENCODE_WARN_ON_ERR){
+        if (encode_ckWARN(check, WARN_UTF8)) {
             Perl_warner(aTHX_ packWARN(WARN_UTF8),
                 ERR_ENCODE_NOMAP, (UV)ch, enc->name[0]);
         }
@@ -276,7 +276,7 @@ encode_method(pTHX_ const encode_t * enc, const encpage_t * dir, SV * src, U8 * 
                               enc->name[0], (UV)s[slen]);
             return &PL_sv_undef; /* never reaches but be safe */
         }
-        if (check & ENCODE_WARN_ON_ERR){
+        if (encode_ckWARN(check, WARN_UTF8)) {
             Perl_warner(
             aTHX_ packWARN(WARN_UTF8),
             ERR_DECODE_NOMAP,
@@ -460,7 +460,11 @@ process_utf8(pTHX_ SV* dst, U8* s, U8* e, SV *check_sv,
                     ? UTF8_DISALLOW_ILLEGAL_INTERCHANGE
                     : UTF8_ALLOW_NON_STRICT;
 
-    if (SvROK(check_sv)) {
+    if (!SvOK(check_sv)) {
+	fallback_cb = &PL_sv_undef;
+	check = 0;
+    }
+    else if (SvROK(check_sv)) {
 	/* croak("UTF-8 decoder doesn't support callback CHECK"); */
 	fallback_cb = check_sv;
 	check = ENCODE_PERLQQ|ENCODE_LEAVE_SRC; /* same as perlqq */
@@ -581,7 +585,7 @@ process_utf8(pTHX_ SV* dst, U8* s, U8* e, SV *check_sv,
             else
                 Perl_croak(aTHX_ ERR_DECODE_STR_NOMAP, (strict ? "UTF-8" : "utf8"), esc);
         }
-        if (check & ENCODE_WARN_ON_ERR){
+        if (encode_ckWARN(check, WARN_UTF8)) {
             if (encode)
                 Perl_warner(aTHX_ packWARN(WARN_UTF8),
                             ERR_ENCODE_NOMAP, uv, (strict ? "UTF-8" : "utf8"));
@@ -1029,6 +1033,7 @@ BOOT:
     newCONSTSUB(stash, "WARN_ON_ERR", newSViv(ENCODE_WARN_ON_ERR));
     newCONSTSUB(stash, "RETURN_ON_ERR", newSViv(ENCODE_RETURN_ON_ERR));
     newCONSTSUB(stash, "LEAVE_SRC", newSViv(ENCODE_LEAVE_SRC));
+    newCONSTSUB(stash, "ONLY_PRAGMA_WARNINGS", newSViv(ENCODE_ONLY_PRAGMA_WARNINGS));
     newCONSTSUB(stash, "PERLQQ", newSViv(ENCODE_PERLQQ));
     newCONSTSUB(stash, "HTMLCREF", newSViv(ENCODE_HTMLCREF));
     newCONSTSUB(stash, "XMLCREF", newSViv(ENCODE_XMLCREF));

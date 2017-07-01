@@ -99,6 +99,7 @@ extern void Encode_DefineEncoding(encode_t *enc);
 #define  ENCODE_WARN_ON_ERR    0x0002 /* warn on error; may proceed */
 #define  ENCODE_RETURN_ON_ERR  0x0004 /* immediately returns on NOREP */
 #define  ENCODE_LEAVE_SRC      0x0008 /* $src updated unless set */
+#define  ENCODE_ONLY_PRAGMA_WARNINGS 0x0010 /* when enabled report only warnings configured by pragma warnings, otherwise report all warnings; no effect without ENCODE_WARN_ON_ERR */
 #define  ENCODE_PERLQQ         0x0100 /* perlqq fallback string */
 #define  ENCODE_HTMLCREF       0x0200 /* HTML character ref. fb mode */
 #define  ENCODE_XMLCREF        0x0400 /* XML  character ref. fb mode */
@@ -111,5 +112,8 @@ extern void Encode_DefineEncoding(encode_t *enc);
 #define  ENCODE_FB_PERLQQ      (ENCODE_PERLQQ|ENCODE_LEAVE_SRC)
 #define  ENCODE_FB_HTMLCREF    (ENCODE_HTMLCREF|ENCODE_LEAVE_SRC)
 #define  ENCODE_FB_XMLCREF     (ENCODE_XMLCREF|ENCODE_LEAVE_SRC)
+
+#define encode_ckWARN(c, w) ((c & ENCODE_WARN_ON_ERR) && (!(c & ENCODE_ONLY_PRAGMA_WARNINGS) || ckWARN(w)))
+#define encode_ckWARN_packed(c, w) ((c & ENCODE_WARN_ON_ERR) && (!(c & ENCODE_ONLY_PRAGMA_WARNINGS) || Perl_ckwarn(aTHX_ w)))
 
 #endif /* ENCODE_H */

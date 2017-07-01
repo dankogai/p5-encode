@@ -14,6 +14,7 @@ BEGIN {
 
 use Exporter 5.57 'import';
 
+use Carp ();
 our @CARP_NOT = qw(Encode::Encoder);
 
 # Public, encouraged API is exported by default
@@ -171,109 +172,54 @@ sub clone_encoding($) {
 }
 
 sub encode($$;$) {
-    my ( $name, $string, $check ) = @_;
-    return undef unless defined $string;
-    $string .= '';    # stringify;
-    $check ||= 0;
-    unless ( defined $name ) {
-        require Carp;
-        Carp::croak("Encoding name should not be undef");
-    }
+    my $name = $_[0];
+    my $check = $_[2];
+    Carp::croak("Encoding name should not be undef") unless defined $name;
     my $enc = find_encoding($name);
-    unless ( defined $enc ) {
-        require Carp;
-        Carp::croak("Unknown encoding '$name'");
+    Carp::croak("Unknown encoding '$name'") unless defined $enc;
+    my $encode = $enc->can('encode');
+    Carp::croak("No function 'encode' for encoding '$name'") unless defined $encode;
+    $check ||= 0;
+    splice(@_, 0, 1, $enc);
+    if (ref $check or !$check or ($check & LEAVE_SRC)) {
+        my $string = $_[1];
+        splice(@_, 1, 1, $string);
     }
-    # For Unicode, warnings need to be caught and re-issued at this level
-    # so that callers can disable utf8 warnings lexically.
-    my $octets;
-    if ( ref($enc) eq 'Encode::Unicode' ) {
-        my $warn = '';
-        {
-            local $SIG{__WARN__} = sub { $warn = shift };
-            $octets = $enc->encode( $string, $check );
-        }
-        warnings::warnif('utf8', $warn) if length $warn;
-    }
-    else {
-        $octets = $enc->encode( $string, $check );
-    }
-    $_[1] = $string if $check and !ref $check and !( $check & LEAVE_SRC );
-    return $octets;
+    splice(@_, 2, 1, $check);
+    goto &$encode;
 }
 *str2bytes = \&encode;
 
 sub decode($$;$) {
-    my ( $name, $octets, $check ) = @_;
-    return undef unless defined $octets;
-    $octets .= '';
-    $check ||= 0;
+    my $name = $_[0];
+    my $check = $_[2];
+    Carp::croak("Encoding name should not be undef") unless defined $name;
     my $enc = find_encoding($name);
-    unless ( defined $enc ) {
-        require Carp;
-        Carp::croak("Unknown encoding '$name'");
+    Carp::croak("Unknown encoding '$name'") unless defined $enc;
+    my $decode = $enc->can('decode');
+    Carp::croak("No function 'decode' for encoding '$name'") unless defined $decode;
+    $check ||= 0;
+    splice(@_, 0, 1, $enc);
+    if (ref $check or !$check or ($check & LEAVE_SRC)) {
+        my $octets = $_[1];
+        splice(@_, 1, 1, $octets);
     }
-    # For Unicode, warnings need to be caught and re-issued at this level
-    # so that callers can disable utf8 warnings lexically.
-    my $string;
-    if ( ref($enc) eq 'Encode::Unicode' ) {
-        my $warn = '';
-        {
-            local $SIG{__WARN__} = sub { $warn = shift };
-            $string = $enc->decode( $octets, $check );
-        }
-        warnings::warnif('utf8', $warn) if length $warn;
-    }
-    else {
-        $string = $enc->decode( $octets, $check );
-    }
-    $_[1] = $octets if $check and !ref $check and !( $check & LEAVE_SRC );
-    return $string;
+    splice(@_, 2, 1, $check);
+    goto &$decode;
 }
 *bytes2str = \&decode;
 
 sub from_to($$$;$) {
     my ( $string, $from, $to, $check ) = @_;
+    Carp::croak("Encoding name should not be undef") unless defined $from and defined $to;
+    my $f = find_encoding($from);
+    Carp::croak("Unknown encoding '$from'") unless defined $f;
+    my $t = find_encoding($to);
+    Carp::croak("Unknown encoding '$to'") unless defined $t;
     return undef unless defined $string;
     $check ||= 0;
-    my $f = find_encoding($from);
-    unless ( defined $f ) {
-        require Carp;
-        Carp::croak("Unknown encoding '$from'");
-    }
-    my $t = find_encoding($to);
-    unless ( defined $t ) {
-        require Carp;
-        Carp::croak("Unknown encoding '$to'");
-    }
-
-    # For Unicode, warnings need to be caught and re-issued at this level
-    # so that callers can disable utf8 warnings lexically.
-    my $uni;
-    if ( ref($f) eq 'Encode::Unicode' ) {
-        my $warn = '';
-        {
-            local $SIG{__WARN__} = sub { $warn = shift };
-            $uni = $f->decode($string);
-        }
-        warnings::warnif('utf8', $warn) if length $warn;
-    }
-    else {
-        $uni = $f->decode($string);
-    }
-
-    if ( ref($t) eq 'Encode::Unicode' ) {
-        my $warn = '';
-        {
-            local $SIG{__WARN__} = sub { $warn = shift };
-            $_[0] = $string = $t->encode( $uni, $check );
-        }
-        warnings::warnif('utf8', $warn) if length $warn;
-    }
-    else {
-        $_[0] = $string = $t->encode( $uni, $check );
-    }
-
+    my $uni = $f->decode($string);
+    $_[0] = $string = $t->encode( $uni, $check );
     return undef if ( $check && length($uni) );
     return defined( $_[0] ) ? length($string) : undef;
 }
@@ -288,14 +234,9 @@ sub encode_utf8($) {
 my $utf8enc;
 
 sub decode_utf8($;$) {
-    my ( $octets, $check ) = @_;
-    return undef unless defined $octets;
-    $octets .= '';
-    $check   ||= 0;
     $utf8enc ||= find_encoding('utf8');
-    my $string = $utf8enc->decode( $octets, $check );
-    $_[0] = $octets if $check and !ref $check and !( $check & LEAVE_SRC );
-    return $string;
+    unshift(@_, $utf8enc);
+    goto &{$utf8enc->can('decode')};
 }
 
 onBOOT;
