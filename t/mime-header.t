@@ -24,7 +24,7 @@ use strict;
 use utf8;
 use charnames ":full";
 
-use Test::More tests => 264;
+use Test::More tests => 266;
 
 BEGIN {
     use_ok("Encode::MIME::Header");
@@ -136,6 +136,8 @@ my @decode_default_tests = (
     "=?utf8?Q?=C3=A1=f9=80=80=80=80?=" => "á�",
     "=?UTF8?Q?=C3=A1=f9=80=80=80=80?=" => "á�",
     "=?utf-8-strict?Q?=C3=A1=f9=80=80=80=80?=" => "á�",
+    # allow non-ASCII characters in q word
+    "=?UTF-8?Q?\x{C3}\x{A1}?=" => "á",
 );
 
 my @decode_strict_tests = (
@@ -155,6 +157,8 @@ my @decode_strict_tests = (
     "=?utf8?Q?=C3=A1?=" => "=?utf8?Q?=C3=A1?=",
     "=?UTF8?Q?=C3=A1?=" => "=?UTF8?Q?=C3=A1?=",
     "=?utf-8-strict?Q?=C3=A1?=" => "=?utf-8-strict?Q?=C3=A1?=",
+    # do not allow non-ASCII characters in q word
+    "=?UTF-8?Q?\x{C3}\x{A1}?=" => "=?UTF-8?Q?\x{C3}\x{A1}?=",
 );
 
 my @encode_tests = (
