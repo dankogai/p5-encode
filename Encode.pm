@@ -49,7 +49,7 @@ our %EXPORT_TAGS = (
 
 our $ON_EBCDIC = ( ord("A") == 193 );
 
-use Encode::Alias;
+use Encode::Alias ();
 use Encode::MIME::Name;
 
 use Storable;
@@ -136,6 +136,15 @@ sub getEncoding {
         }
     }
     return;
+}
+
+# HACK: These two functions must be defined in Encode and because of
+# cyclic dependency between Encode and Encode::Alias, Exporter does not work
+sub find_alias {
+    goto &Encode::Alias::find_alias;
+}
+sub define_alias {
+    goto &Encode::Alias::define_alias;
 }
 
 sub find_encoding($;$) {
