@@ -110,6 +110,7 @@ t/taint.t       test script
 t/truncated_utf8.t test script
 t/undef.t       test script
 t/unibench.pl	benchmark script
+t/use-Encode-Alias.t test script
 t/utf8messages.t test script
 t/utf8ref.t	test script
 t/utf8strict.t	test script
