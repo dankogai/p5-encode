@@ -1,10 +1,21 @@
 # Revision history for Perl extension Encode.
 #
-# $Id: Changes,v 2.91 2017/06/22 08:11:05 dankogai Exp dankogai $
+# $Id: Changes,v 2.92 2017/07/18 07:15:29 dankogai Exp dankogai $
 #
-$Revision: 2.91 $ $Date: 2017/06/22 08:11:05 $
+$Revision: 2.92 $ $Date: 2017/07/18 07:15:29 $
+! Encode.pm  MANIFEST lib/Encode/Alias.pm
++ t/use-Encode-Alias.t
+  Pulled: Fix loading Encode::Alias before Encode
+  https://github.com/dankogai/p5-encode/pull/118
+! Makefile.PL
+  Pulled: Fix gccversion Argument "630 20170516" isn't numeric
+   https://github.com/dankogai/p5-encode/pull/118
+! lib/Encode/MIME/Header.pm t/mime-header.t
+  Pulled: Encode::MIME::Header: Fix parsing quoted-printable text
+    in strict mode
+  https://github.com/dankogai/p5-encode/pull/115
 ! Encode.pm
-  Stop directory tweaking $Encode::Encoding{utf8}.
+  use define_encoding() instead of tweaking $Encode::Encoding{utf8}.
   https://github.com/dankogai/p5-encode/commit/208d094b8cf82da488495400ea9a518841fd007a#commitcomment-22698036
 
 2.91 2017/06/22 08:11:05
