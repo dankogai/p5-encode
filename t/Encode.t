@@ -25,8 +25,9 @@ my @character_set = ('0'..'9', 'A'..'Z', 'a'..'z');
 my @source = qw(ascii iso8859-1 cp1250);
 my @destiny = qw(cp1047 cp37 posix-bc);
 my @ebcdic_sets = qw(cp1047 cp37 posix-bc);
-plan tests => 38+$n*@encodings + 2*@source*@destiny*@character_set + 2*@ebcdic_sets*256 + 6 + 3 + 3*8 + 2;
+plan tests => 39+$n*@encodings + 2*@source*@destiny*@character_set + 2*@ebcdic_sets*256 + 6 + 3 + 3*8 + 2;
 
+is Encode::sanitize_utf8("filter \x{006D}alformed 1:\x{1} 2:\x{2} 3:\x{ffff}"), "filter malformed 1: 2: 3:\x{fffd}";
 my $str = join('',map(chr($_),0x20..0x7E));
 my $cpy = $str;
 is length($str),from_to($cpy,'iso8859-1','Unicode'),"Length Wrong";
