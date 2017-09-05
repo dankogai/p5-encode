@@ -20,7 +20,7 @@ if (!$ENV{PERL_CORE}) {
     $gccver =~ s/\.//g; $gccver =~ s/ .*//;
     $gccver .= "0" while length $gccver < 3;
     $gccver = 0+$gccver;
-    $ccflags .= ' -Werror=declaration-after-statement' if $gccver > 400;
+    $ccflags .= ' -Werror=declaration-after-statement' if $gccver > 412;
     $ccflags .= ' -Wpointer-sign' if !$Config{d_cplusplus} and $gccver > 400;
     $ccflags .= ' -fpermissive' if $Config{d_cplusplus};
   }
