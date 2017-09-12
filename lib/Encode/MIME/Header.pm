@@ -128,26 +128,26 @@ sub decode($$;$) {
                 }
 
                 if ( not defined $enc ) {
-                    Carp::croak qq(Unknown charset "$charset") if not ref $chk and $chk & Encode::DIE_ON_ERR;
-                    Carp::carp qq(Unknown charset "$charset") if not ref $chk and $chk & Encode::WARN_ON_ERR;
-                    $stop = 1 if not ref $chk and $chk & Encode::RETURN_ON_ERR;
+                    Carp::croak qq(Unknown charset "$charset") if not ref $chk and $chk and $chk & Encode::DIE_ON_ERR;
+                    Carp::carp qq(Unknown charset "$charset") if not ref $chk and $chk and $chk & Encode::WARN_ON_ERR;
+                    $stop = 1 if not ref $chk and $chk and $chk & Encode::RETURN_ON_ERR;
                     $output .= ($output =~ /(?:\A|[ \t])$/ ? '' : ' ') . $orig unless $stop; # $orig mime word is separated by whitespace
                     $stop ? $orig : '';
                 } else {
                     if ( uc($mime_enc) eq 'B' and $obj->{decode_b} ) {
                         my $decoded = _decode_b($enc, $text, $chk);
-                        $stop = 1 if not defined $decoded and not ref $chk and $chk & Encode::RETURN_ON_ERR;
+                        $stop = 1 if not defined $decoded and not ref $chk and $chk and $chk & Encode::RETURN_ON_ERR;
                         $output .= (defined $decoded ? $decoded : $text) unless $stop;
                         $stop ? $orig : '';
                     } elsif ( uc($mime_enc) eq 'Q' and $obj->{decode_q} ) {
                         my $decoded = _decode_q($enc, $text, $chk);
-                        $stop = 1 if not defined $decoded and not ref $chk and $chk & Encode::RETURN_ON_ERR;
+                        $stop = 1 if not defined $decoded and not ref $chk and $chk and $chk & Encode::RETURN_ON_ERR;
                         $output .= (defined $decoded ? $decoded : $text) unless $stop;
                         $stop ? $orig : '';
                     } else {
-                        Carp::croak qq(MIME "$mime_enc" unsupported) if not ref $chk and $chk & Encode::DIE_ON_ERR;
-                        Carp::carp qq(MIME "$mime_enc" unsupported) if not ref $chk and $chk & Encode::WARN_ON_ERR;
-                        $stop = 1 if not ref $chk and $chk & Encode::RETURN_ON_ERR;
+                        Carp::croak qq(MIME "$mime_enc" unsupported) if not ref $chk and $chk and $chk & Encode::DIE_ON_ERR;
+                        Carp::carp qq(MIME "$mime_enc" unsupported) if not ref $chk and $chk and $chk & Encode::WARN_ON_ERR;
+                        $stop = 1 if not ref $chk and $chk and $chk & Encode::RETURN_ON_ERR;
                         $output .= ($output =~ /(?:\A|[ \t])$/ ? '' : ' ') . $orig unless $stop; # $orig mime word is separated by whitespace
                         $stop ? $orig : '';
                     }
