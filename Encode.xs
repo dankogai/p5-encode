@@ -24,6 +24,14 @@
 #define SvIV_nomg SvIV
 #endif
 
+#ifndef SvTRUE_nomg
+#define SvTRUE_nomg SvTRUE
+#endif
+
+#ifndef SVfARG
+#define SVfARG(p) ((void*)(p))
+#endif
+
 #ifndef UTF8_DISALLOW_ILLEGAL_INTERCHANGE
 #  define UTF8_DISALLOW_ILLEGAL_INTERCHANGE 0
 #  define UTF8_ALLOW_NON_STRICT (UTF8_ALLOW_FE_FF|UTF8_ALLOW_SURROGATE|UTF8_ALLOW_FFFF)
@@ -650,6 +658,83 @@ process_utf8(pTHX_ SV* dst, U8* s, U8* e, SV *check_sv,
     return s;
 }
 
+static SV *
+find_encoding(pTHX_ SV *enc)
+{
+    dSP;
+    I32 count;
+    SV *m_enc;
+    SV *obj = &PL_sv_undef;
+#ifndef SV_NOSTEAL
+    U32 tmp;
+#endif
+
+    ENTER;
+    SAVETMPS;
+    PUSHMARK(sp);
+
+    m_enc = sv_newmortal();
+#ifndef SV_NOSTEAL
+    tmp = SvFLAGS(enc) & SVs_TEMP;
+    SvTEMP_off(enc);
+    sv_setsv_flags(m_enc, enc, 0);
+    SvFLAGS(enc) |= tmp;
+#else
+    sv_setsv_flags(m_enc, enc, SV_NOSTEAL);
+#endif
+    XPUSHs(m_enc);
+
+    PUTBACK;
+
+    count = call_pv("Encode::find_encoding", G_SCALAR);
+
+    SPAGAIN;
+
+    if (count > 0) {
+        obj = POPs;
+        SvREFCNT_inc(obj);
+    }
+
+    PUTBACK;
+    FREETMPS;
+    LEAVE;
+    return sv_2mortal(obj);
+}
+
+static SV *
+call_encoding(pTHX_ const char *method, SV *obj, SV *src, SV *check)
+{
+    dSP;
+    I32 count;
+    SV *dst = &PL_sv_undef;
+
+    PUSHMARK(sp);
+
+    if (check)
+        check = sv_2mortal(newSVsv(check));
+
+    if (!check || SvROK(check) || !SvTRUE_nomg(check) || (SvIV_nomg(check) & ENCODE_LEAVE_SRC))
+        src = sv_2mortal(newSVsv(src));
+
+    XPUSHs(obj);
+    XPUSHs(src);
+    XPUSHs(check ? check : &PL_sv_no);
+
+    PUTBACK;
+
+    count = call_method(method, G_SCALAR);
+
+    SPAGAIN;
+
+    if (count > 0) {
+        dst = POPs;
+        SvREFCNT_inc(dst);
+    }
+
+    PUTBACK;
+    return dst;
+}
+
 
 MODULE = Encode		PACKAGE = Encode::utf8	PREFIX = Method_
 
@@ -1016,6 +1101,117 @@ CODE:
     } else {
         RETVAL = &PL_sv_undef;
     }
+OUTPUT:
+    RETVAL
+
+SV *
+decode(encoding, octets, check = NULL)
+SV *	encoding
+SV *	octets
+SV *	check
+ALIAS:
+    bytes2str = 0
+PREINIT:
+    SV *obj;
+INIT:
+    SvGETMAGIC(encoding);
+CODE:
+    if (!SvOK(encoding))
+        croak("Encoding name should not be undef");
+    obj = find_encoding(aTHX_ encoding);
+    if (!SvOK(obj))
+        croak("Unknown encoding '%" SVf "'", SVfARG(encoding));
+    RETVAL = call_encoding(aTHX_ "decode", obj, octets, check);
+OUTPUT:
+    RETVAL
+
+SV *
+encode(encoding, string, check = NULL)
+SV *	encoding
+SV *	string
+SV *	check
+ALIAS:
+    str2bytes = 0
+PREINIT:
+    SV *obj;
+INIT:
+    SvGETMAGIC(encoding);
+CODE:
+    if (!SvOK(encoding))
+        croak("Encoding name should not be undef");
+    obj = find_encoding(aTHX_ encoding);
+    if (!SvOK(obj))
+        croak("Unknown encoding '%" SVf "'", SVfARG(encoding));
+    RETVAL = call_encoding(aTHX_ "encode", obj, string, check);
+OUTPUT:
+    RETVAL
+
+SV *
+decode_utf8(octets, check = NULL)
+SV *	octets
+SV *	check
+PREINIT:
+    HV *hv;
+    SV **sv;
+CODE:
+    hv = get_hv("Encode::Encoding", 0);
+    if (!hv)
+        croak("utf8 encoding was not found");
+    sv = hv_fetch(hv, "utf8", 4, 0);
+    if (!sv || !*sv || !SvOK(*sv))
+        croak("utf8 encoding was not found");
+    RETVAL = call_encoding(aTHX_ "decode", *sv, octets, check);
+OUTPUT:
+    RETVAL
+
+SV *
+encode_utf8(string)
+SV *	string
+CODE:
+    RETVAL = newSVsv(string);
+    if (SvOK(RETVAL))
+        sv_utf8_encode(RETVAL);
+OUTPUT:
+    RETVAL
+
+SV *
+from_to(octets, from, to, check = NULL)
+SV *	octets
+SV *	from
+SV *	to
+SV *	check
+PREINIT:
+    SV *from_obj;
+    SV *to_obj;
+    SV *string;
+    SV *new_octets;
+    U8 *ptr;
+    STRLEN len;
+INIT:
+    SvGETMAGIC(from);
+    SvGETMAGIC(to);
+CODE:
+    if (!SvOK(from) || !SvOK(to))
+        croak("Encoding name should not be undef");
+    from_obj = find_encoding(aTHX_ from);
+    if (!SvOK(from_obj))
+        croak("Unknown encoding '%" SVf "'", SVfARG(from));
+    to_obj = find_encoding(aTHX_ to);
+    if (!SvOK(to_obj))
+        croak("Unknown encoding '%" SVf "'", SVfARG(to));
+    string = sv_2mortal(call_encoding(aTHX_ "decode", from_obj, octets, NULL));
+    new_octets = sv_2mortal(call_encoding(aTHX_ "encode", to_obj, string, check));
+    SvGETMAGIC(new_octets);
+    if (SvOK(new_octets) && (!check || SvROK(check) || !SvTRUE_nomg(check) || sv_len(string) == 0)) {
+        ptr = (U8 *)SvPV_nomg(new_octets, len);
+        if (SvUTF8(new_octets))
+            len = utf8_length(ptr, ptr+len);
+        RETVAL = newSVuv(len);
+    } else {
+        RETVAL = &PL_sv_undef;
+    }
+    sv_setsv_nomg(octets, new_octets);
+    SvSETMAGIC(octets);
 OUTPUT:
     RETVAL
 
