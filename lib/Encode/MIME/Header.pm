@@ -198,6 +198,7 @@ sub _decode_q {
 
 sub _decode_octets {
     my ($enc, $octets, $chk) = @_;
+    $chk = 0 unless defined $chk;
     $chk &= ~Encode::LEAVE_SRC if not ref $chk and $chk;
     my $output = $enc->decode($octets, $chk);
     return undef if not ref $chk and $chk and $octets ne '';
@@ -238,7 +239,9 @@ sub _encode_string {
     my ($obj, $str, $chk) = @_;
     my $wordlen = $obj->{bpl} > 76 ? 76 : $obj->{bpl};
     my $enc = Encode::find_mime_encoding($obj->{charset});
-    my $enc_chk = (not ref $chk and $chk) ? ($chk | Encode::LEAVE_SRC) : $chk;
+    my $enc_chk = $chk;
+    $enc_chk = 0 unless defined $enc_chk;
+    $enc_chk |= Encode::LEAVE_SRC if not ref $enc_chk and $enc_chk;
     my @result = ();
     my $octets = '';
     while ( length( my $chr = substr($str, 0, 1, '') ) ) {
