@@ -4,8 +4,10 @@
 use strict;
 use Encode qw(decode_utf8 FB_CROAK find_encoding decode);
 use Test::More tests => 17;
+use Test::Builder;
 
 sub croak_ok(&) {
+    local $Test::Builder::Level = $Test::Builder::Level + 1;
     my $code = shift;
     eval { $code->() };
     like $@, qr/does not map/;

@@ -156,7 +156,7 @@ sub encode($$;$) {
         }
         elsif ( $str =~ s/(.)// ) {
             my $s = $1;
-            my $tmp = $GB->encode( $s, $chk );
+            my $tmp = $GB->encode( $s, $chk || 0 );
             last if !defined $tmp;
             if ( length $tmp == 2 ) {    # maybe a valid GB char (XXX)
                 if ($in_ascii) {
