@@ -176,7 +176,7 @@ sub import {
         # implicitly 'use utf8'
         require utf8;      # to fetch $utf8::hint_bits;
         $^H |= $utf8::hint_bits;
-        eval {
+
             require Filter::Util::Call;
             Filter::Util::Call->import;
             filter_add(
@@ -189,8 +189,6 @@ sub import {
                     $status;
                 }
             );
-            1;
-        } and DEBUG and warn "Filter installed";
     }
     defined ${^UNICODE} and ${^UNICODE} != 0 and return 1;
     for my $h (qw(STDIN STDOUT)) {
@@ -200,19 +198,13 @@ sub import {
                 Carp::croak(
                     "encoding: Unknown encoding for $h, '$arg{$h}'");
             }
-            eval { binmode( $h, ":raw :encoding($arg{$h})" ) };
+            binmode( $h, ":raw :encoding($arg{$h})" );
         }
         else {
             unless ( exists $arg{$h} ) {
-                eval {
                     no warnings 'uninitialized';
                     binmode( $h, ":raw :encoding($name)" );
-                };
             }
-        }
-        if ($@) {
-            require Carp;
-            Carp::croak($@);
         }
     }
     return 1;    # I doubt if we need it, though
