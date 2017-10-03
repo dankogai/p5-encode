@@ -23,7 +23,7 @@ use strict;
 use warnings;
 use Encode;
 #use Test::More qw(no_plan);
-use Test::More tests => 277;
+use Test::More tests => 281;
 
 BEGIN {
     use_ok("Encode::MIME::Name");
