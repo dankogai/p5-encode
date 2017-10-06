@@ -2,7 +2,7 @@ package Encode::MIME::Header;
 use strict;
 use warnings;
 
-our $VERSION = do { my @r = ( q$Revision: 2.27 $ =~ /\d+/g ); sprintf "%d." . "%02d" x $#r, @r };
+our $VERSION = do { my @r = ( q$Revision: 2.28 $ =~ /\d+/g ); sprintf "%d." . "%02d" x $#r, @r };
 
 use Carp ();
 use Encode ();

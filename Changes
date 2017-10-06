@@ -1,8 +1,25 @@
 # Revision history for Perl extension Encode.
 #
-# $Id: Changes,v 2.92 2017/07/18 07:15:29 dankogai Exp dankogai $
+# $Id: Changes,v 2.93 2017/10/06 22:21:53 dankogai Exp dankogai $
 #
-$Revision: 2.92 $ $Date: 2017/07/18 07:15:29 $
+$Revision: 2.93 $ $Date: 2017/10/06 22:21:53 $
+! lib/Encode/MIME/Name.pm t/mime-name.t
+  Pulled: Add "euc-cn" => "EUC-CN" alias to Encode::MIME::Name
+  https://github.com/dankogai/p5-encode/pull/124
+! encoding.pm
+  Pulled: Propagate fatal errors from the encoding pragma back to the caller
+  Resolves rt #100427
+  https://github.com/dankogai/p5-encode/pull/123
+  https://rt.cpan.org/Ticket/Display.html?id=100427
+! lib/Encode/CN/HZ.pm lib/Encode/JP/JIS7.pm lib/Encode/MIME/Header.pm
+  t/decode.t
+  Pulled: Uninitialized value fixes #122
+  https://github.com/dankogai/p5-encode/pull/122
+! Makefile.PL
+  Pulled: Fix -Werror=declaration-after-statement for gcc 4.1.2
+  https://github.com/dankogai/p5-encode/pull/121
+
+2.92 2017/07/18 07:15:29
 ! Encode.pm  MANIFEST lib/Encode/Alias.pm
 + t/use-Encode-Alias.t
   Pulled: Fix loading Encode::Alias before Encode
