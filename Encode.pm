@@ -298,6 +298,14 @@ sub decode_utf8($;$) {
     return $string;
 }
 
+sub sanitize_utf8($) {
+    my $string = shift;
+    return $string unless $string;
+    $string = Encode::decode( 'UTF-8', Encode::encode('UTF-8', $string, Encode::FB_DEFAULT ), Encode::FB_CROAK );
+    $string =~ s/[^\x{9}\x{a}\x{d}\x{20}-\x{d7ff}\x{e000}-\x{fffd}\x{10000}-\x{10ffff}]+//g;
+    return $string;
+}
+
 onBOOT;
 
 if ($ON_EBCDIC) {
