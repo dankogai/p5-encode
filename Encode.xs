@@ -331,7 +331,7 @@ encode_method(pTHX_ const encode_t * enc, const encpage_t * dir, SV * src, U8 * 
                    enc->name[0]);
             return &PL_sv_undef;
         }
-    }
+    }   /* End of looping through the string */
  ENCODE_SET_SRC:
     if (check && !(check & ENCODE_LEAVE_SRC)){
     sdone = SvCUR(src) - (slen+sdone);
@@ -434,10 +434,27 @@ convert_utf8_multi_seq(U8* s, STRLEN len, STRLEN *rlen)
     return uv;
 }
 
+#endif  /* CAN_USE_BASE_PERL */
+
 static U8*
 process_utf8(pTHX_ SV* dst, U8* s, U8* e, SV *check_sv,
              bool encode, bool strict, bool stop_at_partial)
 {
+    /* Copies the purportedly UTF-8 encoded string starting at 's' and ending
+     * at 'e' - 1 to 'dst', checking as it goes along that the string actually
+     * is valid UTF-8.  There are two levels of strictness checking.  If
+     * 'strict' is FALSE, the string is checked for being well-formed UTF-8, as
+     * extended by Perl.  Additionally, if 'strict' is TRUE, above-Unicode code
+     * points, surrogates, and non-character code points are checked for.  When
+     * invalid input is encountered, some action is taken, exactly what depends
+     * on the flags in 'check_sv'.  'encode' gives if this is from an encode
+     * operation (if TRUE), or a decode one.  This function returns the
+     * position in 's' of the start of the next character beyond where it got
+     * to.  If there were no problems, that will be 'e'.  If 'stop_at_partial'
+     * is TRUE, if the final character before 'e' is incomplete, but valid as
+     * far as is available, no action will be taken on that partial character,
+     * and the return value will point to its first byte */
+
     UV uv;
     STRLEN ulen;
     SV *fallback_cb;
