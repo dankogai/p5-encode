@@ -480,6 +480,8 @@ process_utf8(pTHX_ SV* dst, U8* s, U8* e, SV *check_sv,
     dlen = (s && e && s < e) ? e-s+1 : 1;
     d = (U8 *) SvGROW(dst, dlen);
 
+    stop_at_partial = stop_at_partial || (check & ENCODE_STOP_AT_PARTIAL);
+
     while (s < e) {
         if (UTF8_IS_INVARIANT(*s)) {
             *d++ = *s++;
@@ -501,7 +503,7 @@ process_utf8(pTHX_ SV* dst, U8* s, U8* e, SV *check_sv,
                 else
                     ulen = 1;
 
-                if ((stop_at_partial || (check & ENCODE_STOP_AT_PARTIAL)) && ulen == (STRLEN)(e-s))
+                if (stop_at_partial && ulen == (STRLEN)(e-s))
                     break;
 
                 goto malformed_byte;
