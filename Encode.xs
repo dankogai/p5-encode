@@ -379,6 +379,13 @@ strict_utf8(pTHX_ SV* sv)
     return SvTRUE(*svp);
 }
 
+/* Modern perls have the capability to do this more efficiently and portably */
+#ifdef is_utf8_string_loc_flags
+# define CAN_USE_BASE_PERL
+#endif
+
+#ifndef CAN_USE_BASE_PERL
+
 /*
  * https://github.com/dankogai/p5-encode/pull/56#issuecomment-231959126
  */
@@ -463,6 +470,9 @@ process_utf8(pTHX_ SV* dst, U8* s, U8* e, SV *check_sv,
     STRLEN dlen;
     char esc[UTF8_MAXLEN * 6 + 1];
     STRLEN i;
+    const U32 flags = (strict)
+                    ? UTF8_DISALLOW_ILLEGAL_INTERCHANGE
+                    : 0;
 
     if (SvROK(check_sv)) {
 	/* croak("UTF-8 decoder doesn't support callback CHECK"); */
@@ -483,6 +493,41 @@ process_utf8(pTHX_ SV* dst, U8* s, U8* e, SV *check_sv,
     stop_at_partial = stop_at_partial || (check & ENCODE_STOP_AT_PARTIAL);
 
     while (s < e) {
+
+#ifdef CAN_USE_BASE_PERL    /* Use the much faster, portable implementation if
+                               available */
+
+        /* If there were no errors, this will be 'e'; otherwise it will point
+         * to the first byte of the erroneous input */
+        const U8* e_or_where_failed;
+        bool valid = is_utf8_string_loc_flags(s, e - s, &e_or_where_failed, flags);
+        STRLEN len = e_or_where_failed - s;
+
+        /* Copy as far as was successful */
+        Move(s, d, len, U8);
+        d += len;
+        s = (U8 *) e_or_where_failed;
+
+        /* Are done if it was valid, or we are accepting partial characters and
+         * the only error is that the final bytes form a partial character */
+        if (    LIKELY(valid)
+            || (   stop_at_partial
+                && is_utf8_valid_partial_char_flags(s, e, flags)))
+        {
+            break;
+        }
+
+        /* Here, was not valid.  If is 'strict', and is legal extended UTF-8,
+         * we know it is a code point whose value we can calculate, just not
+         * one accepted under strict.  Otherwise, it is malformed in some way.
+         * In either case, the system function can calculate either the code
+         * point, or the best substitution for it */
+        uv = utf8n_to_uvchr(s, e - s, &ulen, UTF8_ALLOW_ANY);
+
+#else   /* Use code for earlier perls */
+
+        PERL_UNUSED_VAR(flags);
+
         if (UTF8_IS_INVARIANT(*s)) {
             *d++ = *s++;
             continue;
@@ -532,6 +577,16 @@ process_utf8(pTHX_ SV* dst, U8* s, U8* e, SV *check_sv,
             ulen = 1;
 
     malformed:
+
+#endif  /* The two versions for processing come back together here, for the
+         * error handling code.
+         *
+         * Here, we are looping through the input and found an error.
+         * 'uv' is the code point in error if calculable, or the REPLACEMENT
+         *      CHARACTER if not.
+         * 'ulen' is how many bytes of input this iteration of the loop
+         *        consumes */
+
         if (!encode && (check & (ENCODE_DIE_ON_ERR|ENCODE_WARN_ON_ERR|ENCODE_PERLQQ)))
             for (i=0; i<ulen; ++i) sprintf(esc+4*i, "\\x%02X", s[i]);
         if (check & ENCODE_DIE_ON_ERR){
