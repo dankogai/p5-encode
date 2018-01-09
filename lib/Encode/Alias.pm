@@ -270,7 +270,7 @@ sub init_aliases {
     define_alias( qr/\bUTF-8$/i => '"utf-8-strict"' );
 
     # At last, Map white space and _ to '-'
-    define_alias( qr/^(\S+)[\s_]+(.*)$/i => '"$1-$2"' );
+    define_alias( qr/^([^\s_]+)[\s_]+([^\s_]*)$/i => '"$1-$2"' );
 }
 
 1;

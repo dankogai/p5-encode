@@ -3,6 +3,18 @@
 # $Id: Changes,v 2.93 2017/10/06 22:21:53 dankogai Exp dankogai $
 #
 $Revision: 2.93 $ $Date: 2017/10/06 22:21:53 $
+! lib/Encode/Alias.pm
+  Fixed: deep recursion in Encode::find_encoding when decoding
+  bad MIME header
+  https://github.com/dankogai/p5-encode/pull/127
+! Encode.pm
+  Pulled: Include more information about Encode::is_utf8() that it
+  should not be normally used
+  https://github.com/dankogai/p5-encode/pull/126
+  Pulled: Remove misleading documentation about UTF8 flag
+  https://github.com/dankogai/p5-encode/pull/125
+
+2.93 2017/10/06 22:21:53
 ! lib/Encode/MIME/Name.pm t/mime-name.t
   Pulled: Add "euc-cn" => "EUC-CN" alias to Encode::MIME::Name
   https://github.com/dankogai/p5-encode/pull/124
