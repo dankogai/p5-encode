@@ -968,6 +968,13 @@ release.
 If I<CHECK> is true, also checks whether I<STRING> contains well-formed
 UTF-8.  Returns true if successful, false otherwise.
 
+Typically only necessary for debugging and testing.  Don't use this flag as
+a marker to distinguish character and binary data, that should be decided
+for each variable when you write your code.
+
+B<CAVEAT>: If I<STRING> has UTF8 flag set, it does B<NOT> mean that
+I<STRING> is UTF-8 encoded and vice-versa.
+
 As of Perl 5.8.1, L<utf8> also has the C<utf8::is_utf8> function.
 
 =head3 _utf8_on
