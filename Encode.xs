@@ -35,6 +35,13 @@ UNIMPLEMENTED(_encoded_bytes_to_utf8, I32)
 #define SvIV_nomg SvIV
 #endif
 
+#ifndef UTF8_DISALLOW_ILLEGAL_INTERCHANGE
+#  define UTF8_DISALLOW_ILLEGAL_INTERCHANGE 0
+#  define UTF8_ALLOW_NON_STRICT (UTF8_ALLOW_FE_FF|UTF8_ALLOW_SURROGATE|UTF8_ALLOW_FFFF)
+#else
+#  define UTF8_ALLOW_NON_STRICT 0
+#endif
+
 static void
 Encode_XSEncoding(pTHX_ encode_t * enc)
 {
@@ -472,7 +479,7 @@ process_utf8(pTHX_ SV* dst, U8* s, U8* e, SV *check_sv,
     STRLEN i;
     const U32 flags = (strict)
                     ? UTF8_DISALLOW_ILLEGAL_INTERCHANGE
-                    : 0;
+                    : UTF8_ALLOW_NON_STRICT;
 
     if (SvROK(check_sv)) {
 	/* croak("UTF-8 decoder doesn't support callback CHECK"); */
