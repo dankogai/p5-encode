@@ -1,8 +1,14 @@
 # Revision history for Perl extension Encode.
 #
-# $Id: Changes,v 2.94 2018/01/09 05:53:00 dankogai Exp dankogai $
+# $Id: Changes,v 2.95 2018/02/08 00:26:15 dankogai Exp $
 #
-$Revision: 2.94 $ $Date: 2018/01/09 05:53:00 $
+$Revision: 2.95 $ $Date: 2018/02/08 00:26:15 $
+! Encode.pm Encode.xs Encode/encode.h Unicode/Unicode.pm
+  Unicode/Unicode.xs encengine.c
+  Pulled: new perls
+  https://github.com/dankogai/p5-encode/pull/128
+
+2.94 2018/01/09 05:53:00
 ! lib/Encode/Alias.pm
   Fixed: deep recursion in Encode::find_encoding when decoding
   bad MIME header
