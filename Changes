@@ -1,8 +1,13 @@
 # Revision history for Perl extension Encode.
 #
-# $Id: Changes,v 2.95 2018/02/08 00:26:15 dankogai Exp $
+# $Id: Changes,v 2.96 2018/02/11 05:35:26 dankogai Exp dankogai $
 #
-$Revision: 2.95 $ $Date: 2018/02/08 00:26:15 $
+$Revision: 2.96 $ $Date: 2018/02/11 05:35:26 $
+! Encode.pm encoding.pm Unicode/Unicode.pm
+  VERSION++ to make bleadperl happy
+  <CADED=K4v5WQ3R7+aTu1xV4q2RcZFT=jriZubqfrHe7PZrgRmDA@mail.gmail.com>
+
+2.95 2018/02/08 00:26:15
 ! Encode.pm Encode.xs Encode/encode.h Unicode/Unicode.pm
   Unicode/Unicode.xs encengine.c
   Pulled: new perls
