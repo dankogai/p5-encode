@@ -387,7 +387,7 @@ strict_utf8(pTHX_ SV* sv)
 }
 
 /* Modern perls have the capability to do this more efficiently and portably */
-#ifdef is_utf8_string_loc_flags
+#ifdef utf8n_to_uvchr_msgs
 # define CAN_USE_BASE_PERL
 #endif
 
