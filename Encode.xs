@@ -533,7 +533,7 @@ process_utf8(pTHX_ SV* dst, U8* s, U8* e, SV *check_sv,
 
 #else   /* Use code for earlier perls */
 
-        PERL_UNUSED_VAR(flags);
+        ((void)sizeof(flags));  /* Avoid compiler warning */
 
         if (UTF8_IS_INVARIANT(*s)) {
             *d++ = *s++;
