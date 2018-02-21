@@ -1,8 +1,15 @@
 # Revision history for Perl extension Encode.
 #
-# $Id: Changes,v 2.96 2018/02/11 05:35:26 dankogai Exp dankogai $
+# $Id: Changes,v 2.97 2018/02/21 12:14:33 dankogai Exp dankogai $
 #
-$Revision: 2.96 $ $Date: 2018/02/11 05:35:26 $
+$Revision: 2.97 $ $Date: 2018/02/21 12:14:33 $
+! Encode.xs
+  Pulled: New perls that fixes
+    https://github.com/dankogai/p5-encode/issues/129
+    https://rt.cpan.org/Ticket/Display.html?id=124399
+  https://github.com/dankogai/p5-encode/pull/130
+
+2.96 2018/02/11 05:35:26
 ! Encode.pm encoding.pm Unicode/Unicode.pm
   VERSION++ to make bleadperl happy
   <CADED=K4v5WQ3R7+aTu1xV4q2RcZFT=jriZubqfrHe7PZrgRmDA@mail.gmail.com>
