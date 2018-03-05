@@ -164,7 +164,7 @@ do_bytes_fallback_cb(pTHX_ U8 *s, STRLEN slen, SV *fallback_cb)
 
 static SV *
 encode_method(pTHX_ const encode_t * enc, const encpage_t * dir, SV * src, U8 * s, STRLEN slen,
-	      int check, STRLEN * offset, SV * term, int * retcode, 
+	      IV check, STRLEN * offset, SV * term, int * retcode, 
 	      SV *fallback_cb)
 {
     STRLEN tlen  = slen;
@@ -472,7 +472,7 @@ process_utf8(pTHX_ SV* dst, U8* s, U8* e, SV *check_sv,
     UV uv;
     STRLEN ulen;
     SV *fallback_cb;
-    int check;
+    IV check;
     U8 *d;
     STRLEN dlen;
     char esc[UTF8_MAXLEN * 6 + 1];
@@ -683,7 +683,7 @@ PREINIT:
     U8 *e;
     SV *dst;
     bool renewed = 0;
-    int check;
+    IV check;
     bool modify;
     dSP;
 INIT:
@@ -744,7 +744,7 @@ PREINIT:
     U8 *s;
     U8 *e;
     SV *dst;
-    int check;
+    IV check;
     bool modify;
 INIT:
     SvGETMAGIC(src);
@@ -848,7 +848,7 @@ SV *	off
 SV *	term
 SV *    check_sv
 PREINIT:
-    int check;
+    IV check;
     SV *fallback_cb;
     bool modify;
     encode_t *enc;
@@ -886,7 +886,7 @@ SV *	obj
 SV *	src
 SV *	check_sv
 PREINIT:
-    int check;
+    IV check;
     SV *fallback_cb;
     bool modify;
     encode_t *enc;
@@ -917,7 +917,7 @@ SV *	obj
 SV *	src
 SV *	check_sv
 PREINIT:
-    int check;
+    IV check;
     SV *fallback_cb;
     bool modify;
     encode_t *enc;
