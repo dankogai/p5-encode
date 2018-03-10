@@ -1141,7 +1141,7 @@ CODE:
 
 BOOT:
 {
-    HV *stash = gv_stashpvn("Encode", strlen("Encode"), GV_ADD);
+    HV *stash = gv_stashpvn("Encode", (U32)strlen("Encode"), GV_ADD);
     newCONSTSUB(stash, "DIE_ON_ERR", newSViv(ENCODE_DIE_ON_ERR));
     newCONSTSUB(stash, "WARN_ON_ERR", newSViv(ENCODE_WARN_ON_ERR));
     newCONSTSUB(stash, "RETURN_ON_ERR", newSViv(ENCODE_RETURN_ON_ERR));
