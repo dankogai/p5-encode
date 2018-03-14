@@ -123,8 +123,8 @@ MODULE = Encode::Unicode PACKAGE = Encode::Unicode
 
 PROTOTYPES: DISABLE
 
-#define attr(k, l)  (hv_exists((HV *)SvRV(obj),k,l) ? \
-    *hv_fetch((HV *)SvRV(obj),k,l,0) : &PL_sv_undef)
+#define attr(k)  (hv_exists((HV *)SvRV(obj),"" k "",sizeof(k)-1) ? \
+    *hv_fetch((HV *)SvRV(obj),"" k "",sizeof(k)-1,0) : &PL_sv_undef)
 
 void
 decode(obj, str, check = 0)
@@ -133,9 +133,9 @@ SV *	str
 IV	check
 CODE:
 {
-    SV *sve      = attr("endian", 6);
+    SV *sve      = attr("endian");
     U8 endian    = *((U8 *)SvPV_nolen(sve));
-    SV *svs      = attr("size", 4);
+    SV *svs      = attr("size");
     int size     = SvIV(svs);
     int ucs2     = -1; /* only needed in the event of surrogate pairs */
     SV *result   = newSVpvn("",0);
@@ -209,7 +209,7 @@ CODE:
 	}
 #if 1
 	/* Update endian for next sequence */
-	sv = attr("renewed", 7);
+	sv = attr("renewed");
 	if (SvTRUE(sv)) {
 	    (void)hv_store((HV *)SvRV(obj),"endian",6,newSVpv((char *)&endian,1),0);
 	}
@@ -229,7 +229,7 @@ CODE:
 	U8 *d;
 	if (issurrogate(ord)) {
 	    if (ucs2 == -1) {
-		SV *sv = attr("ucs2", 4);
+		SV *sv = attr("ucs2");
 		ucs2 = SvTRUE(sv);
 	    }
 	    if (ucs2 || size == 4) {
@@ -351,9 +351,9 @@ SV *	utf8
 IV	check
 CODE:
 {
-    SV *sve = attr("endian", 6);
+    SV *sve = attr("endian");
     U8 endian = *((U8 *)SvPV_nolen(sve));
-    SV *svs = attr("size", 4);
+    SV *svs = attr("size");
     const int size = SvIV(svs);
     int ucs2 = -1; /* only needed if there is invalid_ucs2 input */
     const STRLEN usize = (size > 0 ? size : 1);
@@ -399,7 +399,7 @@ CODE:
 	enc_pack(aTHX_ result,size,endian,BOM_BE);
 #if 1
 	/* Update endian for next sequence */
-	sv = attr("renewed", 7);
+	sv = attr("renewed");
 	if (SvTRUE(sv)) {
 	    (void)hv_store((HV *)SvRV(obj),"endian",6,newSVpv((char *)&endian,1),0);
 	}
@@ -416,7 +416,7 @@ CODE:
 	if (size != 4 && invalid_ucs2(ord)) {
 	    if (!issurrogate(ord)) {
 		if (ucs2 == -1) {
-		    SV *sv = attr("ucs2", 4);
+		    SV *sv = attr("ucs2");
 		    ucs2 = SvTRUE(sv);
 		}
 		if (ucs2 || ord > 0x10FFFF) {
