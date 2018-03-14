@@ -20,17 +20,6 @@
    encode_method().  1 is recommended. 2 restores NI-S original */
 #define ENCODE_XS_USEFP   1
 
-#define UNIMPLEMENTED(x,y) static y x (SV *sv, char *encoding) {	\
-			Perl_croak_nocontext("panic_unimplemented");	\
-                        PERL_UNUSED_VAR(sv); \
-                        PERL_UNUSED_VAR(encoding); \
-             return (y)0; /* fool picky compilers */ \
-                         }
-/**/
-
-UNIMPLEMENTED(_encoded_utf8_to_bytes, I32)
-UNIMPLEMENTED(_encoded_bytes_to_utf8, I32)
-
 #ifndef SvIV_nomg
 #define SvIV_nomg SvIV
 #endif
@@ -64,16 +53,6 @@ Encode_XSEncoding(pTHX_ encode_t * enc)
     PUTBACK;
     call_pv("Encode::define_encoding", G_DISCARD);
     SvREFCNT_dec(sv);
-}
-
-static void
-call_failure(SV * routine, U8 * done, U8 * dest, U8 * orig)
-{
-    /* Exists for breakpointing */
-    PERL_UNUSED_VAR(routine);
-    PERL_UNUSED_VAR(done);
-    PERL_UNUSED_VAR(dest);
-    PERL_UNUSED_VAR(orig);
 }
 
 static void
@@ -987,102 +966,6 @@ OUTPUT:
 MODULE = Encode         PACKAGE = Encode
 
 PROTOTYPES: ENABLE
-
-I32
-_bytes_to_utf8(sv, ...)
-SV *    sv
-PREINIT:
-    SV * encoding;
-INIT:
-    encoding = items == 2 ? ST(1) : Nullsv;
-CODE:
-    if (encoding)
-    RETVAL = _encoded_bytes_to_utf8(sv, SvPV_nolen(encoding));
-    else {
-    STRLEN len;
-    U8*    s = (U8*)SvPV(sv, len);
-    U8*    converted;
-
-    converted = bytes_to_utf8(s, &len); /* This allocs */
-    sv_setpvn(sv, (char *)converted, len);
-    SvUTF8_on(sv); /* XXX Should we? */
-    Safefree(converted);                /* ... so free it */
-    RETVAL = len;
-    }
-OUTPUT:
-    RETVAL
-
-I32
-_utf8_to_bytes(sv, ...)
-SV *    sv
-PREINIT:
-    SV * to;
-    SV * check;
-INIT:
-    to    = items > 1 ? ST(1) : Nullsv;
-    check = items > 2 ? ST(2) : Nullsv;
-CODE:
-    if (to) {
-    RETVAL = _encoded_utf8_to_bytes(sv, SvPV_nolen(to));
-    } else {
-    STRLEN len;
-    U8 *s = (U8*)SvPV(sv, len);
-
-    RETVAL = 0;
-    if (SvTRUE(check)) {
-        /* Must do things the slow way */
-        U8 *dest;
-            /* We need a copy to pass to check() */
-        U8 *src  = s;
-        U8 *send = s + len;
-        U8 *d0;
-
-        New(83, dest, len, U8); /* I think */
-        d0 = dest;
-
-        while (s < send) {
-                if (*s < 0x80){
-            *dest++ = *s++;
-                } else {
-            STRLEN ulen;
-            UV uv = *s++;
-
-            /* Have to do it all ourselves because of error routine,
-               aargh. */
-            if (!(uv & 0x40)){ goto failure; }
-            if      (!(uv & 0x20)) { ulen = 2;  uv &= 0x1f; }
-            else if (!(uv & 0x10)) { ulen = 3;  uv &= 0x0f; }
-            else if (!(uv & 0x08)) { ulen = 4;  uv &= 0x07; }
-            else if (!(uv & 0x04)) { ulen = 5;  uv &= 0x03; }
-            else if (!(uv & 0x02)) { ulen = 6;  uv &= 0x01; }
-            else if (!(uv & 0x01)) { ulen = 7;  uv = 0; }
-            else                   { ulen = 13; uv = 0; }
-        
-            /* Note change to utf8.c variable naming, for variety */
-            while (ulen--) {
-            if ((*s & 0xc0) != 0x80){
-                goto failure;
-            } else {
-                uv = (uv << 6) | (*s++ & 0x3f);
-            }
-          }
-          if (uv > 256) {
-          failure:
-              call_failure(check, s, dest, src);
-              /* Now what happens? */
-          }
-          *dest++ = (U8)uv;
-        }
-        }
-        RETVAL = dest - d0;
-        sv_usepvn(sv, (char *)dest, RETVAL);
-        SvUTF8_off(sv);
-    } else {
-        RETVAL = (utf8_to_bytes(s, &len) ? len : 0);
-    }
-    }
-OUTPUT:
-    RETVAL
 
 bool
 is_utf8(sv, check = 0)
