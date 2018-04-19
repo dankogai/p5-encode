@@ -3,6 +3,20 @@
 # $Id: Changes,v 2.97 2018/02/21 12:14:33 dankogai Exp dankogai $
 #
 $Revision: 2.97 $ $Date: 2018/02/21 12:14:33 $
+! t/truncated_utf8.t
+  Resolved: RT125131: truncated_utf8.t TODO test pass in blead
+  https://rt.cpan.org/Ticket/Display.html?id=125131
+! Encode.xs
+  Pulled: Remove XS functions _bytes_to_utf8() and _utf8_to_bytes()
+  https://github.com/dankogai/p5-encode/pull/133
+! Unicode/Unicode.xs
+  Pulled: Automatically compute length in attr() macro
+  https://github.com/dankogai/p5-encode/pull/132
+! Encode.xs
+  Pulled: Fix compile warnings on 64bit MS VS2017
+  https://github.com/dankogai/p5-encode/pull/131
+
+2.97 2018/02/21 12:14:33
 ! Encode.xs
   Pulled: New perls that fixes
     https://github.com/dankogai/p5-encode/issues/129
