@@ -1,8 +1,8 @@
 # Revision history for Perl extension Encode.
 #
-# $Id: Changes,v 2.97 2018/02/21 12:14:33 dankogai Exp dankogai $
+# $Id: Changes,v 2.98 2018/04/22 09:02:00 dankogai Exp $
 #
-$Revision: 2.97 $ $Date: 2018/02/21 12:14:33 $
+$Revision: 2.98 $ $Date: 2018/04/22 09:02:00 $
 ! t/truncated_utf8.t
   Resolved: RT125131: truncated_utf8.t TODO test pass in blead
   https://rt.cpan.org/Ticket/Display.html?id=125131
