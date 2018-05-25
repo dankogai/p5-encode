@@ -3,6 +3,7 @@
  */
 
 #define PERL_NO_GET_CONTEXT
+#define IN_ENCODE_XS
 #include "EXTERN.h"
 #include "perl.h"
 #include "XSUB.h"
@@ -30,13 +31,6 @@
 
 #ifndef SVfARG
 #define SVfARG(p) ((void*)(p))
-#endif
-
-#ifndef UTF8_DISALLOW_ILLEGAL_INTERCHANGE
-#  define UTF8_DISALLOW_ILLEGAL_INTERCHANGE 0
-#  define UTF8_ALLOW_NON_STRICT (UTF8_ALLOW_FE_FF|UTF8_ALLOW_SURROGATE|UTF8_ALLOW_FFFF)
-#else
-#  define UTF8_ALLOW_NON_STRICT 0
 #endif
 
 static void
@@ -373,70 +367,6 @@ strict_utf8(pTHX_ SV* sv)
     return SvTRUE(*svp);
 }
 
-/* Modern perls have the capability to do this more efficiently and portably */
-#ifdef utf8n_to_uvchr_msgs
-# define CAN_USE_BASE_PERL
-#endif
-
-#ifndef CAN_USE_BASE_PERL
-
-/*
- * https://github.com/dankogai/p5-encode/pull/56#issuecomment-231959126
- */
-#ifndef UNICODE_IS_NONCHAR
-#define UNICODE_IS_NONCHAR(c) ((c >= 0xFDD0 && c <= 0xFDEF) || (c & 0xFFFE) == 0xFFFE)
-#endif
-
-#ifndef UNICODE_IS_SUPER
-#define UNICODE_IS_SUPER(c) (c > PERL_UNICODE_MAX)
-#endif
-
-#define UNICODE_IS_STRICT(c) (!UNICODE_IS_SURROGATE(c) && !UNICODE_IS_NONCHAR(c) && !UNICODE_IS_SUPER(c))
-
-#ifndef UTF_ACCUMULATION_OVERFLOW_MASK
-#ifndef CHARBITS
-#define CHARBITS CHAR_BIT
-#endif
-#define UTF_ACCUMULATION_OVERFLOW_MASK (((UV) UTF_CONTINUATION_MASK) << ((sizeof(UV) * CHARBITS) - UTF_ACCUMULATION_SHIFT))
-#endif
-
-/*
- * Convert non strict utf8 sequence of len >= 2 to unicode codepoint
- */
-static UV
-convert_utf8_multi_seq(U8* s, STRLEN len, STRLEN *rlen)
-{
-    UV uv;
-    U8 *ptr = s;
-    bool overflowed = 0;
-
-    uv = NATIVE_TO_UTF(*s) & UTF_START_MASK(UTF8SKIP(s));
-
-    len--;
-    s++;
-
-    while (len--) {
-        if (!UTF8_IS_CONTINUATION(*s)) {
-            *rlen = s-ptr;
-            return 0;
-        }
-        if (uv & UTF_ACCUMULATION_OVERFLOW_MASK)
-            overflowed = 1;
-        uv = UTF8_ACCUMULATE(uv, *s);
-        s++;
-    }
-
-    *rlen = s-ptr;
-
-    if (overflowed || *rlen > (STRLEN)UNISKIP(uv)) {
-        return 0;
-    }
-
-    return uv;
-}
-
-#endif  /* CAN_USE_BASE_PERL */
-
 static U8*
 process_utf8(pTHX_ SV* dst, U8* s, U8* e, SV *check_sv,
              bool encode, bool strict, bool stop_at_partial)
@@ -466,7 +396,7 @@ process_utf8(pTHX_ SV* dst, U8* s, U8* e, SV *check_sv,
     STRLEN i;
     const U32 flags = (strict)
                     ? UTF8_DISALLOW_ILLEGAL_INTERCHANGE
-                    : UTF8_ALLOW_NON_STRICT;
+                    : 0;
 
     if (!SvOK(check_sv)) {
 	fallback_cb = &PL_sv_undef;
@@ -491,9 +421,6 @@ process_utf8(pTHX_ SV* dst, U8* s, U8* e, SV *check_sv,
     stop_at_partial = stop_at_partial || (check & ENCODE_STOP_AT_PARTIAL);
 
     while (s < e) {
-
-#ifdef CAN_USE_BASE_PERL    /* Use the much faster, portable implementation if
-                               available */
 
         /* If there were no errors, this will be 'e'; otherwise it will point
          * to the first byte of the erroneous input */
@@ -522,63 +449,7 @@ process_utf8(pTHX_ SV* dst, U8* s, U8* e, SV *check_sv,
          * point, or the best substitution for it */
         uv = utf8n_to_uvchr(s, e - s, &ulen, UTF8_ALLOW_ANY);
 
-#else   /* Use code for earlier perls */
-
-        ((void)sizeof(flags));  /* Avoid compiler warning */
-
-        if (UTF8_IS_INVARIANT(*s)) {
-            *d++ = *s++;
-            continue;
-        }
-
-        uv = 0;
-        ulen = 1;
-        if (! UTF8_IS_CONTINUATION(*s)) {
-            /* Not an invariant nor a continuation; must be a start byte.  (We
-             * can't test for UTF8_IS_START as that excludes things like \xC0
-             * which are start bytes, but always lead to overlongs */
-
-            U8 skip = UTF8SKIP(s);
-            if ((s + skip) > e) {
-                /* just calculate ulen, in pathological cases can be smaller then e-s */
-                if (e-s >= 2)
-                    convert_utf8_multi_seq(s, e-s, &ulen);
-                else
-                    ulen = 1;
-
-                if (stop_at_partial && ulen == (STRLEN)(e-s))
-                    break;
-
-                goto malformed_byte;
-            }
-
-            uv = convert_utf8_multi_seq(s, skip, &ulen);
-            if (uv == 0)
-                goto malformed_byte;
-            else if (strict && !UNICODE_IS_STRICT(uv))
-                goto malformed;
-
-
-             /* Whole char is good */
-             memcpy(d, s, skip);
-             d += skip;
-             s += skip;
-             continue;
-        }
-
-        /* If we get here there is something wrong with alleged UTF-8 */
-        /* uv is used only when encoding */
-    malformed_byte:
-        if (uv == 0)
-            uv = (UV)*s;
-        if (encode || ulen == 0)
-            ulen = 1;
-
-    malformed:
-
-#endif  /* The two versions for processing come back together here, for the
-         * error handling code.
-         *
+        /*
          * Here, we are looping through the input and found an error.
          * 'uv' is the code point in error if calculable, or the REPLACEMENT
          *      CHARACTER if not.

@@ -2,6 +2,8 @@
  $Id: Unicode.xs,v 2.18 2018/04/22 09:02:00 dankogai Exp $
  */
 
+#define IN_UNICODE_XS
+
 #define PERL_NO_GET_CONTEXT
 #include "EXTERN.h"
 #include "perl.h"
@@ -62,6 +64,7 @@ enc_unpack(pTHX_ U8 **sp, U8 *e, STRLEN size, U8 endian)
     case 'N':
 	v = *s++;
 	v = (v << 8) | *s++;
+        /* FALLTHROUGH */
     case 'n':
 	v = (v << 8) | *s++;
 	v = (v << 8) | *s++;
