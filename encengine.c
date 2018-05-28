@@ -24,7 +24,7 @@ The process can be considered as pseudo perl:
 my $dst = '';
 while (length($src))
  {
-  my $size    = $count($src);
+  my $size    = src_count($src);
   my $in_seq  = substr($src,0,$size,'');
   my $out_seq = $s2d_hash{$in_seq};
   if (defined $out_seq)
