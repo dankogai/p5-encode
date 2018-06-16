@@ -680,7 +680,12 @@ find_encoding(pTHX_ SV *enc)
     sv_setsv_flags(m_enc, enc, 0);
     SvFLAGS(enc) |= tmp;
 #else
+#if SV_NOSTEAL == 0
+    #error You have broken SV_NOSTEAL which cause memory corruption in sv_setsv_flags()
+    #error Most probably broken SV_NOSTEAL was defined by buggy version of ppport.h
+#else
     sv_setsv_flags(m_enc, enc, SV_NOSTEAL);
+#endif
 #endif
     XPUSHs(m_enc);
 
