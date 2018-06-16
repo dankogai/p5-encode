@@ -172,6 +172,10 @@ static const char super_cp_format[]     = "Code point 0x%" UVXf " is not Unicode
 #if    (defined(IN_ENCODE_XS) || defined(IN_UNICODE_XS))                     \
   && (! defined(utf8n_to_uvchr_msgs) && ! defined(uvchr_to_utf8_flags_msgs))
 
+#  ifndef hv_stores
+#    define hv_stores(hv, key, val) hv_store((hv), ("" key ""), (sizeof(key)-1), (val), 0)
+#  endif
+
 static HV *
 S_new_msg_hv(const char * const message, /* The message text */
                    U32 categories)  /* Packed warning categories */
@@ -264,6 +268,14 @@ S_new_msg_hv(const char * const message, /* The message text */
                 "\xFF\x80\x87\xBF\xBF\xBF\xBF\xBF\xBF\xBF\xBF\xBF\xBF"
 #      endif
 #    endif
+#  endif
+
+#  ifndef Newx
+#    define Newx(v,n,t) New(0,v,n,t)
+#  endif
+
+#  ifndef PERL_UNUSED_ARG
+#    define PERL_UNUSED_ARG(x) ((void)x)
 #  endif
 
 static const char malformed_text[] = "Malformed UTF-8 character";
@@ -570,6 +582,10 @@ S_isFF_OVERLONG(const U8 * const s, const STRLEN len)
     (   UNICODE_IS_32_CONTIGUOUS_NONCHARS(uv)                       \
      || (   LIKELY( ! UNICODE_IS_SUPER(uv))                         \
          && UNICODE_IS_END_PLANE_NONCHAR_GIVEN_NOT_SUPER(uv)))
+#  endif
+
+#  ifndef UTF8_MAXBYTES
+#    define UTF8_MAXBYTES UTF8_MAXLEN
 #  endif
 
 static UV
