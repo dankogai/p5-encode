@@ -697,6 +697,12 @@ code to do exactly that:
 This is the same as C<FB_QUIET> above, except that instead of being silent
 on errors, it issues a warning.  This is handy for when you are debugging.
 
+B<CAVEAT>: All warnings from Encode module are reported, independently of
+L<pragma warnings|warnings> settings. If you want to follow settings of
+lexical warnings configured by L<pragma warnings|warnings> then append
+also check value C<ENCODE::ONLY_PRAGMA_WARNINGS>. This value is available
+since Encode version 2.99.
+
 =head3 FB_PERLQQ FB_HTMLCREF FB_XMLCREF
 
 =over 2
