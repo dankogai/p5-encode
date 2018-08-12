@@ -101,6 +101,8 @@ do_encode(const encpage_t * enc, const U8 * src, STRLEN * slen, U8 * dst,
     U8 *d = dst;
     U8 *dend = d + dlen, *dlast = d;
     int code = 0;
+    if (!dst)
+      return ENCODE_NOSPACE;
     while (s < send) {
         const encpage_t *e = enc;
         U8 byte = *s;
