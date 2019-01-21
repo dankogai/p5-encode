@@ -1,8 +1,23 @@
 # Revision history for Perl extension Encode.
 #
-# $Id: Changes,v 2.98 2018/04/22 09:02:00 dankogai Exp $
+# $Id: Changes,v 2.99 2019/01/21 03:13:35 dankogai Exp $
 #
-$Revision: 2.98 $ $Date: 2018/04/22 09:02:00 $
+$Revision: 2.99 $ $Date: 2019/01/21 03:13:35 $
+! Unicode/Unicode.xs Unicode/Unicode.pm
+  VERSION++'ed as Perl core needed.
+  https://github.com/dankogai/p5-encode/issues/136
+! encengine.c
+  Pulled: protect do_encode from NULL dst
+  https://github.com/dankogai/p5-encode/pull/135
+
+2.98 2018/04/22 09:02:00
+! Encode.pm Encode.xs Encode/encode.h Unicode/Unicode.xs encengine.c
+t/decode.t t/enc_eucjp.t t/utf8messages.t t/utf8warnings.t
+- t/utf8messages.t
++ t/utf32warnings.t
+  Pulled: Introduce new Encode check flag Encode::ONLY_PRAGMA_WARNINGS
+  https://github.com/dankogai/p5-encode/pull/134
+2.98 2018/04/22 09:02:00
 ! t/truncated_utf8.t
   Resolved: RT125131: truncated_utf8.t TODO test pass in blead
   https://rt.cpan.org/Ticket/Display.html?id=125131
