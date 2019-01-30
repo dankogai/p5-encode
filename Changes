@@ -3,6 +3,10 @@
 # $Id: Changes,v 2.99 2019/01/21 03:13:35 dankogai Exp $
 #
 $Revision: 2.99 $ $Date: 2019/01/21 03:13:35 $
+! MANIFEST
+  remove utf8messages.t which is already deleted from the repository.
+
+2.99 2019/01/21 03:13:35
 ! Unicode/Unicode.xs Unicode/Unicode.pm
   VERSION++'ed as Perl core needed.
   https://github.com/dankogai/p5-encode/issues/136
