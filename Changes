@@ -1,8 +1,12 @@
 # Revision history for Perl extension Encode.
 #
-# $Id: Changes,v 2.99 2019/01/21 03:13:35 dankogai Exp $
+# $Id: Changes,v 2.100 2019/01/31 04:26:40 dankogai Exp dankogai $
 #
-$Revision: 2.99 $ $Date: 2019/01/21 03:13:35 $
+$Revision: 2.100 $ $Date: 2019/01/31 04:26:40 $
+!  Encode.xs MANIFEST
++  t/xml.t
+  Pulled: Do not access SV* buffer if we have not called SvPV_force()
+  https://github.com/dankogai/p5-encode/pull/137
 ! MANIFEST
   remove utf8messages.t which is already deleted from the repository.
 
