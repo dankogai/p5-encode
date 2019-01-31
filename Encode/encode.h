@@ -372,6 +372,9 @@ S_unexpected_non_continuation_text(const U8 * const s,
 }
 
 static int
+S_is_utf8_overlong_given_start_byte_ok(const U8 * const s, const STRLEN len);
+
+static int
 S_does_utf8_overflow(const U8 * const s,
                        const U8 * e,
                        const bool consider_overlongs)
