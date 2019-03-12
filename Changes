@@ -3,6 +3,14 @@
 # $Id: Changes,v 3.00 2019/01/31 04:51:32 dankogai Exp $
 #
 $Revision: 3.00 $ $Date: 2019/01/31 04:51:32 $
+! Encode.xs
+  patched: Warning: Use of uninitialized value in subroutine entry
+  https://github.com/dankogai/p5-encode/issues/139#issuecomment-459765852
+! Encode/encode.h
+  Pulled: Fix compile error and warning
+  https://github.com/dankogai/p5-encode/pull/138
+
+3.00 2019/01/31
 ! Encode.pm
   VERSION bumped to 3.00 to make PAUSE happy
 
