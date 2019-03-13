@@ -1,8 +1,8 @@
 # Revision history for Perl extension Encode.
 #
-# $Id: Changes,v 3.00 2019/01/31 04:51:32 dankogai Exp $
+# $Id: Changes,v 3.01 2019/03/13 00:26:18 dankogai Exp dankogai $
 #
-$Revision: 3.00 $ $Date: 2019/01/31 04:51:32 $
+$Revision: 3.01 $ $Date: 2019/03/13 00:26:18 $
 ! Encode.xs
   patched: Warning: Use of uninitialized value in subroutine entry
   https://github.com/dankogai/p5-encode/issues/139#issuecomment-459765852
