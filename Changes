@@ -3,6 +3,20 @@
 # $Id: Changes,v 3.01 2019/03/13 00:26:18 dankogai Exp dankogai $
 #
 $Revision: 3.01 $ $Date: 2019/03/13 00:26:18 $
+! t/whatwg-aliases.t
+  drop RELEASE_TESTING since Pumpking also uses it. 
+  https://github.com/Perl/perl5/issues/17382
+! bin/enc2xs
+  Pulled: enc2xs: Add environment variable to suppress comments
+  https://github.com/dankogai/p5-encode/pull/145
+! t/enc_utf8.t
+  Pulled: fixup enc_utf8.t for ONLY_PRAGMA_WARNINGS
+  https://github.com/dankogai/p5-encode/pull/142
+! Encode/encode.h
+  Pulled: Fix linker errors
+  https://github.com/dankogai/p5-encode/pull/141
+
+3.01 2019/03/13 00:26:18
 ! Encode.xs
   patched: Warning: Use of uninitialized value in subroutine entry
   https://github.com/dankogai/p5-encode/issues/139#issuecomment-459765852
