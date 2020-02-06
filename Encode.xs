@@ -982,6 +982,7 @@ ALIAS:
 PREINIT:
     SV *obj;
 INIT:
+    PERL_UNUSED_VAR(ix);
     SvGETMAGIC(encoding);
 CODE:
     if (!SvOK(encoding))
@@ -1003,6 +1004,7 @@ ALIAS:
 PREINIT:
     SV *obj;
 INIT:
+    PERL_UNUSED_VAR(ix);
     SvGETMAGIC(encoding);
 CODE:
     if (!SvOK(encoding))
