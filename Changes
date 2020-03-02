@@ -1,8 +1,16 @@
 # Revision history for Perl extension Encode.
 #
-# $Id: Changes,v 3.02 2019/12/25 09:23:21 dankogai Exp $
+# $Id: Changes,v 3.03 2020/03/02 04:34:34 dankogai Exp $
 #
-$Revision: 3.02 $ $Date: 2019/12/25 09:23:21 $
+$Revision: 3.03 $ $Date: 2020/03/02 04:34:34 $
+! Encode.pm Encode.xs
+  pulled: Stop using deprecated function
+  https://github.com/dankogai/p5-encode/pull/148
+! Encode.xs
+  pulled: Silence unused var warnings from Encode
+  https://github.com/dankogai/p5-encode/pull/147
+
+3.02 2019/12/25 09:23:21
 ! t/whatwg-aliases.t
   drop RELEASE_TESTING since Pumpking also uses it.
   https://github.com/Perl/perl5/issues/17382

@@ -1,5 +1,5 @@
 #
-# $Id: Encode.pm,v 3.02 2019/12/25 09:25:17 dankogai Exp $
+# $Id: Encode.pm,v 3.03 2020/03/02 04:36:39 dankogai Exp $
 #
 package Encode;
 use strict;
