@@ -1,8 +1,13 @@
 # Revision history for Perl extension Encode.
 #
-# $Id: Changes,v 3.03 2020/03/02 04:34:34 dankogai Exp $
+# $Id: Changes,v 3.04 2020/03/10 22:29:50 dankogai Exp dankogai $
 #
-$Revision: 3.03 $ $Date: 2020/03/02 04:34:34 $
+$Revision: 3.04 $ $Date: 2020/03/10 22:29:50 $
+! Encode.pm
+  Bump version to make bleadperl happy
+  <0036284d-87ac-a021-0ba9-44bc972e88ab@khwilliamson.com>
+
+3.03 $ 2020/03/02 04:34:34
 ! Encode.pm Encode.xs
   pulled: Stop using deprecated function
   https://github.com/dankogai/p5-encode/pull/148
