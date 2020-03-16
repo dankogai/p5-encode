@@ -158,7 +158,7 @@ sub guess {
         $nline++;
     }
     $try{ascii}
-      or return "Encodings too ambiguous: ", join( " or ", keys %try );
+      or return "Encodings too ambiguous: " . join( " or ", keys %try );
     return $try{ascii};
 }
 
