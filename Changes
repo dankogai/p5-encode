@@ -1,13 +1,23 @@
 # Revision history for Perl extension Encode.
 #
-# $Id: Changes,v 3.04 2020/03/10 22:29:50 dankogai Exp dankogai $
+# $Id: Changes,v 3.05 2020/03/18 04:56:12 dankogai Exp dankogai $
 #
-$Revision: 3.04 $ $Date: 2020/03/10 22:29:50 $
+$Revision: 3.05 $ $Date: 2020/03/18 04:56:12 $
+! Encode.pm
+  Address Tiny change for Encode.pm from David Levine
+    We do some compiled perl, and @INC is not always defined,
+    so it throws a warning.
+  <BN8PR12MB3153AEAF99EC08DB1E69A458A4FA0@BN8PR12MB3153.namprd12.prod.outlook.com>
+! lib/Encode/Guess.pm
+  fix RT#131359: Encode::Guess: incomplete error messsage
+  https://rt.cpan.org/Public/Bug/Display.html?id=131359
+
+3.04 2020/03/10 22:29:50
 ! Encode.pm
   Bump version to make bleadperl happy
   <0036284d-87ac-a021-0ba9-44bc972e88ab@khwilliamson.com>
 
-3.03 $ 2020/03/02 04:34:34
+3.03 2020/03/02 04:34:34
 ! Encode.pm Encode.xs
   pulled: Stop using deprecated function
   https://github.com/dankogai/p5-encode/pull/148
