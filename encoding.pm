@@ -1,4 +1,4 @@
-# $Id: encoding.pm,v 3.00 2020/04/19 10:56:28 dankogai Exp dankogai $
+# $Id: encoding.pm,v 3.00 2020/04/19 10:56:28 dankogai Exp $
 package encoding;
 our $VERSION = sprintf "%d.%02d", q$Revision: 3.00 $ =~ /(\d+)/g;
 
