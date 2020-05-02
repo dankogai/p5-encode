@@ -3,6 +3,15 @@
 # $Id: Changes,v 3.05 2020/03/18 04:56:12 dankogai Exp dankogai $
 #
 $Revision: 3.05 $ $Date: 2020/03/18 04:56:12 $
+! bin/enc2xs
+  address RT#132471: Will not work in 5.32 going forward
+  remove the use of lib/unicore/Name.pl
+  https://rt.cpan.org/Ticket/Display.html?id=132471
+! encoding.pm
+  Bump version from 2.22 to 3.00 to address RT#132377
+  https://rt.cpan.org/Public/Bug/Display.html?id=132377
+
+3.05 2020/03/18 04:56:12
 ! Encode.pm
   Address Tiny change for Encode.pm from David Levine
     We do some compiled perl, and @INC is not always defined,
