@@ -1,8 +1,14 @@
 # Revision history for Perl extension Encode.
 #
-# $Id: Changes,v 3.06 2020/05/02 02:32:27 dankogai Exp dankogai $
+# $Id: Changes,v 3.07 2020/07/25 12:59:29 dankogai Exp dankogai $
 #
-$Revision: 3.06 $ $Date: 2020/05/02 02:32:27 $
+$Revision: 3.07 $ $Date: 2020/07/25 12:59:29 $
+! lib/Encode/GSM0338.pm t/gsm0338.t
+  Pulled: GSM0338: Fix encoding module to be compatible with
+    latest  GSM 03.38 standard
+  https://github.com/dankogai/p5-encode/pull/149
+
+3.06 2020/05/02 02:32:27
 ! bin/enc2xs
   address RT#132471: Will not work in 5.32 going forward
   remove the use of lib/unicore/Name.pl
