@@ -1158,7 +1158,7 @@ t/decode.t t/enc_eucjp.t t/utf8messages.t t/utf8warnings.t
 + lib/Encode/GSM0338.pm
 - ucm/gsm0338.ucm 
 ! lib/Encode/Supported.pod lib/Encode/Config.pm Bytes/Makefile.PL t/gsm0338.t
-  ESTI GSM 03.38 support is relocated from Encode::Byte to Encode::GSM0338.
+  ETSI GSM 03.38 support is relocated from Encode::Byte to Encode::GSM0338.
   This encoding is so kaputt it is unfit for Encode::XS!
   Though it was okay for general cases and escape sequences,
   '\0' => '@' IFF '\0\0' => '\0' had gliches.
