@@ -164,9 +164,20 @@ our %UNI2GSM = (
 our %GSM2UNI = reverse %UNI2GSM;
 our $ESC    = "\x1b";
 
+sub gsm2uni {
+	return \%GSM2UNI;
+}
+
+sub uni2gsm {
+	return \%UNI2GSM;
+}
+
 sub decode ($$;$) {
     my ( $obj, $bytes, $chk ) = @_;
     return undef unless defined $bytes;
+
+	my $gsm2uni = $obj->gsm2uni;
+
     my $str = substr($bytes, 0, 0); # to propagate taintedness;
     while ( length $bytes ) {
         my $seq = '';
@@ -176,12 +187,12 @@ sub decode ($$;$) {
             $seq .= $c;
         } while ( length $bytes and $c eq $ESC );
         my $u =
-            exists $GSM2UNI{$seq}
-            ? $GSM2UNI{$seq}
+            exists $gsm2uni->{$seq}
+            ? $gsm2uni->{$seq}
             : ($chk && ref $chk eq 'CODE')
             ? $chk->( unpack 'C*', $seq )
             : "\x{FFFD}";
-        if ( not exists $GSM2UNI{$seq} and $chk and not ref $chk ) {
+        if ( not exists $gsm2uni->{$seq} and $chk and not ref $chk ) {
             croak join( '', map { sprintf "\\x%02X", $_ } unpack 'C*', $seq ) . ' does not map to Unicode' if $chk & Encode::DIE_ON_ERR;
             carp join( '', map { sprintf "\\x%02X", $_ } unpack 'C*', $seq ) . ' does not map to Unicode' if $chk & Encode::WARN_ON_ERR;
             if ($chk & Encode::RETURN_ON_ERR) {
@@ -198,17 +209,20 @@ sub decode ($$;$) {
 sub encode($$;$) {
     my ( $obj, $str, $chk ) = @_;
     return undef unless defined $str;
+
+	my $uni2gsm = $obj->uni2gsm;
+
     my $bytes = substr($str, 0, 0); # to propagate taintedness
     while ( length $str ) {
         my $u = substr( $str, 0, 1, '' );
         my $c;
         my $seq =
-            exists $UNI2GSM{$u}
-            ? $UNI2GSM{$u}
+            exists $uni2gsm->{$u}
+            ? $uni2gsm->{$u}
             : ($chk && ref $chk eq 'CODE')
             ? $chk->( ord($u) )
-            : $UNI2GSM{'?'};
-        if ( not exists $UNI2GSM{$u} and $chk and not ref $chk ) {
+            : $uni2gsm->{'?'};
+        if ( not exists $uni2gsm->{$u} and $chk and not ref $chk ) {
             croak sprintf( "\\x{%04x} does not map to %s", ord($u), $obj->name ) if $chk & Encode::DIE_ON_ERR;
             carp sprintf( "\\x{%04x} does not map to %s", ord($u), $obj->name ) if $chk & Encode::WARN_ON_ERR;
             if ($chk & Encode::RETURN_ON_ERR) {
