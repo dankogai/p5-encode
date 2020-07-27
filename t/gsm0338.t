@@ -46,7 +46,7 @@ sub eu{
 
 for my $c ( map { chr } 0 .. 127 ) {
     next if $c eq "\x1B"; # escape character, start of multibyte sequence
-    my $u = $Encode::GSM0338::GSM2UNI_BASIC_SET{plain}{$c};
+    my $u = Encode::GSM0338::Charset::Default->GSM2UNI_BASIC_SET->{$c};
 
     # default character set
     is decode( "gsm0338", $c, $chk ), $u,
