@@ -15,9 +15,6 @@ use Encode qw(:fallbacks);
 use parent qw(Encode::Encoding);
 __PACKAGE__->Define('gsm0338');
 
-sub needs_lines { 1 }
-sub perlio_ok   { 0 }
-
 use utf8;
 
 # Mapping table according to 3GPP TS 23.038 version 16.0.0 Release 16 and ETSI TS 123 038 V16.0.0 (2020-07)
@@ -182,6 +179,10 @@ sub decode ($$;$) {
             ? $chk->( unpack 'C*', $seq )
             : "\x{FFFD}";
         if ( not exists $GSM2UNI{$seq} and $chk and not ref $chk ) {
+            if ( substr($seq, 0, 1) eq $ESC and ($chk & Encode::STOP_AT_PARTIAL) ) {
+                $bytes .= $seq;
+                last;
+            }
             croak join( '', map { sprintf "\\x%02X", $_ } unpack 'C*', $seq ) . ' does not map to Unicode' if $chk & Encode::DIE_ON_ERR;
             carp join( '', map { sprintf "\\x%02X", $_ } unpack 'C*', $seq ) . ' does not map to Unicode' if $chk & Encode::WARN_ON_ERR;
             if ($chk & Encode::RETURN_ON_ERR) {
