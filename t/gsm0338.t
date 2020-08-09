@@ -13,7 +13,7 @@ BEGIN {
 
 use strict;
 use utf8;
-use Test::More tests => 776;
+use Test::More tests => 777;
 use Encode;
 use Encode::GSM0338;
 
@@ -82,6 +82,13 @@ is encode("gsm0338", chr(0xC7)) => "\x09", 'RT75670: encode';
 # https://rt.cpan.org/Public/Bug/Display.html?id=124571
 is decode("gsm0338", encode('gsm0338', '..@@..')), '..@@..';
 is decode("gsm0338", encode('gsm0338', '..@€..')), '..@€..';
+
+# special GSM sequence, € is at 1024 byte buffer boundary
+my $gsm = "\x41" . "\x1B\x65" x 1024;
+open my $fh, '<:encoding(gsm0338)', \$gsm or die;
+my $uni = <$fh>;
+close $fh;
+is $uni, "A" . "€" x 1024, 'PerlIO encoding(gsm0338) read works';
 
 __END__
 for my $c (map { chr } 0..127){
