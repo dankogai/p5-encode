@@ -3,6 +3,15 @@
 # $Id: Changes,v 3.07 2020/07/25 12:59:29 dankogai Exp dankogai $
 #
 $Revision: 3.07 $ $Date: 2020/07/25 12:59:29 $
+! t/gsm0338.t
+  Pulled: Remove old disabled tests from t/gsm0338.t
+  https://github.com/dankogai/p5-encode/pull/152
+! lib/Encode/GSM0338.pm t/gsm0338.t
+  Pulled: GSM0338: Enable PerlIO and fix code to not require
+    line buffering #151
+  https://github.com/dankogai/p5-encode/pull/151
+
+3.07 2020/07/25 12:59:29
 ! lib/Encode/GSM0338.pm t/gsm0338.t
   Pulled: GSM0338: Fix encoding module to be compatible with
     latest  GSM 03.38 standard
