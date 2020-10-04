@@ -78,7 +78,7 @@ show this message and exit.
 =item -s
 
 specify a list of "suspect encoding types" to test, 
-seperated by either C<:> or C<,>
+separated by either C<:> or C<,>
 
 =item -S
 
