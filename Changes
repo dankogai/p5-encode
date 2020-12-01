@@ -3,6 +3,12 @@
 # $Id: Changes,v 3.07 2020/07/25 12:59:29 dankogai Exp dankogai $
 #
 $Revision: 3.07 $ $Date: 2020/07/25 12:59:29 $
+! Makefile.PL
+  Addressed: Encode requires Test::More 0.81_01 - this warns
+  https://rt.cpan.org/Public/Bug/Display.html?id=133850
+! bin/encguess
+  Pulled: Fix typo
+  https://github.com/dankogai/p5-encode/pull/153
 ! t/gsm0338.t
   Pulled: Remove old disabled tests from t/gsm0338.t
   https://github.com/dankogai/p5-encode/pull/152

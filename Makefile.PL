@@ -70,7 +70,7 @@ WriteMakefile(
         Storable   => '0',      # bundled with Perl 5.7.3
     },
     TEST_REQUIRES => {
-        'Test::More' => '0.81_01',
+        'Test::More' => '0.92',
     },
     PMLIBDIRS   => \@pmlibdirs,
     INSTALLDIRS => ($] < 5.011 ? 'perl' : 'site'),
