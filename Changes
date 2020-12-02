@@ -1,8 +1,8 @@
 # Revision history for Perl extension Encode.
 #
-# $Id: Changes,v 3.07 2020/07/25 12:59:29 dankogai Exp dankogai $
+# $Id: Changes,v 3.08 2020/12/02 01:28:17 dankogai Exp dankogai $
 #
-$Revision: 3.07 $ $Date: 2020/07/25 12:59:29 $
+$Revision: 3.08 $ $Date: 2020/12/02 01:28:17 $
 ! Makefile.PL
   Addressed: Encode requires Test::More 0.81_01 - this warns
   https://rt.cpan.org/Public/Bug/Display.html?id=133850
