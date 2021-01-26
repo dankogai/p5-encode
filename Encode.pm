@@ -499,7 +499,7 @@ followed by C<encode> as follows:
 
   $octets = encode_utf8($string);
 
-B<WARNING>: L</UTF-8 vs. utf8 vs. UTF8|This function can produce invalid UTF-8!>
+B<WARNING>: L<This function can produce invalid UTF-8!|/UTF-8 vs. utf8 vs. UTF8>
 Do not use it for data exchange.
 Unless you want Perl’s older "lax" mode, prefer
 C<$octets = encode("UTF-8", $string)>.
@@ -941,7 +941,7 @@ C<"UTF-8">, by contrast, will either coerce the input to something valid:
 
 .. or croak:
 
-    decode("UTF-8", "\xf8\x88\x80\x80\x80", 9);
+    decode("UTF-8", "\xf8\x88\x80\x80\x80", DIE_ON_ERR|LEAVE_SRC);
 
 In the C<Encode> module, C<"UTF-8"> is actually a canonical name for
 C<"utf-8-strict">.  That hyphen between the C<"UTF"> and the C<"8"> is
