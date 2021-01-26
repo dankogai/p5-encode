@@ -499,18 +499,24 @@ followed by C<encode> as follows:
 
   $octets = encode_utf8($string);
 
+B<WARNING>: L</UTF-8 vs. utf8 vs. UTF8|This function can produce invalid UTF-8!>
+Do not use it for data exchange.
+Unless you want Perl’s older "lax" mode, prefer
+C<$octets = encode("UTF-8", $string)>.
+
 Equivalent to C<$octets = encode("utf8", $string)>.  The characters in
 $string are encoded in Perl's internal format, and the result is returned
 as a sequence of octets.  Because all possible characters in Perl have a
 (loose, not strict) utf8 representation, this function cannot fail.
 
-B<WARNING>: do not use this function for data exchange as it can produce
-not strict utf8 $octets! For strictly valid UTF-8 output use
-C<$octets = encode("UTF-8", $string)>.
-
 =head3 decode_utf8
 
   $string = decode_utf8($octets [, CHECK]);
+
+B<WARNING>: L</UTF-8 vs. utf8 vs. UTF8|This function accepts invalid UTF-8!>
+Do not use it for data exchange.
+Unless you want Perl’s older "lax" mode, prefer
+C<$string = decode("UTF-8", $octets [, CHECK])>.
 
 Equivalent to C<$string = decode("utf8", $octets [, CHECK])>.
 The sequence of octets represented by $octets is decoded
@@ -518,10 +524,6 @@ from (loose, not strict) utf8 into a sequence of logical characters.
 Because not all sequences of octets are valid not strict utf8,
 it is quite possible for this function to fail.
 For CHECK, see L</"Handling Malformed Data">.
-
-B<WARNING>: do not use this function for data exchange as it can produce
-$string with not strict utf8 representation! For strictly valid UTF-8
-$string representation use C<$string = decode("UTF-8", $octets [, CHECK])>.
 
 B<CAVEAT>: the input I<$octets> might be modified in-place depending on
 what is set in CHECK. See L</LEAVE_SRC> if you want your inputs to be
@@ -926,6 +928,20 @@ important distinction between C<"UTF-8"> and C<"utf8">.
 
   encode("utf8",  "\x{FFFF_FFFF}", 1); # okay
   encode("UTF-8", "\x{FFFF_FFFF}", 1); # croaks
+
+This distinction is also important for decoding. In the following,
+C<$s> stores character U+200000, which exceeds UTF-8’s allowed range.
+C<$s> thus stores an invalid Unicode code point:
+
+  $s = decode("utf8", "\xf8\x88\x80\x80\x80");
+
+C<"UTF-8">, by contrast, will either coerce the input to something valid:
+
+    $s = decode("UTF-8", "\xf8\x88\x80\x80\x80"); # U+FFFD
+
+.. or croak:
+
+    decode("UTF-8", "\xf8\x88\x80\x80\x80", 9);
 
 In the C<Encode> module, C<"UTF-8"> is actually a canonical name for
 C<"utf-8-strict">.  That hyphen between the C<"UTF"> and the C<"8"> is
