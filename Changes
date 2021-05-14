@@ -1,8 +1,8 @@
 # Revision history for Perl extension Encode.
 #
-# $Id: Changes,v 3.08 2020/12/02 01:28:17 dankogai Exp dankogai $
+# $Id: Changes,v 3.09 2021/05/14 10:44:18 dankogai Exp dankogai $
 #
-$Revision: 3.08 $ $Date: 2020/12/02 01:28:17 $
+$Revision: 3.09 $ $Date: 2021/05/14 10:44:18 $
 ! Encode.pm
   Addressed: find_encoding returns Internal encoding
   `Unicode` is no longer a valid encoding name.
