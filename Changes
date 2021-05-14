@@ -3,6 +3,12 @@
 # $Id: Changes,v 3.08 2020/12/02 01:28:17 dankogai Exp dankogai $
 #
 $Revision: 3.08 $ $Date: 2020/12/02 01:28:17 $
+! Encode.pm
+  Addressed: find_encoding returns Internal encoding
+  `Unicode` is no longer a valid encoding name.
+  https://github.com/dankogai/p5-encode/issues/157
+
+3.08 2020/12/02 01:28:17
 ! Makefile.PL
   Addressed: Encode requires Test::More 0.81_01 - this warns
   https://rt.cpan.org/Public/Bug/Display.html?id=133850

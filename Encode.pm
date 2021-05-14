@@ -202,18 +202,6 @@ if ($ON_EBCDIC) {
         $_[1] = '' if $chk;
         return $res;
     }
-} else {
-    package Encode::Internal;
-    use parent 'Encode::Encoding';
-    my $obj = bless { Name => "Internal" } => "Encode::Internal";
-    Encode::define_encoding($obj, 'Unicode');
-    sub decode {
-        my ( undef, $str, $chk ) = @_;
-        utf8::upgrade($str);
-        $_[1] = '' if $chk;
-        return $str;
-    }
-    *encode = \&decode;
 }
 
 {
