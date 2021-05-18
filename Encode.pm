@@ -489,7 +489,7 @@ followed by C<encode> as follows:
 
 B<WARNING>: L<This function can produce invalid UTF-8!|/UTF-8 vs. utf8 vs. UTF8>
 Do not use it for data exchange.
-Unless you want Perl’s older "lax" mode, prefer
+Unless you want Perl's older "lax" mode, prefer
 C<$octets = encode("UTF-8", $string)>.
 
 Equivalent to C<$octets = encode("utf8", $string)>.  The characters in
@@ -503,7 +503,7 @@ as a sequence of octets.  Because all possible characters in Perl have a
 
 B<WARNING>: L<This function accepts invalid UTF-8!|/UTF-8 vs. utf8 vs. UTF8>
 Do not use it for data exchange.
-Unless you want Perl’s older "lax" mode, prefer
+Unless you want Perl's older "lax" mode, prefer
 C<$string = decode("UTF-8", $octets [, CHECK])>.
 
 Equivalent to C<$string = decode("utf8", $octets [, CHECK])>.
@@ -918,7 +918,7 @@ important distinction between C<"UTF-8"> and C<"utf8">.
   encode("UTF-8", "\x{FFFF_FFFF}", 1); # croaks
 
 This distinction is also important for decoding. In the following,
-C<$s> stores character U+200000, which exceeds UTF-8’s allowed range.
+C<$s> stores character U+200000, which exceeds UTF-8's allowed range.
 C<$s> thus stores an invalid Unicode code point:
 
   $s = decode("utf8", "\xf8\x88\x80\x80\x80");

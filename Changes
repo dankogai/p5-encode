@@ -4,9 +4,19 @@
 #
 $Revision: 3.09 $ $Date: 2021/05/14 10:44:18 $
 ! Encode.pm
+  Replace non-ASCII apostrophes w/ \x27, which were introduced in #155
+  https://rt.cpan.org/Public/Bug/Display.html?id=136534
+  https://github.com/creaktive/Test-Mojibake/issues/15
+
+3.09 2021/05/14 10:44:18
+! Encode.pm t/Encode.t
   Addressed: find_encoding returns Internal encoding
   `Unicode` is no longer a valid encoding name.
   https://github.com/dankogai/p5-encode/issues/157
+! Encode.pm
+  Merge pull request #155 from FGasper/utf8_docs_detail
+    then retouch and re^2touch
+  https://github.com/dankogai/p5-encode/pull/155
 
 3.08 2020/12/02 01:28:17
 ! Makefile.PL
