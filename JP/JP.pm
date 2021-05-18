@@ -50,8 +50,8 @@ supported are as follows.
   cp932       /\bwindows-31j$/i Code Page 932
                                 = Shift JIS + MS/IBM vendor mappings
   jis0201-raw                   JIS0201, raw format
-  jis0208-raw                   JIS0201, raw format
-  jis0212-raw                   JIS0201, raw format
+  jis0208-raw                   JIS0208, raw format
+  jis0212-raw                   JIS0212, raw format
   --------------------------------------------------------------------
 
 =head1 DESCRIPTION
