@@ -3,6 +3,9 @@
 # $Id: Changes,v 3.09 2021/05/14 10:44:18 dankogai Exp dankogai $
 #
 $Revision: 3.09 $ $Date: 2021/05/14 10:44:18 $
+! JP/JP.pm
+  Fix POD Typo
+  https://rt.cpan.org/Ticket/Display.html?id=136533
 ! Encode.pm
   Replace non-ASCII apostrophes w/ \x27, which were introduced in #155
   https://rt.cpan.org/Public/Bug/Display.html?id=136534
