@@ -1,8 +1,8 @@
 # Revision history for Perl extension Encode.
 #
-# $Id: Changes,v 3.09 2021/05/14 10:44:18 dankogai Exp dankogai $
+# $Id: Changes,v 3.10 2021/05/18 07:42:45 dankogai Exp dankogai $
 #
-$Revision: 3.09 $ $Date: 2021/05/14 10:44:18 $
+$Revision: 3.10 $ $Date: 2021/05/18 07:42:45 $
 ! JP/JP.pm
   Fix POD Typo
   https://rt.cpan.org/Ticket/Display.html?id=136533
