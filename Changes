@@ -1,8 +1,14 @@
 # Revision history for Perl extension Encode.
 #
-# $Id: Changes,v 3.10 2021/05/18 07:42:45 dankogai Exp dankogai $
+# $Id: Changes,v 3.10 2021/05/18 07:42:45 dankogai Exp $
 #
 $Revision: 3.10 $ $Date: 2021/05/18 07:42:45 $
+! lib/Encode/GSM0338.pm
+  Address RT#136586
+  Just applied perltidy and 'make ci'
+  https://rt.cpan.org/Ticket/Display.html?id=136586
+
+3.10 2021/05/18 07:42:45
 ! JP/JP.pm
   Fix POD Typo
   https://rt.cpan.org/Ticket/Display.html?id=136533
