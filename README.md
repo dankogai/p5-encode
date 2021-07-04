@@ -1,4 +1,4 @@
-[![build status](https://secure.travis-ci.org/dankogai/p5-encode.png)](http://travis-ci.org/dankogai/p5-encode)
+[![build status](https://travis-ci.com/dankogai/p5-encode.svg)](http://travis-ci.com/dankogai/p5-encode)
 
 ## NAME
 
