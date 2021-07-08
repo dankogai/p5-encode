@@ -361,6 +361,10 @@ CODE:
     }
 
     if (!temp_result) shrink_buffer(result);
+
+    /* Make sure we have a trailing NUL: */
+    *SvEND(result) = '\0';
+
     if (SvTAINTED(str)) SvTAINTED_on(result); /* propagate taintedness */
     XSRETURN(1);
 }
