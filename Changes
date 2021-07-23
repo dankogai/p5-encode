@@ -1,8 +1,15 @@
 # Revision history for Perl extension Encode.
 #
-# $Id: Changes,v 3.10 2021/05/18 07:42:45 dankogai Exp $
+# $Id: Changes,v 3.11 2021/07/23 02:26:54 dankogai Exp dankogai $
 #
-$Revision: 3.10 $ $Date: 2021/05/18 07:42:45 $
+$Revision: 3.11 $ $Date: 2021/07/23 02:26:54 $
+! Unicode/Unicode.xs
++ t/Unicode_trailing_nul.t
+  Pulled: Ensure that UTF-16 decode always includes a trailing NUL.
+  https://github.com/dankogai/p5-encode/pull/160
+! Unicode/Unicode.pm t/Unicode.t
+  Pullled: Fix links
+  https://github.com/dankogai/p5-encode/pull/158
 ! lib/Encode/GSM0338.pm
   Address RT#136586
   Just applied perltidy and 'make ci'
