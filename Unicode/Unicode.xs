@@ -1,5 +1,5 @@
 /*
- $Id: Unicode.xs,v 2.20 2021/07/23 02:26:54 dankogai Exp dankogai $
+ $Id: Unicode.xs,v 2.20 2021/07/23 02:26:54 dankogai Exp $
  */
 
 #define IN_UNICODE_XS
