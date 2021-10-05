@@ -1,8 +1,8 @@
 # Revision history for Perl extension Encode.
 #
-# $Id: Changes,v 3.12 2021/08/09 14:17:04 dankogai Exp dankogai $
+# $Id: Changes,v 3.13 2021/10/05 23:48:27 dankogai Exp dankogai $
 #
-$Revision: 3.12 $ $Date: 2021/08/09 14:17:04 $
+$Revision: 3.13 $ $Date: 2021/10/05 23:48:27 $
 ! Encode.xs
   Apply the patch of RT#139622 to fix a memory leak on FB_CROAK
   https://rt.cpan.org/Ticket/Display.html?id=139622
@@ -11,6 +11,7 @@ $Revision: 3.12 $ $Date: 2021/08/09 14:17:04 $
 ! Encode.pm
   Address CVE-2021-36770
   <9639159a-d070-4762-9cbd-f1622f10449c@beta.fastmail.com>
+
 3.11 2021/07/23 02:26:54
 ! Unicode/Unicode.xs
 + t/Unicode_trailing_nul.t
