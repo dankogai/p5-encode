@@ -1,5 +1,5 @@
 /*
- $Id: Encode.xs,v 2.50 2021/10/08 00:30:35 dankogai Exp dankogai $
+ $Id: Encode.xs,v 2.51 2021/10/08 15:29:23 dankogai Exp dankogai $
  */
 
 #define PERL_NO_GET_CONTEXT

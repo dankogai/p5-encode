@@ -1,8 +1,8 @@
 # Revision history for Perl extension Encode.
 #
-# $Id: Changes,v 3.14 2021/10/08 00:30:35 dankogai Exp dankogai $
+# $Id: Changes,v 3.15 2021/10/08 15:29:23 dankogai Exp dankogai $
 #
-$Revision: 3.14 $ $Date: 2021/10/08 00:30:35 $
+$Revision: 3.15 $ $Date: 2021/10/08 15:29:23 $
 ! Encode.xs
   Revert Encode 3.13 (commit 2397881) which should have been done w/ pull 161
   <20211008091648.GA28259@dcvr>
