@@ -275,7 +275,6 @@ encode_method(pTHX_ const encode_t * enc, const encpage_t * dir, SV * src, U8 * 
         /* decoding */
         else {
         if (check & ENCODE_DIE_ON_ERR){
-            SvREFCNT_dec(dst);
             Perl_croak(aTHX_ ERR_DECODE_NOMAP,
                               enc->name[0], (UV)s[slen]);
             return &PL_sv_undef; /* never reaches but be safe */

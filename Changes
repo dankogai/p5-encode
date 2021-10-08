@@ -4,6 +4,13 @@
 #
 $Revision: 3.14 $ $Date: 2021/10/08 00:30:35 $
 ! Encode.xs
+  Revert Encode 3.13 (commit 2397881) which should have been done w/ pull 161
+  <20211008091648.GA28259@dcvr>
+  https://github.com/dankogai/p5-encode/commit/23978817a2c1ed13861167154e8eb3d829104b6b
+  https://github.com/dankogai/p5-encode/pull/161
+
+3.14 2021/10/08 00:30:35
+! Encode.xs
   Pulled: Fix memory leak in function encode_method()
   https://github.com/dankogai/p5-encode/pull/161
 
