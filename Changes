@@ -1,8 +1,13 @@
 # Revision history for Perl extension Encode.
 #
-# $Id: Changes,v 3.13 2021/10/05 23:48:27 dankogai Exp dankogai $
+# $Id: Changes,v 3.14 2021/10/08 00:30:35 dankogai Exp dankogai $
 #
-$Revision: 3.13 $ $Date: 2021/10/05 23:48:27 $
+$Revision: 3.14 $ $Date: 2021/10/08 00:30:35 $
+! Encode.xs
+  Pulled: Fix memory leak in function encode_method()
+  https://github.com/dankogai/p5-encode/pull/161
+
+3.13 2021/10/05 23:48:27
 ! Encode.xs
   Apply the patch of RT#139622 to fix a memory leak on FB_CROAK
   https://rt.cpan.org/Ticket/Display.html?id=139622
