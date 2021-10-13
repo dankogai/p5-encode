@@ -1,8 +1,13 @@
 # Revision history for Perl extension Encode.
 #
-# $Id: Changes,v 3.15 2021/10/08 15:29:23 dankogai Exp dankogai $
+# $Id: Changes,v 3.16 2021/10/13 08:29:13 dankogai Exp dankogai $
 #
-$Revision: 3.15 $ $Date: 2021/10/08 15:29:23 $
+$Revision: 3.16 $ $Date: 2021/10/13 08:29:13 $
+! Makefile.PL
+  Pulled: Only add -Werror=declaration-after-statement for 5.035004 and earlier
+  https://github.com/dankogai/p5-encode/pull/162/filehttps://github.com/dankogai/p5-encode/pull/162
+
+3.15 2021/10/08 15:29:23
 ! Encode.xs
   Revert Encode 3.13 (commit 2397881) which should have been done w/ pull 161
   <20211008091648.GA28259@dcvr>
