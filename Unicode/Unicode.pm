@@ -263,7 +263,7 @@ L<http://www.unicode.org/faq/utf_bom.html>,
 
 RFC 2781 L<http://www.ietf.org/rfc/rfc2781.txt>,
 
-The whole Unicode standard L<http://www.unicode.org/unicode/uni2book/u2.html>
+The whole Unicode standard L<https://www.unicode.org/standard/standard.html>
 
 Ch. 15, pp. 403 of C<Programming Perl (3rd Edition)>
 by Larry Wall, Tom Christiansen, Jon Orwant;
