@@ -265,8 +265,8 @@ RFC 2781 L<http://www.ietf.org/rfc/rfc2781.txt>,
 
 The whole Unicode standard L<https://www.unicode.org/standard/standard.html>
 
-Ch. 15, pp. 403 of C<Programming Perl (3rd Edition)>
-by Larry Wall, Tom Christiansen, Jon Orwant;
-O'Reilly & Associates; ISBN 0-596-00027-8
+Ch. 6 pp. 275 of C<Programming Perl (3rd Edition)>
+by Tom Christiansen, brian d foy & Larry Wall;
+O'Reilly & Associates; ISBN 978-0-596-00492-7
 
 =cut
