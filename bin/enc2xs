@@ -254,7 +254,7 @@ END
     print C qq(#pragma GCC diagnostic ignored "-Wc++-compat"\n);
    }
 
-  if ($cname =~ /(\w+)\.xs$/)
+  if ($cname =~ /\.xs$/i)
    {
     print C "#define PERL_NO_GET_CONTEXT\n";
     print C "#include <EXTERN.h>\n";
@@ -264,15 +264,15 @@ END
   print C "#include \"encode.h\"\n\n";
 
  }
-elsif ($cname =~ /\.enc$/)
+elsif ($cname =~ /\.enc$/i)
  {
   $doEnc = 1;
  }
-elsif ($cname =~ /\.ucm$/)
+elsif ($cname =~ /\.ucm$/i)
  {
   $doUcm = 1;
  }
-elsif ($cname =~ /\.pet$/)
+elsif ($cname =~ /\.pet$/i)
  {
   $doPet = 1;
  }
