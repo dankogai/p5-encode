@@ -249,6 +249,11 @@ if ($cname =~ /\.(c|xs)$/i) # VMS may have upcased filenames with DECC$ARGV_PARS
 END
   }
 
+  if ($cname =~ /\.c$/i && $Config{ccname} eq "gcc")
+   {
+    print C qq(#pragma GCC diagnostic ignored "-Wc++-compat"\n);
+   }
+
   if ($cname =~ /(\w+)\.xs$/)
    {
     print C "#define PERL_NO_GET_CONTEXT\n";
