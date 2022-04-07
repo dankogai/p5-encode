@@ -1,8 +1,25 @@
 # Revision history for Perl extension Encode.
 #
-# $Id: Changes,v 3.16 2021/10/13 08:29:13 dankogai Exp dankogai $
+# $Id: Changes,v 3.17 2022/04/07 03:06:40 dankogai Exp dankogai $
 #
-$Revision: 3.16 $ $Date: 2021/10/13 08:29:13 $
+$Revision: 3.17 $ $Date: 2022/04/07 03:06:40 $
+! bin/enc2xs t/enc_data.t t/enc_module.t t/encoding.t t/jperl.t
+  Pulled: Fix Issue #144, spurious warnings from -Wc++-compate,
+   and a few related nits
+  https://github.com/dankogai/p5-encode/pull/168
+! MANIFEST
+  add t/utf32warnings.t which was missing
+! t/taint.t
+  Pulled: Skip taint tests if your perl was built without taint support
+  https://github.com/dankogai/p5-encode/pull/167
+! Unicode/Unicode.pm
+  Pulled: fix link to Unicode standard
+  https://github.com/dankogai/p5-encode/pull/165
+! t/Unicode_trailing_nul.t
+  Pulled: Use note() instead of diag()
+  https://github.com/dankogai/p5-encode/pull/164
+
+3.16 2021/10/13 08:29:13
 ! Makefile.PL
   Pulled: Only add -Werror=declaration-after-statement for 5.035004 and earlier
   https://github.com/dankogai/p5-encode/pull/162
