@@ -8,7 +8,7 @@ my $content = String->new("--\x{30c6}--");
 my $text = Encode::encode('latin1', $content, Encode::FB_XMLCREF);
 is $text, "--&#x30c6;--";
 
-done_testing;
+done_testing();
 
 package String;
 use overload
