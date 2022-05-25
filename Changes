@@ -3,6 +3,12 @@
 # $Id: Changes,v 3.17 2022/04/07 03:06:40 dankogai Exp dankogai $
 #
 $Revision: 3.17 $ $Date: 2022/04/07 03:06:40 $
+! t/Unicode_trailing_nul.t t/truncated_utf8.t
+  t/utf32warnings.t t/xml.t
+  Skip so Github Actions are happy
+  https://github.com/dankogai/p5-encode/blob/main/.github/workflows/versions.yml
+
+3.17 2022/04/07
 ! bin/enc2xs t/enc_data.t t/enc_module.t t/encoding.t t/jperl.t
   Pulled: Fix Issue #144, spurious warnings from -Wc++-compate,
    and a few related nits
