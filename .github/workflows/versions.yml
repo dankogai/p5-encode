@@ -1,10 +1,7 @@
 name: CI on Perl 5.8-32 on Linux
 
-on:
-  push:
-    branches: [ main ]
-  pull_request:
-    branches: [ main ]
+# manual run only
+on: [ workflow_dispatch ]
 
 jobs:
   build:
