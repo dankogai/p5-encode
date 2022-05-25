@@ -1,5 +1,5 @@
 BEGIN {
-    if ( $] <= 5.008 ) {
+    if ( $] < 5.009 ) {
         print "1..0 # Skip: Perl <= 5.9 or later required\n";
         exit 0;
     }
