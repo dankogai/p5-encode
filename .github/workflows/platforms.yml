@@ -1,4 +1,4 @@
-name: CI via GitHub Actions
+name: CI on Perl 5.34 on {Linux,macOS,Windows}
 
 on:
   push:

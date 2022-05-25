@@ -1,4 +1,4 @@
-name: CI via GitHub Actions
+name: CI on Perl 5.32-5.8
 
 on:
   push:
@@ -35,5 +35,6 @@ jobs:
         with:
           perl-version: ${{ matrix.perl }}
       - run: perl -V
+      - run: cpanm --installdeps .
       - run: perl Makefile.PL
       - run: make test
