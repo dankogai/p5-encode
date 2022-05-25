@@ -1,4 +1,4 @@
-[![build status](https://app.travis-ci.com/dankogai/p5-encode.svg)](https://app.travis-ci.com/github/dankogai/p5-encode)
+[![CI on Perl 5.34 on {Linux,macOS,Windows}](https://github.com/dankogai/p5-encode/actions/workflows/platforms.yml/badge.svg)](https://github.com/dankogai/p5-encode/actions/workflows/platforms.yml)
 
 ## NAME
 
