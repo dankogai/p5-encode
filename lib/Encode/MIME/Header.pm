@@ -94,6 +94,10 @@ sub decode($$;$) {
 
         $stop = 1 unless length($line) or length($sep);
 
+        # in non strict mode append missing '=' padding characters for b words
+        # fixes below concatenation of consecutive encoded mime words
+        1 while not $STRICT_DECODE and $line =~ s/(=\?$re_charset(?:\*$re_language)?\?[Bb]\?)((?:[^\?]{4})*[^\?]{1,3})(\?=)/$1.$2.('='x(4-length($2)%4)).$3/se;
+
         # NOTE: this code partially could break $chk support
         # in non strict mode concat consecutive encoded mime words with same charset, language and encoding
         # fixes breaking inside multi-byte characters
