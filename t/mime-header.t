@@ -1,5 +1,5 @@
 #
-# $Id: mime-header.t,v 2.15 2017/07/18 07:15:29 dankogai Exp $
+# $Id: mime-header.t,v 2.16 2022/06/25 01:58:57 dankogai Exp $
 # This script is written in utf8
 #
 BEGIN {

@@ -1,4 +1,4 @@
-[![CI on Perl 5.34 on {Linux,macOS,Windows}](https://github.com/dankogai/p5-encode/actions/workflows/platforms.yml/badge.svg)](https://github.com/dankogai/p5-encode/actions/workflows/platforms.yml)
+[![CI on Perl 5.{36,34} on {Linux,macOS,Windows}](https://github.com/dankogai/p5-encode/actions/workflows/platforms.yml/badge.svg)](https://github.com/dankogai/p5-encode/actions/workflows/platforms.yml)
 
 ## NAME
 
