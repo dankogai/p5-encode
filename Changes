@@ -1,8 +1,8 @@
 # Revision history for Perl extension Encode.
 #
-# $Id: Changes,v 3.18 2022/06/25 02:05:01 dankogai Exp dankogai $
+# $Id: Changes,v 3.19 2022/08/04 04:43:23 dankogai Exp dankogai $
 #
-$Revision: 3.18 $ $Date: 2022/06/25 02:05:01 $
+$Revision: 3.19 $ $Date: 2022/08/04 04:43:23 $
 ! lib/Encode/Alias.pm /t/Aliases.t
   Add ISO-8859-8-I as an alias of ISO-8859-8
   <8ac3918e-5d77-4815-f1e6-6577397068c6@iki.fi>
