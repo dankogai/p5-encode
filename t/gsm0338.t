@@ -16,6 +16,10 @@ use utf8;
 use Test::More tests => 777;
 use Encode;
 use Encode::GSM0338;
+use PerlIO::encoding;
+
+# perl < 5.8.8 didn't enable STOP_AT_PARTIAL by default
+$PerlIO::encoding::fallback |= Encode::STOP_AT_PARTIAL;
 
 my $chk = Encode::LEAVE_SRC();
 
