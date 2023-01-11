@@ -213,7 +213,7 @@ if (exists $opt{f}) {
 }
 
 my $cname = $opt{o} ? $opt{o} : shift(@ARGV);
-unless ($cname) { #debuging a win32 nmake error-only. works via cmdline
+unless ($cname) { # Debugging a Win32 nmake error-only; works via cmdline.
     print "\nARGV:";
     print "$_ " for @ARGV;
     print "\nopt:";
