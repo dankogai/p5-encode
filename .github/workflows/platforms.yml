@@ -1,4 +1,4 @@
-name: CI on Perl 5.{36,34} on {Linux,macOS,Windows}
+name: CI on Perl 5.{36,34} on {Linux,macOS}
 
 on:
   push:
