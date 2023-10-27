@@ -1,4 +1,4 @@
-name: CI on Perl 5.8-32 on Linux
+name: CI on Perl 5.8-34 on Linux
 
 # manual run only
 on: [ workflow_dispatch ]
