@@ -3,6 +3,17 @@
 # $Id: Changes,v 3.19 2022/08/04 04:43:23 dankogai Exp dankogai $
 #
 $Revision: 3.19 $ $Date: 2022/08/04 04:43:23 $
+! bin/encguess
+  Pulled: encguess: remove duplicate "the"
+  https://github.com/dankogai/p5-encode/pull/173
+! bin/enc2xs
+  Pulled: Fix spelling in comment
+  https://github.com/dankogai/p5-encode/pull/171
+! t/gsm0338.t
+  Pulled: fix gsm0338 test compatibility with perl < 5.8.8
+  https://github.com/dankogai/p5-encode/pull/170
+
+3.19 2022/08/04 04:43:23
 ! lib/Encode/Alias.pm /t/Aliases.t
   Add ISO-8859-8-I as an alias of ISO-8859-8
   <8ac3918e-5d77-4815-f1e6-6577397068c6@iki.fi>
