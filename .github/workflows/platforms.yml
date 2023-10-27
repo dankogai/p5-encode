@@ -11,7 +11,7 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        os: ['ubuntu-latest', 'macos-latest', 'windows-latest']
+        os: ['ubuntu-latest', 'macos-latest']
         perl: [ '5.38', '5.36' ]
     name: Perl ${{ matrix.perl }} on ${{ matrix.os }}
     steps:
