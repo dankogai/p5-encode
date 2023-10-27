@@ -1,0 +1,23 @@
+name: CI on Perl 5.{38,36} on Strawberry Perl
+
+# manual run only
+on: [ workflow_dispatch ]
+
+jobs:
+  build:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: ['windows-latest']
+        perl: [ '5.38', '5.36' ]
+    name: Perl ${{ matrix.perl }} on ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v3
+      - name: Set up perl
+        uses: shogo82148/actions-setup-perl@v1
+        with:
+          perl-version: ${{ matrix.perl }}
+          distribution: strawberry          
+      - run: perl -V
+      - run: perl Makefile.PL
+      - run: make test
