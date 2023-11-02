@@ -4,7 +4,7 @@
 # This script is written in euc-jp
 
 BEGIN {
-    require Config; import Config;
+    require Config; Config->import;
     if ($Config{'extensions'} !~ /\bEncode\b/) {
       print "1..0 # Skip: Encode was not built\n";
       exit 0;
@@ -36,13 +36,13 @@ no encoding; # ensure
 my $Enamae = "\xbe\xae\xbb\xf4\x20\xc3\xc6"; # euc-jp, with \x escapes
 use encoding "euc-jp";
 
-my $Namae  = "¾®»ô ÃÆ";   # in Japanese, in euc-jp
+my $Namae  = "ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½";   # in Japanese, in euc-jp
 my $Name   = "Dan Kogai"; # in English
 # euc-jp in \x format but after the pragma.  But this one will be converted!
 my $Ynamae = "\xbe\xae\xbb\xf4\x20\xc3\xc6"; 
 
 
-my $str = $Namae; $str =~ s/¾®»ô ÃÆ/Dan Kogai/o;
+my $str = $Namae; $str =~ s/ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½/Dan Kogai/o;
 is($str, $Name, q{regex});
 $str = $Namae; $str =~ s/$Namae/Dan Kogai/o;
 is($str, $Name, q{regex - with variable});
@@ -91,10 +91,10 @@ is (length($Namae), 10);
     no strict 'vars'; # fools
     # doesn't work w/ "my" as of this writing.
     # because of  buggy strict.pm and utf8.pm
-    our $¿Í = 2; 
+    our $ï¿½ï¿½ = 2; 
     #   ^^U+4eba, "human" in CJK ideograph
-    $¿Í++; # a child is born
-    *people = \$¿Í;
+    $ï¿½ï¿½++; # a child is born
+    *people = \$ï¿½ï¿½;
     is ($people, 3, "Filter:utf8 identifier");
     no encoding;
     ok(1, "Filter off");
