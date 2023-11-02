@@ -1,7 +1,7 @@
 BEGIN {
     if (! -d 'blib' and -d 't'){ chdir 't' };
     unshift @INC,  '../lib';
-    require Config; import Config;
+    require Config; Config->import;
     if ($Config{'extensions'} !~ /\bEncode\b/) {
       print "1..0 # Skip: Encode was not built\n";
       exit 0;
@@ -45,18 +45,18 @@ run_tests('Basic Big5 range', {
     ),
 
     'big5'	=> (join('',
-'«Ò°ª¶§¤§­]¸Ç¤¼¡A®Ó¬Ó¦Ò¤ê§B±e¡Q',
-'Äá´£­s¤_©s³µ¤¼¡A±©©°±G§^¥H­°¡Q',
+'ï¿½Ò°ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½]ï¿½Ç¤ï¿½ï¿½Aï¿½Ó¬Ó¦Ò¤ï¿½Bï¿½eï¿½Q',
+'ï¿½á´£ï¿½sï¿½_ï¿½sï¿½ï¿½ï¿½ï¿½ï¿½Aï¿½ï¿½ï¿½ï¿½ï¿½Gï¿½^ï¿½Hï¿½ï¿½ï¿½Q',
     )),
 
     'big5-hkscs'=> (join('',
-'«Ò°ª¶§¤§­]¸Ç¤¼¡A®Ó¬Ó¦Ò¤ê§B±e¡Q',
-'Äá´£­s¤_©s³µ¤¼¡A±©©°±G§^¥H­°¡Q',
+'ï¿½Ò°ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½]ï¿½Ç¤ï¿½ï¿½Aï¿½Ó¬Ó¦Ò¤ï¿½Bï¿½eï¿½Q',
+'ï¿½á´£ï¿½sï¿½_ï¿½sï¿½ï¿½ï¿½ï¿½ï¿½Aï¿½ï¿½ï¿½ï¿½ï¿½Gï¿½^ï¿½Hï¿½ï¿½ï¿½Q',
     )),
 
     'cp950'	=> (join('',
-'«Ò°ª¶§¤§­]¸Ç¤¼¡A®Ó¬Ó¦Ò¤ê§B±e¡Q',
-'Äá´£­s¤_©s³µ¤¼¡A±©©°±G§^¥H­°¡Q',
+'ï¿½Ò°ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½]ï¿½Ç¤ï¿½ï¿½Aï¿½Ó¬Ó¦Ò¤ï¿½Bï¿½eï¿½Q',
+'ï¿½á´£ï¿½sï¿½_ï¿½sï¿½ï¿½ï¿½ï¿½ï¿½Aï¿½ï¿½ï¿½ï¿½ï¿½Gï¿½^ï¿½Hï¿½ï¿½ï¿½Q',
     )),
 });
 
@@ -70,8 +70,8 @@ run_tests('Hong Kong Extensions', {
     ),
 
     'big5-hkscs'	=> join('',
-'·PÁÂ©Ò¦³¨Ï¥Î Perl ïªB¤Í¡Aµ¹§Ú’]ï¤ä«ù¡B·N¨£©M¹ªÀy',
-'¦pªG½s½X¦³¥ô¦ó¿ùº|¡A½Ð§i¶D§Ú’]¡C'
+'ï¿½Pï¿½Â©Ò¦ï¿½ï¿½Ï¥ï¿½ Perl ï¿½ï¿½Bï¿½Í¡Aï¿½ï¿½ï¿½Ú’]ï¿½ï¿½ï¿½ï¿½ï¿½Bï¿½Nï¿½ï¿½ï¿½Mï¿½ï¿½ï¿½y',
+'ï¿½pï¿½Gï¿½sï¿½Xï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½|ï¿½Aï¿½Ð§iï¿½Dï¿½Ú’]ï¿½C'
     ),
 });
 

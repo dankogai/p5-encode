@@ -1,7 +1,7 @@
 # $Id: enc_module.t,v 2.6 2022/04/07 03:06:40 dankogai Exp $
 # This file is in euc-jp
 BEGIN {
-    require Config; import Config;
+    require Config; Config->import;
     if ($Config{'extensions'} !~ /\bEncode\b/) {
       print "1..0 # Skip: Encode was not built\n";
       exit 0;
@@ -43,7 +43,7 @@ local $SIG{__WARN__} = sub{ $DEBUG and print STDERR @_ };
 
 open STDOUT, ">", $file1 or die "$file1:$!";
 print $obj->str, "\n";
-$obj->set("¥Æ¥¹¥ÈÊ¸»úÎó");
+$obj->set("ï¿½Æ¥ï¿½ï¿½ï¿½Ê¸ï¿½ï¿½ï¿½ï¿½");
 print $obj->str, "\n";
 
 # Please do not move this to a point after the comparison -- Craig Berry
@@ -54,7 +54,7 @@ close STDOUT unless $^O eq 'freebsd';
 my $cmp = compare_text($file0, $file1);
 is($cmp, 0, "encoding vs. STDOUT");
 
-my @cmp = qw/½é´üÊ¸»úÎó ¥Æ¥¹¥ÈÊ¸»úÎó/;
+my @cmp = qw/ï¿½ï¿½ï¿½Ê¸ï¿½ï¿½ï¿½ï¿½ ï¿½Æ¥ï¿½ï¿½ï¿½Ê¸ï¿½ï¿½ï¿½ï¿½/;
 open STDIN, "<", $file0 or die "$file0:$!";
 $obj = Mod_EUCJP->new;
 my $i = 0;
