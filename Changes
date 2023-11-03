@@ -8,7 +8,7 @@ $Revision: 3.19 $ $Date: 2022/08/04 04:43:23 $
   t/encoding.t t/fallback.t t/grow.t t/gsm0338.t t/guess.t t/jperl.t
   t/magic.t t/mime-header.t t/mime-name.t t/perlio.t t/rt113164.t
   t/rt65541.t t/rt76824.t t/rt85489.t t/rt86327.t t/truncated_utf8.t
-  t/utf8strict.t
+  t/utf8strict.t t/rt.pl
   Fix indirect syntax accordingly to (but not by pulling):
   https://github.com/dankogai/p5-encode/pull/176
 ! bin/enc2xs
