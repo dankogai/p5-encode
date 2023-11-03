@@ -3,6 +3,17 @@
 # $Id: Changes,v 3.19 2022/08/04 04:43:23 dankogai Exp dankogai $
 #
 $Revision: 3.19 $ $Date: 2022/08/04 04:43:23 $
+! t/Aliases.t t/CJKT.t t/Encode.t t/Encoder.t t/Unicode.t t/at-cn.t
+  t/at-tw.t t/enc_data.t t/enc_eucjp.t t/enc_module.t t/enc_utf8.t
+  t/encoding.t t/fallback.t t/grow.t t/gsm0338.t t/guess.t t/jperl.t
+  t/magic.t t/mime-header.t t/mime-name.t t/perlio.t t/rt113164.t
+  t/rt65541.t t/rt76824.t t/rt85489.t t/rt86327.t t/truncated_utf8.t
+  t/utf8strict.t
+  Fix indirect syntax accordingly to (but not by pulling):
+  https://github.com/dankogai/p5-encode/pull/176
+! bin/enc2xs
+  Pulled: enc2xs: Fix indirect syntax
+  https://github.com/dankogai/p5-encode/pull/174
 ! bin/encguess
   Pulled: encguess: remove duplicate "the"
   https://github.com/dankogai/p5-encode/pull/173
