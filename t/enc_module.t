@@ -1,4 +1,4 @@
-# $Id: enc_module.t,v 2.6 2022/04/07 03:06:40 dankogai Exp $
+# $Id: enc_module.t,v 2.7 2023/11/10 01:10:50 dankogai Exp dankogai $
 # This file is in euc-jp
 BEGIN {
     require Config; Config->import();
