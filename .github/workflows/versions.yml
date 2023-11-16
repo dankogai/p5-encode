@@ -1,7 +1,9 @@
 name: CI on Perl 5.8-34 on Linux
 
-# manual run only
-on: [ workflow_dispatch ]
+on:
+  workflow_dispatch:
+  push:
+    tags: [ '*.*.*' ]
 
 jobs:
   build:

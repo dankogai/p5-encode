@@ -3,6 +3,14 @@
 # $Id: Changes,v 3.20 2023/11/10 01:10:50 dankogai Exp dankogai $
 #
 $Revision: 3.20 $ $Date: 2023/11/10 01:10:50 $
+! Encode.pm
+  pulled: remove POD markup from verbatim sections
+  https://github.com/dankogai/p5-encode/pull/178
+! lib/Encode/Supported.pod
+  pulled: fix module name in POD
+  https://github.com/dankogai/p5-encode/pull/177
+
+3.20 2023/11/10 01:10:50
 ! t/Aliases.t t/CJKT.t t/Encode.t t/Encoder.t t/Unicode.t t/at-cn.t
   t/at-tw.t t/enc_data.t t/enc_eucjp.t t/enc_module.t t/enc_utf8.t
   t/encoding.t t/fallback.t t/grow.t t/gsm0338.t t/guess.t t/jperl.t
