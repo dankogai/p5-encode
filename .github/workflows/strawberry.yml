@@ -3,7 +3,7 @@ name: CI on Perl 5.{38,36} on Strawberry Perl
 on:
   workflow_dispatch:
   push:
-    tags: [ '*.*.*' ]
+    tags: [ '*.*' ]
 
 jobs:
   build:

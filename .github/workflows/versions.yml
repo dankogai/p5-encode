@@ -3,7 +3,7 @@ name: CI on Perl 5.8-34 on Linux
 on:
   workflow_dispatch:
   push:
-    tags: [ '*.*.*' ]
+    tags: [ '*.*' ]
 
 jobs:
   build:

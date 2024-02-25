@@ -3,7 +3,7 @@ name: CI on Perl 5.{38,36} on {Linux,macOS}
 on:
   workflow_dispatch:
   push:
-    tags: [ '*.*.*' ]
+    tags: [ '*.*' ]
   pull_request:
     branches: [ main ]
 
