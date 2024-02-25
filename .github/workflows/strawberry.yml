@@ -22,4 +22,4 @@ jobs:
           distribution: strawberry
       - run: perl -V
       - run: perl Makefile.PL
-      - run: make test
+      - run: gmake test
