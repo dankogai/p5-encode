@@ -22,6 +22,5 @@ jobs:
         with:
           perl-version: ${{ matrix.perl }}
       - run: perl -V
-      - run: perl Makefile.PL
-      - run: make test
-
+      - run: cpanm --installdeps .
+      - run: prove -lv t
