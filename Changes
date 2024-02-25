@@ -1,8 +1,11 @@
 # Revision history for Perl extension Encode.
 #
-# $Id: Changes,v 3.20 2023/11/10 01:10:50 dankogai Exp dankogai $
+# $Id: Changes,v 3.21 2024/02/25 22:21:59 dankogai Exp dankogai $
 #
-$Revision: 3.20 $ $Date: 2023/11/10 01:10:50 $
+$Revision: 3.21 $ $Date: 2024/02/25 22:21:59 $
+! t/CJKT.t
+  address RT#151983: parallel test race condition
+  https://rt.cpan.org/Ticket/Display.html?id=151983
 ! Encode.pm
   pulled: remove POD markup from verbatim sections
   https://github.com/dankogai/p5-encode/pull/178
