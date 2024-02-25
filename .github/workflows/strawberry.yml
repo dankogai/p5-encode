@@ -21,5 +21,5 @@ jobs:
           perl-version: ${{ matrix.perl }}
           distribution: strawberry
       - run: perl -V
-      - run: cpanm --installdeps .
-      - run: prove -lv t
+      - run: perl Makefile.PL
+      - run: make test
