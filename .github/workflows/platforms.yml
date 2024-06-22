@@ -1,4 +1,4 @@
-name: CI on Perl 5.{38,36} on {Linux,macOS}
+name: CI on Perl 5.{40,38,36} on {Linux,macOS}
 
 on:
   workflow_dispatch:
@@ -13,7 +13,7 @@ jobs:
     strategy:
       matrix:
         os: ['ubuntu-latest', 'macos-latest']
-        perl: [ '5.38', '5.36' ]
+        perl: [ '5.40', '5.38', '5.36' ]
     name: Perl ${{ matrix.perl }} on ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v4
