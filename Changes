@@ -1,8 +1,11 @@
 # Revision history for Perl extension Encode.
 #
-# $Id: Changes,v 3.21 2024/02/25 22:21:59 dankogai Exp dankogai $
+# $Id: Changes,v 3.22 2026/04/25 16:36:51 dankogai Exp $
 #
-$Revision: 3.21 $ $Date: 2024/02/25 22:21:59 $
+$Revision: 3.22 $ $Date: 2026/04/25 16:36:51 $
+! lib/Encode/Supported.pod
+  Pulled: Encode::Supported: fix broken link
+  https://github.com/dankogai/p5-encode/pull/182
 ! Byte/Makefile.PL
   Pulled: Byte/Makefile.PL: ensure build reproducibility
   https://github.com/dankogai/p5-encode/pull/179
