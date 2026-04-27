@@ -3,11 +3,18 @@
 # $Id: Changes,v 3.23 2026/04/27 03:01:25 dankogai Exp dankogai $
 #
 $Revision: 3.23 $ $Date: 2026/04/27 03:01:25 $
+! Changes
+  More fixes to revision subheaders
+  
+  Pulled: Restore correct revision subheader for 3.22
+  https://github.com/dankogai/p5-encode/pull/186
+
+3.23 2026/04/27 03:01:25
 ! t/Unicode_trailing_nul.t
   readdress RT#152013: Unicode_trailing_nul.t leaves a temp file
   https://github.com/dankogai/p5-encode/commit/f01eac7df7185a836ca5825d7bf2bd9510a3826b
 
-$Revision: 3.22 $ $Date: 2026/04/25 16:36:51 $
+3.22 2026/04/25 16:36:51
 ! lib/Encode/Supported.pod
   Pulled: Encode::Supported: fix broken link
   https://github.com/dankogai/p5-encode/pull/182
