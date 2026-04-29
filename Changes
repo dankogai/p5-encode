@@ -3,6 +3,9 @@
 # $Id: Changes,v 3.23 2026/04/27 03:01:25 dankogai Exp dankogai $
 #
 $Revision: 3.23 $ $Date: 2026/04/27 03:01:25 $
+! Byte/Makefile.PL
+  Pulled: Byte/Makefile.PL: ensure build reproducibility again
+  https://github.com/dankogai/p5-encode/pull/187
 ! Changes
   More fixes to revision subheaders
   https://github.com/dankogai/p5-encode/commit/eac1089847d488abfe412009ad41d7555921e8d2
