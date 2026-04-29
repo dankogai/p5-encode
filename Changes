@@ -1,8 +1,8 @@
 # Revision history for Perl extension Encode.
 #
-# $Id: Changes,v 3.23 2026/04/27 03:01:25 dankogai Exp dankogai $
+# $Id: Changes,v 3.24 2026/04/29 17:36:34 dankogai Exp dankogai $
 #
-$Revision: 3.23 $ $Date: 2026/04/27 03:01:25 $
+$Revision: 3.24 $ $Date: 2026/04/29 17:36:34 $
 ! Byte/Makefile.PL
   Pulled: Byte/Makefile.PL: ensure build reproducibility again
   https://github.com/dankogai/p5-encode/pull/187
