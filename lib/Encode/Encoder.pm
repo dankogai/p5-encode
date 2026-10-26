@@ -4,7 +4,7 @@
 package Encode::Encoder;
 use strict;
 use warnings;
-our $VERSION = '2.03';
+our $VERSION = '2.04';
 
 require Exporter;
 our @ISA       = qw(Exporter);

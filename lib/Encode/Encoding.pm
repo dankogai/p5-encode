@@ -3,7 +3,7 @@ package Encode::Encoding;
 # Base class for classes which implement encodings
 use strict;
 use warnings;
-our $VERSION = '2.08';
+our $VERSION = '2.09';
 
 our @CARP_NOT = qw(Encode Encode::Encoder);
 

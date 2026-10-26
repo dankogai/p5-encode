@@ -1,7 +1,7 @@
 package Encode::MIME::Name;
 use strict;
 use warnings;
-our $VERSION = '1.03';
+our $VERSION = '1.04';
 
 # NOTE: This table must be 1:1 mapping
 our %MIME_NAME_OF = (

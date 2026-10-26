@@ -1,7 +1,7 @@
 package Encode::KR::2022_KR;
 use strict;
 use warnings;
-our $VERSION = '2.04';
+our $VERSION = '2.05';
 
 use Encode qw(:fallbacks);
 

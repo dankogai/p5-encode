@@ -5,7 +5,7 @@ use warnings;
 use utf8 ();
 
 use vars qw($VERSION);
-$VERSION = '2.10';
+$VERSION = '2.11';
 
 use Encode qw(:fallbacks);
 

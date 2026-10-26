@@ -13,7 +13,8 @@ $Revision: 3.24 $ $Date: 2026/04/29 17:36:34 $
   bin/enc2xs bin/ucmlint
   Assign $VERSION as a literal string instead of computing it from
   q$Revision$, per PAUSE Ops request: PAUSE now indexes only
-  statically parseable $VERSION assignments
+  statically parseable $VERSION assignments; bump each sub-module
+  and script version by 0.01
 ! t/taint.t
   Pulled: detect lack of taint support in Perl < 5.38
   https://github.com/dankogai/p5-encode/pull/188

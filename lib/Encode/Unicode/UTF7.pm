@@ -6,7 +6,7 @@ use strict;
 use warnings;
 use parent qw(Encode::Encoding);
 __PACKAGE__->Define('UTF-7');
-our $VERSION = '2.10';
+our $VERSION = '2.11';
 use MIME::Base64;
 use Encode qw(find_encoding);
 

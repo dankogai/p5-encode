@@ -1,7 +1,7 @@
 package Encode::JP::JIS7;
 use strict;
 use warnings;
-our $VERSION = '2.08';
+our $VERSION = '2.09';
 
 use Encode qw(:fallbacks);
 

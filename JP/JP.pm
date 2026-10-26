@@ -7,7 +7,7 @@ BEGIN {
 use strict;
 use warnings;
 use Encode;
-our $VERSION = '2.05';
+our $VERSION = '2.06';
 
 use XSLoader;
 XSLoader::load( __PACKAGE__, $VERSION );

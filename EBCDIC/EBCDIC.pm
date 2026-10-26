@@ -2,7 +2,7 @@ package Encode::EBCDIC;
 use strict;
 use warnings;
 use Encode;
-our $VERSION = '2.02';
+our $VERSION = '2.03';
 
 use XSLoader;
 XSLoader::load( __PACKAGE__, $VERSION );

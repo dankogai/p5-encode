@@ -2,7 +2,7 @@
 # Demand-load module list
 #
 package Encode::Config;
-our $VERSION = '2.05';
+our $VERSION = '2.06';
 
 use strict;
 use warnings;

@@ -2,7 +2,7 @@ package Encode::Byte;
 use strict;
 use warnings;
 use Encode;
-our $VERSION = '2.04';
+our $VERSION = '2.05';
 
 use XSLoader;
 XSLoader::load( __PACKAGE__, $VERSION );

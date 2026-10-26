@@ -15,7 +15,7 @@ use constant TAIL => '?=';
 
 use Encode::CJKConstants qw(%RE);
 
-our $VERSION = '1.09';
+our $VERSION = '1.10';
 
 # I owe the below codes totally to
 #   Jcode by Dan Kogai & http://www.din.or.jp/~ohzaki/perl.htm#JP_Base64

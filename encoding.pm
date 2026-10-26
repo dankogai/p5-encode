@@ -1,6 +1,6 @@
 # $Id: encoding.pm,v 3.00 2020/04/19 10:56:28 dankogai Exp $
 package encoding;
-our $VERSION = '3.00';
+our $VERSION = '3.01';
 
 use Encode;
 use strict;

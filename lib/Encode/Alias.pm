@@ -1,7 +1,7 @@
 package Encode::Alias;
 use strict;
 use warnings;
-our $VERSION = '2.25';
+our $VERSION = '2.26';
 use constant DEBUG => !!$ENV{PERL_ENCODE_DEBUG};
 
 use Exporter 'import';
