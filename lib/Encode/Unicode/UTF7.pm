@@ -6,7 +6,7 @@ use strict;
 use warnings;
 use parent qw(Encode::Encoding);
 __PACKAGE__->Define('UTF-7');
-our $VERSION = do { my @r = ( q$Revision: 2.10 $ =~ /\d+/g ); sprintf "%d." . "%02d" x $#r, @r };
+our $VERSION = '2.10';
 use MIME::Base64;
 use Encode qw(find_encoding);
 

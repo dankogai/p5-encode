@@ -8,7 +8,7 @@ use warnings;
 use Carp;
 
 use vars qw($VERSION);
-$VERSION = do { my @r = ( q$Revision: 2.10 $ =~ /\d+/g ); sprintf "%d." . "%02d" x $#r, @r };
+$VERSION = '2.10';
 
 use Encode qw(:fallbacks);
 

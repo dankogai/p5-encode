@@ -5,7 +5,7 @@
 
 BEGIN { pop @INC if $INC[-1] eq '.' }
 use strict;
-our  $VERSION = do { my @r = (q$Revision: 2.4 $ =~ /\d+/g); sprintf "%d."."%02d" x $#r, @r };
+our  $VERSION = '2.04';
 
 use Getopt::Std;
 our %Opt;

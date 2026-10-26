@@ -7,7 +7,7 @@ use warnings;
 use constant DEBUG => !!$ENV{PERL_ENCODE_DEBUG};
 our $VERSION;
 BEGIN {
-    $VERSION = sprintf "%d.%02d", q$Revision: 3.24 $ =~ /(\d+)/g;
+    $VERSION = '3.24';
     require XSLoader;
     XSLoader::load( __PACKAGE__, $VERSION );
 }
