@@ -1,8 +1,10 @@
 # Revision history for Perl extension Encode.
 #
-# $Id: Changes,v 3.25 2026/10/26 02:19:44 dankogai Exp dankogai $
+# $Id: Changes,v 3.26 2026/10/28 02:20:45 dankogai Exp dankogai $
 #
-$Revision: 3.25 $ $Date: 2026/10/26 02:19:44 $
+$Revision: 3.26 $ $Date: 2026/10/28 02:20:45 $
+
+3.25 2026/10/26 02:19:44
 ! Encode.pm encoding.pm Byte/Byte.pm CN/CN.pm EBCDIC/EBCDIC.pm JP/JP.pm
   KR/KR.pm Symbol/Symbol.pm TW/TW.pm Unicode/Unicode.pm
   lib/Encode/Alias.pm lib/Encode/Config.pm lib/Encode/Encoder.pm
